@@ -23,7 +23,7 @@
 
 class Euclid extends Rhythm
 {
-	protected	$pattern = '';
+	protected $pattern = '';
 
 	/**
 	 * Builds a Euclid object

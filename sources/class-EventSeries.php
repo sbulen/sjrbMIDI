@@ -44,14 +44,14 @@ abstract class EventSeries
 	/**
 	 * Properties
 	 */
-	protected	$type_min;	// CC & PW have different min/max
-	protected	$type_max;	// CC & PW have different min/max
-	protected	$shape;		// Shape, e.g., SINE
-	protected	$freq;		// Frequency - # of cycles per $dur
-	protected	$offset;	// Offset - angle of offset; applies to all types; passed in degrees
-	protected	$min_pct;	// User may not want entire range...  Percent for min value
-	protected	$max_pct;	// User may not want entire range...  Percent for max value
-	protected	$tick_inc;	// # of ticks between each event in series
+	protected $type_min;	// CC & PW have different min/max
+	protected $type_max;	// CC & PW have different min/max
+	protected $shape;		// Shape, e.g., SINE
+	protected $freq;		// Frequency - # of cycles per $dur
+	protected $offset;	// Offset - angle of offset; applies to all types; passed in degrees
+	protected $min_pct;	// User may not want entire range...  Percent for min value
+	protected $max_pct;	// User may not want entire range...  Percent for max value
+	protected $tick_inc;	// # of ticks between each event in series
 
 	/**
 	 * Constructor

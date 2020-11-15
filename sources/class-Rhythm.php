@@ -23,10 +23,10 @@
 
 class Rhythm
 {
-	protected	$beats = 4;
-	protected	$rests = 0;
-	protected	$pulse = 4;
-	protected	$rhythm = array();
+	protected $beats = 4;
+	protected $rests = 0;
+	protected $pulse = 4;
+	protected $rhythm = array();
 
 	/**
 	 * Constructor
