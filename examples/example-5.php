@@ -27,9 +27,9 @@ echo '<br>';
 $myFile->setKeySignature($key->getMIDIsf(), $key->getMIDImm());
 
 // Random rhythm...
-$pulse = 16;
+$pulses = 16;
 $notes = rand(1, 13);
-$euclid = new Euclid($notes, $pulse - $notes);
+$euclid = new Euclid($notes, $pulses - $notes);
 print_r($euclid);
 echo '<br>';
 
@@ -49,30 +49,23 @@ $chord = $key->buildChord($bassnote, Key::THIRD, Key::FIFTH);
 
 foreach(array(1, 3, 5, 7) AS $meas)
 {
-	$start = 0;
-	foreach ($euclid->getRhythm() AS $rlen)
+	$euclid->setStartDur($myFile->mbt2at($meas), $myFile->b2dur(4));
+	foreach ($euclid->walkAll AS $start => $info)
 	{
 		// Chords
-		$time = $myFile->mbt2at($meas, 1, $start);
-		$dur = $rlen * $myFile->b2dur(4) / $euclid->getPulse();
-		$chord_track->addChord($time, $chan, $chord, $vel, $dur);
-		$bass_track->addNote($time, $bass_chan, $key->d2m($bassnote), $vel, $dur);
+		$chord_track->addChord($start, $chan, $chord, $vel, $info['dur']);
+		$bass_track->addNote($start, $bass_chan, $key->d2m($bassnote), $vel, $info['dur']);
 
-			// Solo...
-			$solo_note = $key->dAdd($bassnote, Key::OCTAVE);
-			$beats = rand(0, $rlen);
-			$subeuclid = new Euclid($beats, $rlen - $beats);
-			$substart = $start;
-			foreach ($subeuclid->getRhythm() AS $srlen)
-			{
-				$time = $myFile->mbt2at($meas, 1, $substart);
-				$subdur = $srlen * $dur / $rlen;
-				$solo_track->addNote($time, $solo_chan, $key->d2m($solo_note), $vel, $subdur);
-				$solo_note = $key->dAdd($solo_note, rand(-4, 4));
-				$substart += $subdur;
-			}
-
-		$start += $dur;
+		// Solo...
+		$solo_note = $key->dAdd($bassnote, Key::OCTAVE);
+		$beats = rand(0, $info['pulses']);
+		$subeuclid = new Euclid($beats, $info['pulses'] - $beats);
+		$subeuclid->setStartDur($start, $info['dur']);
+		foreach ($subeuclid->walkSD AS $substart => $subdur)
+		{
+			$solo_track->addNote($substart, $solo_chan, $key->d2m($solo_note), $vel, $subdur);
+			$solo_note = $key->dAdd($solo_note, rand(-4, 4));
+		}
 	}
 }
 
@@ -82,29 +75,22 @@ $chord = $key->buildChord($tweaked, Key::THIRD, Key::FIFTH);
 
 foreach(array(2, 4, 6, 8) AS $meas)
 {
-	$start = 0;
-	foreach ($euclid->getRhythm() AS $rlen)
+	$euclid->setStartDur($myFile->mbt2at($meas), $myFile->b2dur(4));
+	foreach ($euclid->walkAll AS $start => $info)
 	{
 		// Chords
-		$time = $myFile->mbt2at($meas, 1, $start);
-		$dur = $rlen * $myFile->b2dur(4) / $euclid->getPulse();
-		$chord_track->addChord($time, $chan, $chord, $vel, $dur);
-		$bass_track->addNote($time, $bass_chan, $key->d2m($tweaked), $vel, $dur);
+		$chord_track->addChord($start, $chan, $chord, $vel, $info['dur']);
+		$bass_track->addNote($start, $bass_chan, $key->d2m($tweaked), $vel, $info['dur']);
 
-			// Solo...
-			$beats = rand(1, $rlen);
-			$subeuclid = new Euclid($beats, $rlen - $beats);
-			$substart = $start;
-			foreach ($subeuclid->getRhythm() AS $srlen)
-			{
-				$time = $myFile->mbt2at($meas, 1, $substart);
-				$subdur = $srlen * $dur / $rlen;
-				$solo_track->addNote($time, $solo_chan, $key->d2m($solo_note), $vel, $subdur);
-				$solo_note = $key->dAdd($solo_note, rand(-4, 4));
-				$substart += $subdur;
-			}
-
-		$start += $dur;
+		// Solo...
+		$beats = rand(1, $info['pulses']);
+		$subeuclid = new Euclid($beats, $info['pulses'] - $beats);
+		$subeuclid->setStartDur($start, $info['dur']);
+		foreach ($subeuclid->walkSD AS $substart => $subdur)
+		{
+			$solo_track->addNote($substart, $solo_chan, $key->d2m($solo_note), $vel, $subdur);
+			$solo_note = $key->dAdd($solo_note, rand(-4, 4));
+		}
 	}
 }
 
@@ -114,30 +100,23 @@ $chord = $key->buildChord($tweaked, Key::THIRD, Key::FIFTH, Key::SEVENTH);
 
 foreach(array(9, 11) AS $meas)
 {
-	$start = 0;
-	foreach ($euclid->getRhythm() AS $rlen)
+	$euclid->setStartDur($myFile->mbt2at($meas), $myFile->b2dur(4));
+	foreach ($euclid->walkAll AS $start => $info)
 	{
 		// Chords
-		$time = $myFile->mbt2at($meas, 1, $start);
-		$dur = $rlen * $myFile->b2dur(4) / $euclid->getPulse();
-		$chord_track->addChord($time, $chan, $chord, $vel, $dur);
-		$bass_track->addNote($time, $bass_chan, $key->d2m($tweaked), $vel, $dur);
+		$chord_track->addChord($start, $chan, $chord, $vel, $info['dur']);
+		$bass_track->addNote($start, $bass_chan, $key->d2m($tweaked), $vel, $info['dur']);
 
-			// Solo...
-			$solo_note = $key->dAdd($tweaked, Key::OCTAVE);
-			$beats = rand(0, $rlen);
-			$subeuclid = new Euclid($beats, $rlen - $beats);
-			$substart = $start;
-			foreach ($subeuclid->getRhythm() AS $srlen)
-			{
-				$time = $myFile->mbt2at($meas, 1, $substart);
-				$subdur = $srlen * $dur / $rlen;
-				$solo_track->addNote($time, $solo_chan, $key->d2m($solo_note), $vel, $subdur);
-				$solo_note = $key->dAdd($solo_note, rand(-4, 4));
-				$substart += $subdur;
-			}
-
-		$start += $dur;
+		// Solo...
+		$solo_note = $key->dAdd($tweaked, Key::OCTAVE);
+		$beats = rand(0, $info['pulses']);
+		$subeuclid = new Euclid($beats, $info['pulses'] - $beats);
+		$subeuclid->setStartDur($start, $info['dur']);
+		foreach ($subeuclid->walkSD AS $substart => $subdur)
+		{
+			$solo_track->addNote($substart, $solo_chan, $key->d2m($solo_note), $vel, $subdur);
+			$solo_note = $key->dAdd($solo_note, rand(-4, 4));
+		}
 	}
 }
 
@@ -147,29 +126,22 @@ $chord = $key->buildChord($tweaked, Key::THIRD, Key::FIFTH, Key::SEVENTH);
 
 foreach(array(10, 12) AS $meas)
 {
-	$start = 0;
-	foreach ($euclid->getRhythm() AS $rlen)
+	$euclid->setStartDur($myFile->mbt2at($meas), $myFile->b2dur(4));
+	foreach ($euclid->walkAll AS $start => $info)
 	{
 		// Chords
-		$time = $myFile->mbt2at($meas, 1, $start);
-		$dur = $rlen * $myFile->b2dur(4) / $euclid->getPulse();
-		$chord_track->addChord($time, $chan, $chord, $vel, $dur);
-		$bass_track->addNote($time, $bass_chan, $key->d2m($tweaked), $vel, $dur);
+		$chord_track->addChord($start, $chan, $chord, $vel, $info['dur']);
+		$bass_track->addNote($start, $bass_chan, $key->d2m($tweaked), $vel, $info['dur']);
 
-			// Solo...
-			$beats = rand(1, $rlen);
-			$subeuclid = new Euclid($beats, $rlen - $beats);
-			$substart = $start;
-			foreach ($subeuclid->getRhythm() AS $srlen)
-			{
-				$time = $myFile->mbt2at($meas, 1, $substart);
-				$subdur = $srlen * $dur / $rlen;
-				$solo_track->addNote($time, $solo_chan, $key->d2m($solo_note), $vel, $subdur);
-				$solo_note = $key->dAdd($solo_note, rand(-4, 4));
-				$substart += $subdur;
-			}
-
-		$start += $dur;
+		// Solo...
+		$beats = rand(1, $info['pulses']);
+		$subeuclid = new Euclid($beats, $info['pulses'] - $beats);
+		$subeuclid->setStartDur($start, $info['dur']);
+		foreach ($subeuclid->walkSD AS $substart => $subdur)
+		{
+			$solo_track->addNote($substart, $solo_chan, $key->d2m($solo_note), $vel, $subdur);
+			$solo_note = $key->dAdd($solo_note, rand(-4, 4));
+		}
 	}
 }
 
@@ -179,30 +151,23 @@ $chord = $key->buildChord($tweaked, Key::THIRD, Key::FIFTH, Key::SEVENTH);
 
 foreach(array(13) AS $meas)
 {
-	$start = 0;
-	foreach ($euclid->getRhythm() AS $rlen)
+	$euclid->setStartDur($myFile->mbt2at($meas), $myFile->b2dur(4));
+	foreach ($euclid->walkAll AS $start => $info)
 	{
 		// Chords
-		$time = $myFile->mbt2at($meas, 1, $start);
-		$dur = $rlen * $myFile->b2dur(4) / $euclid->getPulse();
-		$chord_track->addChord($time, $chan, $chord, $vel, $dur);
-		$bass_track->addNote($time, $bass_chan, $key->d2m($tweaked), $vel, $dur);
+		$chord_track->addChord($start, $chan, $chord, $vel, $info['dur']);
+		$bass_track->addNote($start, $bass_chan, $key->d2m($tweaked), $vel, $info['dur']);
 
-			// Solo...
-			$solo_note = $key->dAdd($tweaked, Key::OCTAVE);
-			$beats = rand(1, $rlen);
-			$subeuclid = new Euclid($beats, $rlen - $beats);
-			$substart = $start;
-			foreach ($subeuclid->getRhythm() AS $srlen)
-			{
-				$time = $myFile->mbt2at($meas, 1, $substart);
-				$subdur = $srlen * $dur / $rlen;
-				$solo_track->addNote($time, $solo_chan, $key->d2m($solo_note), $vel, $subdur);
-				$solo_note = $key->dAdd($solo_note, rand(-4, 4));
-				$substart += $subdur;
-			}
-
-		$start += $dur;
+		// Solo...
+		$solo_note = $key->dAdd($tweaked, Key::OCTAVE);
+		$beats = rand(1, $info['pulses']);
+		$subeuclid = new Euclid($beats, $info['pulses'] - $beats);
+		$subeuclid->setStartDur($start, $info['dur']);
+		foreach ($subeuclid->walkSD AS $substart => $subdur)
+		{
+			$solo_track->addNote($substart, $solo_chan, $key->d2m($solo_note), $vel, $subdur);
+			$solo_note = $key->dAdd($solo_note, rand(-4, 4));
+		}
 	}
 }
 
@@ -212,29 +177,22 @@ $chord = $key->buildChord($tweaked, Key::THIRD, Key::FIFTH, Key::SEVENTH);
 
 foreach(array(14) AS $meas)
 {
-	$start = 0;
-	foreach ($euclid->getRhythm() AS $rlen)
+	$euclid->setStartDur($myFile->mbt2at($meas), $myFile->b2dur(4));
+	foreach ($euclid->walkAll AS $start => $info)
 	{
 		// Chords
-		$time = $myFile->mbt2at($meas, 1, $start);
-		$dur = $rlen * $myFile->b2dur(4) / $euclid->getPulse();
-		$chord_track->addChord($time, $chan, $chord, $vel, $dur);
-		$bass_track->addNote($time, $bass_chan, $key->d2m($tweaked), $vel, $dur);
+		$chord_track->addChord($start, $chan, $chord, $vel, $info['dur']);
+		$bass_track->addNote($start, $bass_chan, $key->d2m($tweaked), $vel, $info['dur']);
 
-			// Solo...
-			$beats = rand(1, $rlen);
-			$subeuclid = new Euclid($beats, $rlen - $beats);
-			$substart = $start;
-			foreach ($subeuclid->getRhythm() AS $srlen)
-			{
-				$time = $myFile->mbt2at($meas, 1, $substart);
-				$subdur = $srlen * $dur / $rlen;
-				$solo_track->addNote($time, $solo_chan, $key->d2m($solo_note), $vel, $subdur);
-				$solo_note = $key->dAdd($solo_note, rand(-4, 4));
-				$substart += $subdur;
-			}
-
-		$start += $dur;
+		// Solo...
+		$beats = rand(1, $info['pulses']);
+		$subeuclid = new Euclid($beats, $info['pulses'] - $beats);
+		$subeuclid->setStartDur($start, $info['dur']);
+		foreach ($subeuclid->walkSD AS $substart => $subdur)
+		{
+			$solo_track->addNote($substart, $solo_chan, $key->d2m($solo_note), $vel, $subdur);
+			$solo_note = $key->dAdd($solo_note, rand(-4, 4));
+		}
 	}
 }
 
@@ -244,29 +202,22 @@ $chord = $key->buildChord($tweaked, Key::THIRD, Key::FIFTH, Key::SEVENTH);
 
 foreach(array(15) AS $meas)
 {
-	$start = 0;
-	foreach ($euclid->getRhythm() AS $rlen)
+	$euclid->setStartDur($myFile->mbt2at($meas), $myFile->b2dur(4));
+	foreach ($euclid->walkAll AS $start => $info)
 	{
 		// Chords
-		$time = $myFile->mbt2at($meas, 1, $start);
-		$dur = $rlen * $myFile->b2dur(4) / $euclid->getPulse();
-		$chord_track->addChord($time, $chan, $chord, $vel, $dur);
-		$bass_track->addNote($time, $bass_chan, $key->d2m($tweaked), $vel, $dur);
+		$chord_track->addChord($start, $chan, $chord, $vel, $info['dur']);
+		$bass_track->addNote($start, $bass_chan, $key->d2m($tweaked), $vel, $info['dur']);
 
-			// Solo...
-			$beats = rand(1, $rlen);
-			$subeuclid = new Euclid($beats, $rlen - $beats);
-			$substart = $start;
-			foreach ($subeuclid->getRhythm() AS $srlen)
-			{
-				$time = $myFile->mbt2at($meas, 1, $substart);
-				$subdur = $srlen * $dur / $rlen;
-				$solo_track->addNote($time, $solo_chan, $key->d2m($solo_note), $vel, $subdur);
-				$solo_note = $key->dAdd($solo_note, rand(-4, 4));
-				$substart += $subdur;
-			}
-
-		$start += $dur;
+		// Solo...
+		$beats = rand(1, $info['pulses']);
+		$subeuclid = new Euclid($beats, $info['pulses'] - $beats);
+		$subeuclid->setStartDur($start, $info['dur']);
+		foreach ($subeuclid->walkSD AS $substart => $subdur)
+		{
+			$solo_track->addNote($substart, $solo_chan, $key->d2m($solo_note), $vel, $subdur);
+			$solo_note = $key->dAdd($solo_note, rand(-4, 4));
+		}
 	}
 }
 
@@ -275,29 +226,22 @@ $chord = $key->buildChord($bassnote, Key::THIRD, Key::FIFTH, Key::SEVENTH, Key::
 
 foreach(array(16) AS $meas)
 {
-	$start = 0;
-	foreach ($euclid->getRhythm() AS $rlen)
+	$euclid->setStartDur($myFile->mbt2at($meas), $myFile->b2dur(4));
+	foreach ($euclid->walkAll AS $start => $info)
 	{
 		// Chords
-		$time = $myFile->mbt2at($meas, 1, $start);
-		$dur = $rlen * $myFile->b2dur(4) / $euclid->getPulse();
-		$chord_track->addChord($time, $chan, $chord, $vel, $dur);
-		$bass_track->addNote($time, $bass_chan, $key->d2m($bassnote), $vel, $dur);
+		$chord_track->addChord($start, $chan, $chord, $vel, $info['dur']);
+		$bass_track->addNote($start, $bass_chan, $key->d2m($bassnote), $vel, $info['dur']);
 
-			// Solo...
-			$beats = rand(1, $rlen);
-			$subeuclid = new Euclid($beats, $rlen - $beats);
-			$substart = $start;
-			foreach ($subeuclid->getRhythm() AS $srlen)
-			{
-				$time = $myFile->mbt2at($meas, 1, $substart);
-				$subdur = $srlen * $dur / $rlen;
-				$solo_track->addNote($time, $solo_chan, $key->d2m($solo_note), $vel, $subdur);
-				$solo_note = $key->dAdd($solo_note, rand(-4, 4));
-				$substart += $subdur;
-			}
-
-		$start += $dur;
+		// Solo...
+		$beats = rand(1, $info['pulses']);
+		$subeuclid = new Euclid($beats, $info['pulses'] - $beats);
+		$subeuclid->setStartDur($start, $info['dur']);
+		foreach ($subeuclid->walkSD AS $substart => $subdur)
+		{
+			$solo_track->addNote($substart, $solo_chan, $key->d2m($solo_note), $vel, $subdur);
+			$solo_note = $key->dAdd($solo_note, rand(-4, 4));
+		}
 	}
 }
 
@@ -319,60 +263,44 @@ $vel = 120;
 
 for ($meas = 1; $meas <= 16; $meas++)
 {
-	$start = 0;
-	foreach ($euclid->getRhythm() AS $rlen)
+	$euclid->setStartDur($myFile->mbt2at($meas), $myFile->b2dur(4));
+	foreach ($euclid->walkAll AS $start => $info)
 	{
-		$dur = $rlen * $myFile->b2dur(4) / $euclid->getPulse();
-
 		// Kick...
 		$beats = rand(0, 1);
-		$subeuclid = new Euclid($beats, $rlen - $beats);
-		$substart = $start;
-		foreach ($subeuclid->getRhythm() AS $srlen)
+		$subeuclid = new Euclid($beats, $info['pulses'] - $beats);
+		$subeuclid->setStartDur($start, $info['dur']);
+		foreach ($subeuclid->walkSD AS $substart => $subdur)
 		{
-			$time = $myFile->mbt2at($meas, 1, $substart);
-			$subdur = $srlen * $dur / $rlen;
-			$drum_track->addNote($time, $chan, MIDIEvent::DRUM_AC_BASS, $vel, $subdur);
-			$substart += $subdur;
+			$drum_track->addNote($substart, $chan, MIDIEvent::DRUM_AC_BASS, $vel, $subdur);
 		}
 
 		// Snare...
 		$beats = rand(0, 1);
-		$subeuclid = new Euclid($beats, $rlen - $beats);
-		$substart = $start;
-		foreach ($subeuclid->getRhythm() AS $srlen)
+		$subeuclid = new Euclid($beats, $info['pulses'] - $beats);
+		$subeuclid->setStartDur($start, $info['dur']);
+		foreach ($subeuclid->walkSD AS $substart => $subdur)
 		{
-			$time = $myFile->mbt2at($meas, 1, $substart);
-			$subdur = $srlen * $dur / $rlen;
-			$drum_track->addNote($time, $chan, MIDIEvent::DRUM_AC_SNARE, $vel, $subdur);
-			$substart += $subdur;
+			$drum_track->addNote($substart, $chan, MIDIEvent::DRUM_AC_SNARE, $vel, $subdur);
 		}
 
 		// Ride bell...
-		$beats = rand(0, $rlen);
-		$subeuclid = new Euclid($beats, $rlen - $beats);
-		$substart = $start;
-		foreach ($subeuclid->getRhythm() AS $srlen)
+		$beats = rand(0, $info['pulses']);
+		$subeuclid = new Euclid($beats, $info['pulses'] - $beats);
+		$subeuclid->setStartDur($start, $info['dur']);
+		foreach ($subeuclid->walkSD AS $substart => $subdur)
 		{
-			$time = $myFile->mbt2at($meas, 1, $substart);
-			$subdur = $srlen * $dur / $rlen;
-			$drum_track->addNote($time, $chan, MIDIEvent::DRUM_RIDE_BELL, $vel, $subdur);
-			$substart += $subdur;
+			$drum_track->addNote($substart, $chan, MIDIEvent::DRUM_RIDE_BELL, $vel, $subdur);
 		}
 
 		// Ride...
-		$beats = rand(0, $rlen);
-		$subeuclid = new Euclid($beats, $rlen - $beats);
-		$substart = $start;
-		foreach ($subeuclid->getRhythm() AS $srlen)
+		$beats = rand(0, $info['pulses']);
+		$subeuclid = new Euclid($beats, $info['pulses'] - $beats);
+		$subeuclid->setStartDur($start, $info['dur']);
+		foreach ($subeuclid->walkSD AS $substart => $subdur)
 		{
-			$time = $myFile->mbt2at($meas, 1, $substart);
-			$subdur = $srlen * $dur / $rlen;
-			$drum_track->addNote($time, $chan, MIDIEvent::DRUM_RIDE, $vel, $subdur);
-			$substart += $subdur;
+			$drum_track->addNote($substart, $chan, MIDIEvent::DRUM_RIDE, $vel, $subdur);
 		}
-
-		$start += $dur;
 	}
 }
 

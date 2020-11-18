@@ -15,78 +15,47 @@ $myFile = new MIDIFile();
 $myFile->setBPM(97);
 $new_track = $myFile->addTrack('Drums');
 
+// Note setup...
 $chan = 9;
 $vel = 120;
 
 for ($meas = 1; $meas <= 16; $meas++)
 {
 	// Kick...
-	$pulse = 4;
-	$beats = rand(1, $pulse);
-	$euclid = new Euclid($beats, $pulse - $beats);
-	$rhythm = $euclid->getRhythm();
-	print_r($euclid);
-	echo '<br>';
+	$pulses = 4;
+	$beats = rand(1, $pulses);
+	$euclid = new Euclid($beats, $pulses - $beats);
 
-	$start = 0;
-	foreach ($rhythm AS $rlen)
-	{
-		$time = $myFile->mbt2at($meas, 1, $start);
-		$dur = $rlen * $myFile->b2dur(4) / $pulse;
-		$new_track->addNote($time, $chan, MIDIEvent::DRUM_AC_BASS, $vel, $dur);
-		$start += $dur;
-	}
+	$euclid->setStartDur($myFile->mbt2at($meas), $myFile->b2dur(4));
+	foreach ($euclid->walkSD AS $start => $dur)
+		$new_track->addNote($start, $chan, MIDIEvent::DRUM_AC_BASS, $vel, $dur);
 
 	// Snare...
-	$pulse = 2;
-	$beats = rand(1, $pulse);
-	$euclid = new Euclid($beats, $pulse - $beats);
-	$rhythm = $euclid->getRhythm();
-	print_r($euclid);
-	echo '<br>';
+	$pulses = 2;
+	$beats = rand(1, $pulses);
+	$euclid = new Euclid($beats, $pulses - $beats);
 
-	$start = 0;
-	foreach ($rhythm AS $rlen)
-	{
-		$time = $myFile->mbt2at($meas, 1, $start);
-		$dur = $rlen * $myFile->b2dur(4) / $pulse;
-		$new_track->addNote($time, $chan, MIDIEvent::DRUM_AC_SNARE, $vel, $dur);
-		$start += $dur;
-	}
+	$euclid->setStartDur($myFile->mbt2at($meas), $myFile->b2dur(4));
+	foreach ($euclid->walkSD AS $start => $dur)
+		$new_track->addNote($start, $chan, MIDIEvent::DRUM_AC_SNARE, $vel, $dur);
 
 	// Ride bell...
-	$pulse = 4;
-	$beats = rand(1, $pulse);
-	$euclid = new Euclid($beats, $pulse - $beats);
-	$rhythm = $euclid->getRhythm();
-	print_r($euclid);
-	echo '<br>';
+	$pulses = 4;
+	$beats = rand(1, $pulses);
+	$euclid = new Euclid($beats, $pulses - $beats);
 
-	$start = 0;
-	foreach ($rhythm AS $rlen)
-	{
-		$time = $myFile->mbt2at($meas, 1, $start);
-		$dur = $rlen * $myFile->b2dur(4) / $pulse;
-		$new_track->addNote($time, $chan, MIDIEvent::DRUM_RIDE_BELL, $vel, $dur);
-		$start += $dur;
-	}
+	$euclid->setStartDur($myFile->mbt2at($meas), $myFile->b2dur(4));
+	foreach ($euclid->walkSD AS $start => $dur)
+		$new_track->addNote($start, $chan, MIDIEvent::DRUM_RIDE_BELL, $vel, $dur);
 
 	// Ride...
-	$pulse = 16;
-	$beats = rand(1, $pulse);
-	$euclid = new Euclid($beats, $pulse - $beats);
-	$rhythm = $euclid->getRhythm();
-	print_r($euclid);
-	echo '<br>';
+	$pulses = 16;
+	$beats = rand(1, $pulses);
+	$euclid = new Euclid($beats, $pulses - $beats);
 
-	$start = 0;
-	foreach ($rhythm AS $rlen)
-	{
-		$time = $myFile->mbt2at($meas, 1, $start);
-		$dur = $rlen * $myFile->b2dur(4) / $pulse;
-		$new_track->addNote($time, $chan, MIDIEvent::DRUM_RIDE, $vel, $dur);
-		$start += $dur;
-	}
+	$euclid->setStartDur($myFile->mbt2at($meas), $myFile->b2dur(4));
+	foreach ($euclid->walkSD AS $start => $dur)
+		$new_track->addNote($start, $chan, MIDIEvent::DRUM_RIDE, $vel, $dur);
 }
 
 // Last step for each track...

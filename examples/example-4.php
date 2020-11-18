@@ -10,34 +10,34 @@ spl_autoload_register(function ($class_name) {
 );
 
 // Step thru them all...
-$pulse = 16;
-for ($beats = 0; $beats <= $pulse; $beats++)
+$pulses = 16;
+for ($beats = 0; $beats <= $pulses; $beats++)
 {
-	$euclid = new Euclid($beats, $pulse - $beats);
+	$euclid = new Euclid($beats, $pulses - $beats);
 	echo $euclid->getPattern() . '<br>';
 }
 
 // Step thru them all...
-$pulse = 32;
-for ($beats = 0; $beats <= $pulse; $beats++)
+$pulses = 32;
+for ($beats = 0; $beats <= $pulses; $beats++)
 {
-	$euclid = new Euclid($beats, $pulse - $beats);
+	$euclid = new Euclid($beats, $pulses - $beats);
 	echo $euclid->getPattern() . '<br>';
 }
 
 // Step thru them all...
-$pulse = 64;
-for ($beats = 0; $beats <= $pulse; $beats++)
+$pulses = 64;
+for ($beats = 0; $beats <= $pulses; $beats++)
 {
-	$euclid = new Euclid($beats, $pulse - $beats);
+	$euclid = new Euclid($beats, $pulses - $beats);
 	echo $euclid->getPattern() . '<br>';
 }
 
 // Step thru them all...
-$pulse = 128;
-for ($beats = 0; $beats <= $pulse; $beats++)
+$pulses = 128;
+for ($beats = 0; $beats <= $pulses; $beats++)
 {
-	$euclid = new Euclid($beats, $pulse - $beats);
+	$euclid = new Euclid($beats, $pulses - $beats);
 	echo $euclid->getPattern() . '<br>';
 }
 

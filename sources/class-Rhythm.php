@@ -23,10 +23,19 @@
 
 class Rhythm
 {
+	// Minimal information about a rhythm - bests, rests, & an array of relative lengths
 	protected $beats = 4;
 	protected $rests = 0;
-	protected $pulse = 4;
+	protected $pulses = 4;
 	protected $rhythm = array();
+
+	// Once start & dur have been provided for the rhythm, we can use iterators to obtain starts & durs of each beat
+	protected $start = 0;
+	protected $dur = 0;
+
+	// The iterators.  The simple one just returns $start => $durs.  The other returns more info.
+	public $walkSD = null;
+	public $walkAll = null;
 
 	/**
 	 * Constructor
@@ -43,18 +52,23 @@ class Rhythm
 	{
 		$this->beats = 0;
 		$this->rests = 0;
-		$this->pulse = 0;
+		$this->pulses = 0;
+
 		$this->rhythm = array();
 		foreach($lengths as $length)
 		{
-			if (is_numeric($length) && $length > 0)
-			{
-				$this->rhythm[] = $length;
-				$this->pulse += $length;
-			}
+			$this->rhythm[] = $length;
+			$this->pulses += $length;
 		}
+
 		$this->beats = count($this->rhythm);
-		$this->rests = $this->pulse - $this->beats;
+		$this->rests = $this->pulses - $this->beats;
+
+		$this->start = 0;
+		$this->dur = 0;
+		$this->walkSD = new RhythmWalkSD($this->rhythm, $this->start, $this->dur);
+		$this->walkAll = new RhythmWalkAll($this->rhythm, $this->start, $this->dur);
+
 	}
 
 	/**
@@ -92,9 +106,27 @@ class Rhythm
 	 *
 	 * @return int
 	 */
-	public function getPulse()
+	public function getPulses()
 	{
-		return $this->pulse;
+		return $this->pulses;
+	}
+
+	/**
+	 * Set start & duration.
+	 * And recalc iterators.
+	 *
+	 * @param int $start
+	 * @param int $dur
+	 * @return void
+	 */
+	public function setStartDur($start, $dur)
+	{
+		$this->start = $start;
+		$this->dur = $dur;
+
+		// This will recreate the iterators
+		$this->walkSD = new RhythmWalkSD($this->rhythm, $this->start, $this->dur);
+		$this->walkAll = new RhythmWalkAll($this->rhythm, $this->start, $this->dur);
 	}
 
 }
