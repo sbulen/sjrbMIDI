@@ -343,9 +343,9 @@ class MIDIFile
 			$this->readMIDIFile($file);
 		else
 		{
-		    $this->file_name = '';
-		    $this->file_raw_contents = '';
-		    $this->tracks = array();
+			$this->file_name = '';
+			$this->file_raw_contents = '';
+			$this->tracks = array();
 
 			// Header
 			$this->header = new MIDIHdr;
