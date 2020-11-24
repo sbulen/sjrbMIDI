@@ -20,10 +20,11 @@ Create your file in .php and execute it from your browser.  The MIDI file that i
 
 Use one of the examples as an easy starter.
 
+Documentation may be found here: https://github.com/sbulen/sjrbMIDI/blob/main/sjrbMIDI.pdf
 
 ## Limitations
 1. This does not honor any of the real-time MIDI messages at this time.  Not sure PHP would be the platform to do that...
-2. This software is geared towards generating files in MIDI file format 1.  
+2. This software is geared towards generating files in MIDI file format 1.
 3. I have not tested the SMPTE functions, only straight-up MIDI.
 
 
