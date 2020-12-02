@@ -242,6 +242,8 @@ class Key
 		$dnote += $interval;
 		$dnote = base_convert($dnote, 10, 7);
 
+		$dnote = MIDIEvent::rangeCheck($dnote, 0, 241);
+
 		return $dnote;
 	}
 
@@ -297,6 +299,7 @@ class Key
 	{
 		$octb7 = base_convert($oct, 10, 7);
 		$dnote = $this->dAdd($octb7 * 10, $interval);
+		$dnote = MIDIEvent::rangeCheck($dnote, 0, 241);
 
 		return $dnote;
 	}
