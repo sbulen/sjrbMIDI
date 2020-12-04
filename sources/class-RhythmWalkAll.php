@@ -70,7 +70,7 @@ class RhythmWalkAll implements Iterator
 	}
 
 	/**
-	 * Current - return duration of current beat
+	 * Current - return info for current beat
 	 * Use difference between start of next step & start of this step to avoid gaps of 1 due to rounding...
 	 *
 	 * @return mixed
