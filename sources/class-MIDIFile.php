@@ -556,8 +556,10 @@ class MIDIFile
 	 * @param int $abstime - Start time of the current set of data
 	 * @return int
 	 */
-	protected function parseMetaSysex($data = '', &$trackobj, &$abstime)
+	protected function parseMetaSysex($data, &$trackobj, &$abstime)
 	{
+		if (empty($data))
+			$data = '';
 		$delta_time = new VLQ();
 		$delta_time->readVLQ(substr($data, 0, 4));
 		$abstime += $delta_time->getValue();
@@ -604,8 +606,10 @@ class MIDIFile
 	 * @param int $abstime - Start time of the current set of data
 	 * @return int
 	 */
-	protected function parseMetaEvent($data = '', &$trackobj, &$abstime)
+	protected function parseMetaEvent($data, &$trackobj, &$abstime)
 	{
+		if (empty($data))
+			$data = '';
 		$delta_time = new VLQ();
 		$delta_time->readVLQ(substr($data, 0, 4));
 		$abstime += $delta_time->getValue();
