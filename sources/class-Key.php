@@ -252,7 +252,7 @@ class Key
 		$dnote += $interval;
 		$dnote = base_convert($dnote, 10, 7);
 
-		$dnote = MIDIEvent::rangeCheck($dnote, 0, 241);
+		$dnote = MIDIEvent::rangeCheck($dnote, 0, 144);
 
 		return $dnote;
 	}
@@ -291,6 +291,14 @@ class Key
 			if ($this->scale[$i] >= $notes)
 				break;
 
+		// Edge case: sometimes mnotes go over one when they don't map cleanly...
+		// This keeps everything within base7...
+		if ($i == 7)
+		{
+			$octs++;
+			$i = 0;
+		}
+
 		// Finally, calc dnote...
 		$dnote = base_convert($octs, 10, 7) * 10 + $i;
 
@@ -309,7 +317,7 @@ class Key
 	{
 		$octb7 = base_convert($oct, 10, 7);
 		$dnote = $this->dAdd($octb7 * 10, $interval);
-		$dnote = MIDIEvent::rangeCheck($dnote, 0, 241);
+		$dnote = MIDIEvent::rangeCheck($dnote, 0, 144);
 
 		return $dnote;
 	}
