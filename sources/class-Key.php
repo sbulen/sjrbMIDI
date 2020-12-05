@@ -207,6 +207,16 @@ class Key
 	}
 
 	/**
+	 * Get root...
+	 *
+	 * @return int
+	 */
+	public function getRoot()
+	{
+		return $this->root;
+	}
+
+	/**
 	 * Get MIDI sharps/flats...
 	 *
 	 * @return int
