@@ -48,7 +48,6 @@ class VLQ
 			$this->len = 0;
 			$this->str = '';
 		}
-		return $this->value;
 	}
 
 	/**
