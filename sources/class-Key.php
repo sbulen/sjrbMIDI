@@ -3,7 +3,7 @@
  *	MIDI class for a key
  *	Including diatonic math & conversions between diatonic notes & MIDI notes
  *
- *	Copyright 2020 Shawn Bulen
+ *	Copyright 2020-2021 Shawn Bulen
  *
  *	This file is part of the sjrbMIDI library.
  *
@@ -127,6 +127,37 @@ class Key
 	}
 
 	/**
+	 * Cleanse dnote value...
+	 * So, you can pass either a dnote as a single int, or,
+	 * pass the full proper associated array with a 'dn' int & 'sf'.
+	 * The point is to make it much easier to use 99% of the time.
+	 *
+	 * @param mixed dnote
+	 * @return array dnote
+	 */
+	static function cleanseDNote($passed)
+	{
+		$dnote = array('dn' => 0, 'sf' => 0);
+
+		if (is_numeric($passed))
+		{
+			$dnote['dn'] = $passed;
+		}
+		elseif (is_array($passed))
+		{
+			if (isset($passed['dn']) && is_numeric($passed['dn']))
+				$dnote['dn'] = $passed['dn'];
+			if (isset($passed['sf']) && is_numeric($passed['sf']))
+				$dnote['sf'] = $passed['sf'];
+		}
+
+		$dnote['dn'] = MIDIEvent::rangeCheck($dnote['dn'], 0, 144);
+		$dnote['sf'] = MIDIEvent::rangeCheck($dnote['sf'], -127, 127);
+	
+		return $dnote;
+	}
+
+	/**
 	 * Set midi values used in MIDI file creation based on root & modal...
 	 * I.e,. sharps/flats & major/minor.
 	 * Internal worker function.
@@ -242,19 +273,40 @@ class Key
 	 * dnotes are basically in base 7, with the 10s digits being octave (0-11) & the units being scale note (0-6).
 	 * Since dnotes are in base 7, the math is easy!
 	 *
-	 * @param int $dnote
-	 * @param int $interval
-	 * @return int
+	 * @param mixed $dnote
+	 * @param int $interval (base 10)
+	 * @return array $dnote
 	 */
 	public function dAdd($dnote, $interval)
 	{
-		$dnote = base_convert($dnote, 7, 10);
-		$dnote += $interval;
-		$dnote = base_convert($dnote, 10, 7);
+		$dnote = $this->cleanseDNote($dnote);
 
-		$dnote = MIDIEvent::rangeCheck($dnote, 0, 144);
+		$dnote['dn'] = base_convert($dnote['dn'], 7, 10);
+		$dnote['dn'] += $interval;
+		$dnote['dn'] = base_convert($dnote['dn'], 10, 7);
+
+		$dnote['dn'] = MIDIEvent::rangeCheck($dnote['dn'], 0, 144);
 
 		return $dnote;
+	}
+
+	/**
+	 * dnote Subtraction...
+	 * This one subtracts two notes, dnote only.
+	 * Returns the diatonic interval only, no sharp/flat.
+	 *
+	 * @param mixed $dnote
+	 * @param mixed $dnote
+	 * @return int $interval (base 10)
+	 */
+	public function dSub($dnote, $dnote2)
+	{
+		$dnote = $this->cleanseDNote($dnote);
+		$dnote2 = $this->cleanseDNote($dnote2);
+
+		$interval = base_convert($dnote['dn'], 7, 10) - base_convert($dnote2['dn'], 7, 10);
+
+		return $interval;
 	}
 
 	/**
@@ -263,7 +315,7 @@ class Key
 	 * Needs to know what scale you're talking about (major, minor, modals, etc...).
 	 *
 	 * @param int $mnote
-	 * @return int
+	 * @return array $dnote
 	 */
 	public function m2d($mnote)
 	{
@@ -273,7 +325,7 @@ class Key
 		$octs = intdiv($mnote, 12);
 		$notes = $mnote % 12;
 
-		// Since only keys of C starts on note 0, all other keys have a partial octave 0...
+		// Since only keys of C starts on note 0, all other keys have a partial first octave...
 		if ($this->root != Key::C_NOTE)
 			$octs++;
 
@@ -286,21 +338,39 @@ class Key
 		}
 
 		// Find which note in the scale
-		// Everything will have a return value in key... Notes not in the scale will return the next highest note in the scale...
+		// Add a sharp/flat (sharp) if you go beyond value
+		$sf = 0;
 		for ($i = 0; $i < count($this->scale); $i++)
-			if ($this->scale[$i] >= $notes)
+		{
+			if ($this->scale[$i] == $notes)
 				break;
+			elseif ($this->scale[$i] > $notes)
+			{
+				$i--;
+				$sf = 1;
+				break;
+			}
+		}
 
 		// Edge case: sometimes mnotes go over one when they don't map cleanly...
 		// This keeps everything within base7...
 		if ($i == 7)
 		{
-			$octs++;
-			$i = 0;
+			if ($this->scale[6] < $notes)
+			{
+				$i = 6;
+				$sf = 1;
+			}
+			else
+			{
+				$octs++;
+				$i = 0;
+			}
 		}
 
 		// Finally, calc dnote...
-		$dnote = base_convert($octs, 10, 7) * 10 + $i;
+		$dnote['dn'] = base_convert($octs, 10, 7) * 10 + $i;
+		$dnote['sf'] = $sf;
 
 		return $dnote;
 	}
@@ -311,34 +381,37 @@ class Key
 	 *
 	 * @param int $oct
 	 * @param int $interval
-	 * @return int
+	 * @return array $dnote
 	 */
 	public function getD($oct, $interval)
 	{
 		$octb7 = base_convert($oct, 10, 7);
 		$dnote = $this->dAdd($octb7 * 10, $interval);
-		$dnote = MIDIEvent::rangeCheck($dnote, 0, 144);
+
+		$dnote = $this->cleanseDNote($dnote);
 
 		return $dnote;
 	}
 
 	/**
-	 * Converts diatonic note (octave, interval) to midi note (0-127).
+	 * Converts diatonic note (octave, interval, sharp-flat) to midi note (0-127).
 	 * dnotes are basically in base 7, with the 10s digits being octave (0-11 (as 0-15...)) & the units being scale note (0-6).
 	 * Needs to know what scale you're talking about (major, minor, modals, etc...).
 	 *
-	 * @param int $dnote
+	 * @param mixed $dnote
 	 * @return int
 	 */
 	public function d2m($dnote)
 	{
-		$octb7 = intdiv($dnote, 10);
+		$dnote = $this->cleanseDNote($dnote);
+
+		$octb7 = intdiv($dnote['dn'], 10);
 		$oct = base_convert($octb7, 7, 10);
 		if ($this->root != Key::C_NOTE)
 			$oct--;
-		$noteb7 = $dnote % 10;
+		$noteb7 = $dnote['dn'] % 10;
 		$cnote = $this->scale[$noteb7];
-		$mnote = ($oct * 12) + $cnote + $this->root;
+		$mnote = ($oct * 12) + $cnote + $this->root + $dnote['sf'];
 
 		//sanity check...
 		$mnote = MIDIEvent::rangeCheck($mnote);
@@ -352,12 +425,14 @@ class Key
 	 * All input & interval math is diatonic.
 	 * Returns an array of MIDI notes (not diatonic) suitable for being passed to addChord().
 	 *
-	 * @param int $dnote
+	 * @param mixed $dnote
 	 * @param int $intervals - variable #
 	 * @return int[]
 	 */
 	public function buildChord($dnote, ...$intervals)
 	{
+		$dnote = $this->cleanseDNote($dnote);
+
 		$chord = array();
 		$chord[] = $this->d2m($dnote);
 		foreach ($intervals as $int)

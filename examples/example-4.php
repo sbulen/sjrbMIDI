@@ -10,6 +10,7 @@ spl_autoload_register(function ($class_name) {
 );
 
 // Step thru them all...
+echo '<font size="3" face="Courier New">';
 $pulses = 16;
 for ($beats = 0; $beats <= $pulses; $beats++)
 {
