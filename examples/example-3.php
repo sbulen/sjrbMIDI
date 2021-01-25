@@ -42,8 +42,6 @@ $vel = 120;
 
 // Bass chord; Start everything at root, 5th octave
 $bassnote = $key->getD(5, 0);
-echo ' ****************************bassnote: ';
-print_r($bassnote);
 $chord = $key->buildChord($bassnote, Key::THIRD, Key::FIFTH);
 
 foreach(array(1, 3, 5, 7) AS $meas)
