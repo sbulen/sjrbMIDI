@@ -74,7 +74,7 @@ class PhraseWalkAll implements Iterator
 	 */
 	public function key()
 	{
-		return $this->note_arr[$this->position]->abs_time;
+		return $this->note_arr[$this->position]->getAt();
 	}
 
 	/**
