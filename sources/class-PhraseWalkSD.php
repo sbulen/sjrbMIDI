@@ -64,7 +64,7 @@ class PhraseWalkSD implements Iterator
 	 */
 	public function current()
 	{
-		return $this->note_arr[$this->position]->dur;
+		return $this->note_arr[$this->position]->getDur();
 	}
 
 	/**
@@ -74,7 +74,7 @@ class PhraseWalkSD implements Iterator
 	 */
 	public function key()
 	{
-		return $this->note_arr[$this->position]->abs_time;
+		return $this->note_arr[$this->position]->getAt();
 	}
 
 	/**
