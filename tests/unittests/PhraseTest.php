@@ -25,8 +25,8 @@ class PhraseTest extends TestCase {
 			$myKey,
 		);
 
-		$this->assertIsIterable($myPhrase->walkSD);
-		$this->assertIsIterable($myPhrase->walkAll);
+		$this->assertIsIterable($myPhrase->walkSD, 'Phrase iterable test 1 failed');
+		$this->assertIsIterable($myPhrase->walkAll, 'Phrase iterable test 1 failed');
 	}
 
     public function testTransformationSetStartDur(){
@@ -75,8 +75,8 @@ class PhraseTest extends TestCase {
 		$count = 0;
 		foreach($myPhrase->walkSD AS $note_start => $note_dur)
 		{
-			$this->assertEquals($note_start, 1000 + (960 * 2 * $count));
-			$this->assertEquals($note_dur, 960 * 2);
+			$this->assertEquals($note_start, 1000 + (960 * 2 * $count), 'Phrase sd start test failed');
+			$this->assertEquals($note_dur, 960 * 2, 'Phrase sd dur test failed');
 			$count++;
 		}
 
@@ -87,8 +87,8 @@ class PhraseTest extends TestCase {
 		$count = 0;
 		foreach($myPhrase->walkSD AS $note_start => $note_dur)
 		{
-			$this->assertEquals($note_start, 960 * $count);
-			$this->assertEquals($note_dur, 960);
+			$this->assertEquals($note_start, 960 * $count, 'Phrase sd start test 2 failed');
+			$this->assertEquals($note_dur, 960, 'Phrase sd dur test 2 failed');
 			$count++;
 		}
 	}
@@ -139,10 +139,10 @@ class PhraseTest extends TestCase {
 		$count = 0;
 		foreach($myPhrase->walkAll AS $note_start => $note)
 		{
-			$this->assertEquals($note_start, 960 * (23 - $count));
-			$this->assertEquals($note->getDNote()['dn'], $note_data[$count]['dn']);
-			$this->assertEquals($note->getDNote()['sf'], $note_data[$count]['sf']);
-			$this->assertEquals($note->getDur(), 960);
+			$this->assertEquals($note_start, 960 * (23 - $count), 'Phrase retro test 1 failed');
+			$this->assertEquals($note->getDNote()['dn'], $note_data[$count]['dn'], 'Phrase retro test 2 failed');
+			$this->assertEquals($note->getDNote()['sf'], $note_data[$count]['sf'], 'Phrase retro test 3 failed');
+			$this->assertEquals($note->getDur(), 960, 'Phrase retro test 4 failed');
 			$count++;
 		}
 	}
@@ -193,10 +193,10 @@ class PhraseTest extends TestCase {
 		$count = 0;
 		foreach($myPhrase->walkAll AS $note_start => $note)
 		{
-			$this->assertEquals($note_start, 960 * $count);
-			$this->assertEquals($note->getDNote()['dn'], $note_data[23 - $count]['dn']);
-			$this->assertEquals($note->getDNote()['sf'], $note_data[23 - $count]['sf']);
-			$this->assertEquals($note->getDur(), 960);
+			$this->assertEquals($note_start, 960 * $count, 'Phrase invert test 1 failed');
+			$this->assertEquals($note->getDNote()['dn'], $note_data[23 - $count]['dn'], 'Phrase invert test 2 failed');
+			$this->assertEquals($note->getDNote()['sf'], $note_data[23 - $count]['sf'], 'Phrase invert test 3 failed');
+			$this->assertEquals($note->getDur(), 960, 'Phrase invert test 4 failed');
 			$count++;
 		}
 	}
@@ -247,10 +247,10 @@ class PhraseTest extends TestCase {
 		$count = 0;
 		foreach($myPhrase->walkAll AS $note_start => $note)
 		{
-			$this->assertEquals($note_start, 960 * (($count + 11) % 24));
-			$this->assertEquals($note->getDNote()['dn'], $note_data[$count]['dn']);
-			$this->assertEquals($note->getDNote()['sf'], $note_data[$count]['sf']);
-			$this->assertEquals($note->getDur(), 960);
+			$this->assertEquals($note_start, 960 * (($count + 11) % 24), 'Phrase rotate test 1 failed');
+			$this->assertEquals($note->getDNote()['dn'], $note_data[$count]['dn'], 'Phrase rotate test 2 failed');
+			$this->assertEquals($note->getDNote()['sf'], $note_data[$count]['sf'], 'Phrase rotate test 3 failed');
+			$this->assertEquals($note->getDur(), 960, 'Phrase rotate test 4 failed');
 			$count++;
 		}
 
@@ -261,10 +261,10 @@ class PhraseTest extends TestCase {
 		$count = 0;
 		foreach($myPhrase->walkAll AS $note_start => $note)
 		{
-			$this->assertEquals($note_start, 960 * $count);
-			$this->assertEquals($note->getDNote()['dn'], $note_data[$count]['dn']);
-			$this->assertEquals($note->getDNote()['sf'], $note_data[$count]['sf']);
-			$this->assertEquals($note->getDur(), 960);
+			$this->assertEquals($note_start, 960 * $count, 'Phrase rotate test 5 failed');
+			$this->assertEquals($note->getDNote()['dn'], $note_data[$count]['dn'], 'Phrase rotate test 6 failed');
+			$this->assertEquals($note->getDNote()['sf'], $note_data[$count]['sf'], 'Phrase rotate test 7 failed');
+			$this->assertEquals($note->getDur(), 960, 'Phrase rotate test 8 failed');
 			$count++;
 		}
 	}
@@ -314,10 +314,10 @@ class PhraseTest extends TestCase {
 		$count = 0;
 		foreach($myPhrase->walkAll AS $note_start => $note)
 		{
-			$this->assertEquals($note_start, 960 * $count);
-			$this->assertEquals($note->getDNote()['dn'], $note_data[$count]['addfifth']);
-			$this->assertEquals($note->getDNote()['sf'], $note_data[$count]['sf']);
-			$this->assertEquals($note->getDur(), 960);
+			$this->assertEquals($note_start, 960 * $count, 'Phrase transposition test 1 failed');
+			$this->assertEquals($note->getDNote()['dn'], $note_data[$count]['addfifth'], 'Phrase transposition test 2 failed');
+			$this->assertEquals($note->getDNote()['sf'], $note_data[$count]['sf'], 'Phrase transposition test 3 failed');
+			$this->assertEquals($note->getDur(), 960, 'Phrase transposition test 4 failed');
 			$count++;
 		}
 
@@ -328,10 +328,10 @@ class PhraseTest extends TestCase {
 		$count = 0;
 		foreach($myPhrase->walkAll AS $note_start => $note)
 		{
-			$this->assertEquals($note_start, 960 * $count);
-			$this->assertEquals($note->getDNote()['dn'], $note_data[$count]['addninth']);
-			$this->assertEquals($note->getDNote()['sf'], $note_data[$count]['sf']);
-			$this->assertEquals($note->getDur(), 960);
+			$this->assertEquals($note_start, 960 * $count, 'Phrase transposition test 5 failed');
+			$this->assertEquals($note->getDNote()['dn'], $note_data[$count]['addninth'], 'Phrase transposition test 6 failed');
+			$this->assertEquals($note->getDNote()['sf'], $note_data[$count]['sf'], 'Phrase transposition test 7 failed');
+			$this->assertEquals($note->getDur(), 960, 'Phrase transposition test 8 failed');
 			$count++;
 		}
 	}

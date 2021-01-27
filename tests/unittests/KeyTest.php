@@ -150,8 +150,8 @@ class KeyTest extends TestCase {
 		foreach ($data AS $notestuff)
 		{
 			$dnote = $myKey->m2d($notestuff['mn']);
-			$this->assertEquals($dnote['dn'], $notestuff['dn']);
-			$this->assertEquals($dnote['sf'], $notestuff['sf']);
+			$this->assertEquals($dnote['dn'], $notestuff['dn'], 'm2d test - dn failed');
+			$this->assertEquals($dnote['sf'], $notestuff['sf'], 'm2d test - sf failed');
 		}
 
 		// d2m
@@ -159,7 +159,7 @@ class KeyTest extends TestCase {
 		{
 			$dnote = array('dn' => $notestuff['dn'], 'sf' => $notestuff['sf']);
 			$mnote = $myKey->d2m($dnote);
-			$this->assertEquals($mnote, $notestuff['mn']);
+			$this->assertEquals($mnote, $notestuff['mn'], 'd2m test failed');
 		}
 
 		// Repeat everything in the Eb LOCRIAN modal
@@ -300,8 +300,8 @@ class KeyTest extends TestCase {
 		foreach ($data AS $notestuff)
 		{
 			$dnote = $myKey->m2d($notestuff['mn']);
-			$this->assertEquals($dnote['dn'], $notestuff['dn']);
-			$this->assertEquals($dnote['sf'], $notestuff['sf']);
+			$this->assertEquals($dnote['dn'], $notestuff['dn'], 'm2d modal test - dn failed');
+			$this->assertEquals($dnote['sf'], $notestuff['sf'], 'm2d modal test - sf failed');
 		}
 
 		// d2m
@@ -309,7 +309,7 @@ class KeyTest extends TestCase {
 		{
 			$dnote = array('dn' => $notestuff['dn'], 'sf' => $notestuff['sf']);
 			$mnote = $myKey->d2m($dnote);
-			$this->assertEquals($mnote, $notestuff['mn']);
+			$this->assertEquals($mnote, $notestuff['mn'], 'd2m modal test failed');
 		}
 	}
 
@@ -333,9 +333,9 @@ class KeyTest extends TestCase {
 		foreach ($tests AS $test)
 		{
 			$dnote = $myKey->cleanseDnote($test);
-			$this->assertArrayHasKey('dn', $dnote);
-			$this->assertArrayHasKey('sf', $dnote);
-			$this->assertEquals(2, count($dnote));
+			$this->assertArrayHasKey('dn', $dnote, 'cleanseDNote test failed');
+			$this->assertArrayHasKey('sf', $dnote, 'cleanseDNote test failed');
+			$this->assertEquals(2, count($dnote), 'cleanseDNote test failed');
 		}
 	}
 }

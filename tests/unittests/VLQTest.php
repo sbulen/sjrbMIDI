@@ -30,27 +30,27 @@ class VLQTest extends TestCase {
 			$result = new VLQ($row['str']);
 
 			// check val
-			$this->assertEquals($row['val'], $result->getValue());
+			$this->assertEquals($row['val'], $result->getValue(), 'VLQ test 1 failed');
 
 			// check len
-			$this->assertEquals($row['len'], $result->getLen());
+			$this->assertEquals($row['len'], $result->getLen(), 'VLQ test 2 failed');
 
 			// check str
-			$this->assertEquals($row['str'], $result->getStr());
+			$this->assertEquals($row['str'], $result->getStr(), 'VLQ test 3 failed');
 
 			// Again, via reading
 			$val = $result->readVLQ($row['str']);
-			$this->assertEquals($row['val'], $val);
-			$this->assertEquals($row['val'], $result->getValue());
-			$this->assertEquals($row['len'], $result->getLen());
-			$this->assertEquals($row['str'], $result->getStr());
+			$this->assertEquals($row['val'], $val, 'VLQ test 4 failed');
+			$this->assertEquals($row['val'], $result->getValue(), 'VLQ test 5 failed');
+			$this->assertEquals($row['len'], $result->getLen(), 'VLQ test 6 failed');
+			$this->assertEquals($row['str'], $result->getStr(), 'VLQ test 7 failed');
 
 			// Again, via setting value
 			$str = $result->setValue($row['val']);
-			$this->assertEquals($row['str'], $str);
-			$this->assertEquals($row['val'], $result->getValue());
-			$this->assertEquals($row['len'], $result->getLen());
-			$this->assertEquals($row['str'], $result->getStr());
+			$this->assertEquals($row['str'], $str, 'VLQ test 8 failed');
+			$this->assertEquals($row['val'], $result->getValue(), 'VLQ test 9 failed');
+			$this->assertEquals($row['len'], $result->getLen(), 'VLQ test 10 failed');
+			$this->assertEquals($row['str'], $result->getStr(), 'VLQ test 11 failed');
 
 		}
 	}

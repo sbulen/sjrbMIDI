@@ -2,7 +2,7 @@
 /**
  *	MIDI class hierarchy for events.  ALL the events are here...
  *
- *	Copyright 2020 Shawn Bulen
+ *	Copyright 2020-2021 Shawn Bulen
  *
  *	This file is part of the sjrbMIDI library.
  *
@@ -357,6 +357,16 @@ class ControlChange extends MIDIChannelEvent
 	}
 
 	/**
+	 * getValue...
+	 *
+	 * @return int
+	 */
+	public function getValue()
+	{
+		return $this->value;
+	}
+
+	/**
 	 * Everybody has to have a pack...
 	 *
 	 * @return string
@@ -462,6 +472,16 @@ class PitchWheel extends MIDIChannelEvent
 		$this->delta_time = 0;	//Needs to be set later...
 		$this->channel = $this->rangeCheck($chan, 0, 0xF);
 		$this->value = (int) $this->rangeCheck($value, -0x2000, 0x1FFF);
+	}
+
+	/**
+	 * getValue...
+	 *
+	 * @return int
+	 */
+	public function getValue()
+	{
+		return $this->value;
 	}
 
 	/**
