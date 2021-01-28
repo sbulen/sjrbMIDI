@@ -65,7 +65,7 @@ class PWSeriesTest extends TestCase {
 
 		// Just get back one #, since frequency is 1
 		$this->assertEquals(1, count($events), 'PWSeries random test failed');
-		$this->assertTrue(($events[0]->getValue() >=-0x2000) && ($events[0]->getValue() <=0x1FFF), 'PWSeries random range test failed');
+		$this->assertTrue(($events[0]->getValue() >= -0x2000) && ($events[0]->getValue() <= 0x1FFF), 'PWSeries random range test failed');
 	}
 
     public function testPWSeriesRange(){
@@ -126,7 +126,7 @@ class PWSeriesTest extends TestCase {
 
 		// Just get back one #, since frequency is 1
 		$this->assertEquals(1, count($events), 'PWSeries random test failed');
-		$this->assertTrue(($events[0]->getValue() >=-0x2000) && ($events[0]->getValue() <=0x1FFF), 'PWSeries random range test 2 failed');
+		$this->assertTrue(($events[0]->getValue() >= -5735) && ($events[0]->getValue() <= 5733), 'PWSeries random range test 2 failed');
 	}
 
     public function testPWSeriesRangeOffset(){
@@ -188,7 +188,7 @@ class PWSeriesTest extends TestCase {
 
 		// Just get back one #, since frequency is 1
 		$this->assertEquals(1, count($events), 'PWSeries random test failed');
-		$this->assertTrue(($events[0]->getValue() >=-0x2000) && ($events[0]->getValue() <=0x1FFF), 'PWSeries random range test 2 failed');
+		$this->assertTrue(($events[0]->getValue() >= 0) && ($events[0]->getValue() <= 6552), 'PWSeries random range test 2 failed');
 	}
 }
 ?>
