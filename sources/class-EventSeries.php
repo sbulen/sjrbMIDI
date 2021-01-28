@@ -238,11 +238,15 @@ abstract class EventSeries
 			}
 			// Last step is to apply requested scaling
 			// Only need to send if value changed; thin the herd a bit
-			$scaled = (int) $this->scale($result);
-			if ($scaled !== $saved)
+			// Account for random not returning a result
+			if (isset($result))
 			{
-				$values[$start + $time] = $scaled;
-				$saved = $scaled;
+				$scaled = (int) $this->scale($result);
+				if ($scaled !== $saved)
+				{
+					$values[$start + $time] = $scaled;
+					$saved = $scaled;
+				}
 			}
 		}
 		return $values;

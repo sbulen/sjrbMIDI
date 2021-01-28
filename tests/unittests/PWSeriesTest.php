@@ -128,5 +128,67 @@ class PWSeriesTest extends TestCase {
 		$this->assertEquals(1, count($events), 'PWSeries random test failed');
 		$this->assertTrue(($events[0]->getValue() >=-0x2000) && ($events[0]->getValue() <=0x1FFF), 'PWSeries random range test 2 failed');
 	}
+
+    public function testPWSeriesRangeOffset(){
+
+		// Similar series tests, but with a range & offset...
+		$pw_data = array(
+			0=> array('sine' => 6552, 'saw' => 1637, 'square' => 6552, 'expo' => 0),
+			96=> array('sine' => 5927, 'saw' => 2293, 'square' => 'same', 'expo' => 'same'),
+			192=> array('sine' => 4288, 'saw' => 2948, 'square' => 'same', 'expo' => 'same'),
+			288=> array('sine' => 2263, 'saw' => 3603, 'square' => 0, 'expo' => 'same'),
+			384=> array('sine' => 625, 'saw' => 4259, 'square' => 'same', 'expo' => 3),
+			480=> array('sine' => 0, 'saw' => 4914, 'square' => 'same', 'expo' => 36),
+			576=> array('sine' => 625, 'saw' => 5569, 'square' => 'same', 'expo' => 368),
+			672=> array('sine' => 2263, 'saw' => 6225, 'square' => 'same', 'expo' => 3684),
+			768=> array('sine' => 4288, 'saw' => 327, 'square' => 6552, 'expo' => 0),
+			864=> array('sine' => 5927, 'saw' => 982, 'square' => 'same', 'expo' => 'same'),
+		);
+
+		// SINE...
+		$pw_series = new PWSeries(0, EVENTSeries::SINE, 1, 90, 50, 90, 96);
+		$events = $pw_series->genEvents(0, 960);
+
+		foreach($events AS $event)
+		{
+			$this->assertEquals($pw_data[$event->getAt()]['sine'], $event->getValue(), 'PWSeries sine test 3 failed');
+		}
+
+		// Saw...
+		$pw_series = new PWSeries(0, EVENTSeries::SAW, 1, 90, 50, 90, 96);
+		$events = $pw_series->genEvents(0, 960);
+
+		foreach($events AS $event)
+		{
+			$this->assertEquals($pw_data[$event->getAt()]['saw'], $event->getValue(), 'PWSeries saw test 3 failed');
+		}
+
+		// Square...
+		$pw_series = new PWSeries(0, EVENTSeries::SQUARE, 1, 90, 50, 90, 96);
+		$events = $pw_series->genEvents(0, 960);
+
+		foreach($events AS $event)
+		{
+			$this->assertEquals($pw_data[$event->getAt()]['square'], $event->getValue(), 'PWSeries square test 3 failed');
+		}
+
+		// Expo...
+		$pw_series = new PWSeries(0, EVENTSeries::EXPO, 1, 90, 50, 90, 96);
+		$events = $pw_series->genEvents(0, 960);
+
+		foreach($events AS $event)
+		{
+			$this->assertEquals($pw_data[$event->getAt()]['expo'], $event->getValue(), 'PWSeries expo test 3 failed');
+		}
+
+		// Random...
+		// Note that random is extremely sensitive to how many ticks apart things are, so increase resolution for this test...
+		$pw_series = new PWSeries(0, EVENTSeries::RANDOM_STEPS, 1, 90, 50, 90, 12);
+		$events = $pw_series->genEvents(0, 960);
+
+		// Just get back one #, since frequency is 1
+		$this->assertEquals(1, count($events), 'PWSeries random test failed');
+		$this->assertTrue(($events[0]->getValue() >=-0x2000) && ($events[0]->getValue() <=0x1FFF), 'PWSeries random range test 2 failed');
+	}
 }
 ?>
