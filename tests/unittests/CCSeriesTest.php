@@ -65,7 +65,7 @@ class CCSeriesTest extends TestCase {
 
 		// Just get back one #, since frequency is 1
 		$this->assertEquals(1, count($events), 'CCSeries random test failed');
-		$this->assertTrue(($events[0]->getValue() >=0x00) && ($events[0]->getValue() <=0x7F), 'CCSeries random range test failed');
+		$this->assertTrue(($events[0]->getValue() >= 0x00) && ($events[0]->getValue() <= 0x7F), 'CCSeries random range test failed');
 	}
 
     public function testCCSeriesRange(){
