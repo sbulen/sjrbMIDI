@@ -3,7 +3,7 @@
  *	Definition of an Iterator for the Phrase object.
  *	This provides information for each note.
  *
- *	Copyright 2020 Shawn Bulen
+ *	Copyright 2020-2021 Shawn Bulen
  *
  *	This file is part of the sjrbMIDI library.
  *

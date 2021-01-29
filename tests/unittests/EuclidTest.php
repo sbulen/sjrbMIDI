@@ -10,7 +10,7 @@ class EuclidTest extends TestCase {
 
     public function testEuclid(){
 
-		//Array of string, value, lengths for test data
+		//Array of patterns for test data
 		$data = array (
 			'1000000000000000',
 			'1000000010000000',
