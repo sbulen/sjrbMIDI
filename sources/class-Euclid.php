@@ -2,7 +2,7 @@
 /**
  *	Calculate a rhythm (array of relative lengths) via Euclid algorithm
  *
- *	Copyright 2020 Shawn Bulen
+ *	Copyright 2020-2021 Shawn Bulen
  *
  *	This file is part of the sjrbMIDI library.
  *
@@ -36,7 +36,7 @@ class Euclid extends Rhythm
 	{
 		$this->beats = $beats;
 		$this->rests = $rests;
-		$this->pulse = $beats + $rests;
+		$this->pulses = $beats + $rests;
 
 		// Convert beats/rests to string for input to algorithm...
 		$arr = array();
