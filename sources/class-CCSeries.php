@@ -2,7 +2,7 @@
 /**
  *	Series of CCs - Continuous Controller events
  *
- *	Copyright 2020 Shawn Bulen
+ *	Copyright 2020-2021 Shawn Bulen
  *
  *	This file is part of the sjrbMIDI library.
  *

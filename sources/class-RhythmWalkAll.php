@@ -3,7 +3,7 @@
  *	Definition of an Iterator for the Rhythm object.
  *	This provides an array of information for each beat, including $start, $dur, $beat# & $pulses.
  *
- *	Copyright 2020 Shawn Bulen
+ *	Copyright 2020-2021 Shawn Bulen
  *
  *	This file is part of the sjrbMIDI library.
  *
