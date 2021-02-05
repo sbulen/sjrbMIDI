@@ -1024,12 +1024,12 @@ class MIDIFile
 	 * Return an array of notes built from the specified track's MIDI events.
 	 * Useful when you have imported a file, & want to access existing notes.
 	 * Array of notes returned is OK to be added to a Phrase object.
-	 * Assumes midi file format 1 - key, etc., are in track 0.
-	 * Key signature is required in track 0! For d2m conversions.
+	 * Assumes midi file format 1 - key is in track 0 for m2d conversions.
 	 * 
 	 * One major limitation here is that MIDI key signatures only provide 
 	 * enough detail for major & minor scales. Will not work for modals.
 	 * You lose the modal root translating to/from MIDI key signatures.
+	 * MIDI notes will be the same; dnotes won't.
 	 *
 	 * @param MIDItrk $track - track #
 	 * @return Note[]
