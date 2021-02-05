@@ -179,6 +179,16 @@ abstract class MIDIChannelEvent extends MIDIEvent
 	 * properties unique to this layer
 	 */
 	protected $channel = 0;
+
+	/**
+	 * Return the event channel
+	 *
+	 * @return int
+	 */
+	public function getChan()
+	{
+		return $this->channel;
+	}
 }
 
 abstract class MIDISysexEvent extends MIDIEvent
@@ -240,6 +250,26 @@ class NoteOff extends MIDIChannelEvent
 	}
 
 	/**
+	 * Return the event note
+	 *
+	 * @return int
+	 */
+	public function getNote()
+	{
+		return $this->note;
+	}
+
+	/**
+	 * Return the event velocity
+	 *
+	 * @return int
+	 */
+	public function getVel()
+	{
+		return $this->velocity;
+	}
+
+	/**
 	 * Everybody has to have a pack...
 	 *
 	 * @return string
@@ -276,6 +306,26 @@ class NoteOn extends MIDIChannelEvent
 		$this->channel = $this->rangeCheck($chan, 0, 0xF);
 		$this->note = $this->rangeCheck($note);
 		$this->velocity = $this->rangeCheck($velocity);
+	}
+
+	/**
+	 * Return the event note
+	 *
+	 * @return int
+	 */
+	public function getNote()
+	{
+		return $this->note;
+	}
+
+	/**
+	 * Return the event velocity
+	 *
+	 * @return int
+	 */
+	public function getVel()
+	{
+		return $this->velocity;
 	}
 
 	/**
@@ -968,6 +1018,16 @@ class Tempo extends MIDIMetaEvent
 	}
 
 	/**
+	 * Get the tempo
+	 *
+	 * @return int
+	 */
+	public function getTempo($tempo = 500000)
+	{
+		return $this->tempo;
+	}
+
+	/**
 	 * Everybody has to have a pack...
 	 *
 	 * @return string
@@ -1139,6 +1199,16 @@ class KeySignature extends MIDIMetaEvent
 	{
 		$this->sharps = $this->rangeCheck($sharps, -7, 7);
 		$this->minor = $this->rangeCheck($minor, 0, 1);
+	}
+
+	/**
+	 * Get key signature
+	 *
+	 * @return int[]
+	 */
+	public function getKeySignature()
+	{
+		return array('sharps' => $this->sharps, 'minor' => $this->minor);
 	}
 
 	/**

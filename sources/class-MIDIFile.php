@@ -250,6 +250,16 @@ class MIDItrk extends MIDIChunk
 	}
 
 	/**
+	 * Return all events in track.
+	 *
+	 * @return MIDIEvent[]
+	 */
+	public function getEvents()
+	{
+		return $this->events;
+	}
+
+	/**
 	 * Add Track End event, required at the end of each track in a midi file
 	 * If abs time specified, use it.
 	 * If not, find last abs time in track & put it there.
@@ -836,6 +846,25 @@ class MIDIFile
 	}
 
 	/**
+	 * Get BPM
+	 * Assumes midi format 1 file, & tempo event is in track 0
+	 *
+	 * @return float
+	 */
+	public function getBPM()
+	{
+		// Default to 120 bpm in case nothing is found...
+		$tempo = 500000;
+		if (isset($this->tracks[0]))
+			$event = $this->tracks[0]->getEvent(MIDIEvent::META_TEMPO);
+		if ($event !== false)
+			$tempo = $event->getTempo();
+		$bpm = 60000000/$tempo;
+
+		return $bpm;
+	}
+
+	/**
 	 * Set Time Signature
 	 * Numerator & denominator.  Denominator must be a power of 2...
 	 * Assumes midi format 1 file, & time signature event is in track 0
@@ -861,6 +890,27 @@ class MIDIFile
 	}
 
 	/**
+	 * Get Time Signature
+	 * Assumes midi format 1 file, & time signature event is in track 0
+	 *
+	 * @return int[]
+	 */
+	public function getTimeSignature()
+	{
+		$top = 4;
+		$bottom = 4;
+		$event = $this->tracks[0]->getEvent(MIDIEvent::META_TIME_SIG);
+		if ($event !== false)
+		{
+			$time_sig = $event->getTimeSignature();
+			$top = $time_sig['top'];
+			$bottom = pow(2, $time_sig['bottom']);
+		}
+
+		return array('top' => $top, 'bottom' => $bottom);
+	}
+
+	/**
 	 * Set Key Signature
 	 * Use MIDI format: range -7 to 7 sharps, where a neg sharp is a flat
 	 * 0 = major key, 1 = minor in 2nd byte
@@ -882,6 +932,27 @@ class MIDIFile
 		$event->setKeySignature($sharps, $minor);
 
 		return;
+	}
+
+	/**
+	 * Get Key Signature
+	 * Assumes midi format 1 file, & time signature event is in track 0
+	 *
+	 * @return int[]
+	 */
+	public function getKeySignature()
+	{
+		$sharps = 0;
+		$minor = 0;
+		$event = $this->tracks[0]->getEvent(MIDIEvent::META_KEY_SIG);
+		if ($event !== false)
+		{
+			$key_sig = $event->getKeySignature();
+			$sharps = $key_sig['sharps'];
+			$minor = $key_sig['minor'];
+		}
+
+		return array('sharps' => $sharps, 'minor' => $minor);
 	}
 
 	/**
@@ -949,5 +1020,67 @@ class MIDIFile
 		return (int) ($b * $ticks * 4 / $bottom);
 	}
 
+	/**
+	 * Return an array of notes built from the specified track's MIDI events.
+	 * Useful when you have imported a file, & want to access existing notes.
+	 * Array of notes returned is OK to be added to a Phrase object.
+	 * Assumes midi file format 1 - key, etc., are in track 0.
+	 * Key signature is required in track 0! For d2m conversions.
+	 * 
+	 * One major limitation here is that MIDI key signatures only provide 
+	 * enough detail for major & minor scales. Will not work for modals.
+	 * You lose the modal root translating to/from MIDI key signatures.
+	 *
+	 * @param MIDItrk $track - track #
+	 * @return Note[]
+	 */
+	public function getNotesFromTrack($track)
+	{
+		// Key needed for d2m conversions - Get the MIDI file key sitnature
+		$key_sig = $this->getKeySignature();
+
+		// Build a Key object from that...
+		$key = new Key();
+		$key->setKeyFromMIDI($key_sig['sharps'], $key_sig['minor']);
+
+		// Just in case getEvent had an issue...  Can't do this without a key...
+		if (empty($key))
+			return array();
+
+		// Look at note on & note off events, pairing them up & creating Note objects along the way...
+		$note_array = array();
+		$partials = array();
+		foreach ($this->tracks[$track]->getEvents() AS $event)
+		{
+			// Got half of it - Note On... Save it off until we get the other half...
+			// Remember, Note On with a velocity of 0 is very often used as a Note Off...
+			if (($event->getType() == MIDIEvent::NOTE_ON) && ($event->getVel() != 0))
+			{
+				$mnote = $event->getNote();
+				$at = $event->getAt();
+				$chan = $event->getChan();
+				$vel = $event->getVel();
+				$partials[$mnote][$chan][] = array('at' => $at, 'vel' => $vel);
+			}
+			elseif (($event->getType() == MIDIEvent::NOTE_OFF) || (($event->getType() == MIDIEvent::NOTE_ON) && ($event->getVel() == 0)))
+			{
+				// OK, got a Note Off...
+				$mnote = $event->getNote();
+				$at = $event->getAt();
+				$chan = $event->getChan();
+				// If you found a corresponding Note On, we're in business...
+				// Allowing for the possibility of more than one. Will use FIFO, find the oldest one...
+				if (isset($partials[$mnote][$chan]))
+				{
+					$dnote = $key->m2d($mnote);
+				    $note_keys = array_keys($partials[$mnote][$chan]);
+					$oldest = min($note_keys);
+					$note_array[] = new Note($chan, $partials[$mnote][$chan][$oldest]['at'], $dnote, $partials[$mnote][$chan][$oldest]['vel'], $at - $partials[$mnote][$chan][$oldest]['at']);
+					unset($partials[$mnote][$chan][$oldest]);
+				}
+			}
+		}
+		return $note_array;
+	}
 }
 ?>

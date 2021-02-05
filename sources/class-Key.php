@@ -39,19 +39,28 @@ class Key
 	const MINOR_SCALE = 5;		// Equivalent to a minor scale
 	const LOCRIAN_MODAL = 6;	// In key Sig C, Starts & ends on B, white keys...
 
-	// Note base offsets, first octave
+	// Note base offsets, first octave; b=flat, s=sharp
+	const Bs_NOTE = 0;
 	const C_NOTE = 0;
+	const Cs_NOTE = 1;
 	const Db_NOTE = 1;
 	const D_NOTE = 2;
+	const Ds_NOTE = 3;
 	const Eb_NOTE = 3;
 	const E_NOTE = 4;
+	const Fb_NOTE = 4;
+	const Es_NOTE = 5;
 	const F_NOTE = 5;
+	const Fs_NOTE = 6;
 	const Gb_NOTE = 6;
 	const G_NOTE = 7;
+	const Gs_NOTE = 8;
 	const Ab_NOTE = 8;
 	const A_NOTE = 9;
+	const As_NOTE = 10;
 	const Bb_NOTE = 10;
 	const B_NOTE = 11;
+	const Cb_NOTE = 11;
 
 	// Intervals, diatonic
 	const UNISON = 0;
@@ -84,7 +93,7 @@ class Key
 	 * @param int $modal - Modal, e.g., whether major or minor
 	 * @return void
 	 */
-	function __construct($root = Key::C_NOTE, $modal = null)
+	function __construct($root = Key::C_NOTE, $modal = Key::MAJOR_SCALE)
 	{
 		$this->root = $root;
 		$this->modal = $modal;
@@ -224,6 +233,47 @@ class Key
 		}
 
 		return;
+	}
+
+	/**
+	 * Set the key based on midi key signature info...
+	 * Helpful when you have just read a MIDI file & need to build a corresponding Key object.
+	 *
+	 * @param int $sharps
+	 * @param int $minor
+	 * @return void
+	 */
+	public function setKeyFromMIDI($sharps = 0, $minor = 0)
+	{
+		$sharps = MIDIEvent::rangeCheck($sharps, -7, 7);
+		$minor = MIDIEvent::rangeCheck($minor, 0, 1);
+
+		static $root_lookup = array(
+			-7 => array(Key::Cb_NOTE, Key::Ab_NOTE),
+			-6 => array(Key::Gb_NOTE, Key::Eb_NOTE),
+			-5 => array(Key::Db_NOTE, Key::Bb_NOTE),
+			-4 => array(Key::Ab_NOTE, Key::F_NOTE),
+			-3 => array(Key::Eb_NOTE, Key::C_NOTE),
+			-2 => array(Key::Bb_NOTE, Key::G_NOTE),
+			-1 => array(Key::F_NOTE, Key::D_NOTE),
+			0 => array(Key::C_NOTE, Key::A_NOTE),
+			1 => array(Key::G_NOTE, Key::E_NOTE),
+			2 => array(Key::D_NOTE, Key::B_NOTE),
+			3 => array(Key::A_NOTE, Key::Fs_NOTE),
+			4 => array(Key::E_NOTE, Key::Cs_NOTE),
+			5 => array(Key::B_NOTE, Key::Gs_NOTE),
+			6 => array(Key::Fs_NOTE, Key::Ds_NOTE),
+			7 => array(Key::Cs_NOTE, Key::As_NOTE),
+		);
+
+		$root = $root_lookup[$sharps][$minor];
+
+		if ($minor)
+			$modal = Key::MINOR_SCALE;
+		else
+			$modal = Key::MAJOR_SCALE;
+
+		$this->__construct($root, $modal);
 	}
 
 	/**
