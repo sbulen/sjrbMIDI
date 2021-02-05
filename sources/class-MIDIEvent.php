@@ -1022,7 +1022,7 @@ class Tempo extends MIDIMetaEvent
 	 *
 	 * @return int
 	 */
-	public function getTempo($tempo = 500000)
+	public function getTempo()
 	{
 		return $this->tempo;
 	}
