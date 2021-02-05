@@ -1073,7 +1073,7 @@ class MIDIFile
 				if (isset($partials[$mnote][$chan]))
 				{
 					$dnote = $key->m2d($mnote);
-				    $note_keys = array_keys($partials[$mnote][$chan]);
+					$note_keys = array_keys($partials[$mnote][$chan]);
 					$oldest = min($note_keys);
 					$note_array[] = new Note($chan, $partials[$mnote][$chan][$oldest]['at'], $dnote, $partials[$mnote][$chan][$oldest]['vel'], $at - $partials[$mnote][$chan][$oldest]['at']);
 					unset($partials[$mnote][$chan][$oldest]);
