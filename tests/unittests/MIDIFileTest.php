@@ -143,5 +143,31 @@ class MIDIFileTest extends TestCase {
 			}
 		}
 	}
+
+    public function testFIFOQueueForSameNoteValues(){
+		$myFile = new MIDIFile();
+		$note_arr = array();
+		$solo_track = $myFile->addTrack('Wild solo');
+		$solo_track->addNote(1000, 10, 64, 120, 5000); //ends at 6000, third NoteOff
+		$solo_track->addNote(2000, 10, 64, 120, 2001); //ends at 4001, first NoteOff
+		$solo_track->addNote(3000, 10, 64, 120, 2002); //ends at 5002, second NoteOff
+
+		// Need to write, then read, it so we lose NoteOn NoteOff pairings...
+		$myFile->writeMIDIFile('deleteme.mid');
+		$myFile2 = new MIDIFile('deleteme.mid');
+		@unlink('deleteme.mid');
+
+		$new_notes = $myFile2->getNotesFromTrack();
+
+		foreach ($new_notes AS $note)
+		{
+			if ($note->getAt() == 1000)
+				$this->assertEquals(3001, $note->getDur(), 'MIDIFile FIFO Sig test failed');
+			elseif ($note->getAt() == 2000)
+				$this->assertEquals(3002, $note->getDur(), 'MIDIFile FIFO Sig test failed');
+			elseif ($note->getAt() == 3000)
+				$this->assertEquals(3000, $note->getDur(), 'MIDIFile FIFO Sig test failed');
+		}
+	}
 }
 ?>

@@ -1034,7 +1034,7 @@ class MIDIFile
 	 * @param MIDItrk $track - track #
 	 * @return Note[]
 	 */
-	public function getNotesFromTrack($track)
+	public function getNotesFromTrack($track = 1)
 	{
 		// Key needed for d2m conversions - Get the MIDI file key sitnature
 		$key_sig = $this->getKeySignature();
