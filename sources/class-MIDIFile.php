@@ -81,16 +81,6 @@ class MIDIHdr extends MIDIChunk
 	}
 
 	/**
-	 * Return the number of tracks.
-	 *
-	 * @return int
-	 */
-	public function getNtrks()
-	{
-		return $this->ntrks;
-	}
-
-	/**
 	 * Increment the number of tracks by 1.
 	 *
 	 * @return void
@@ -99,6 +89,27 @@ class MIDIHdr extends MIDIChunk
 	{
 		$this->ntrks++;
 		return;
+	}
+
+	/**
+	 * Decrement the number of tracks by 1.
+	 *
+	 * @return void
+	 */
+	public function decNtrks()
+	{
+		$this->ntrks--;
+		return;
+	}
+
+	/**
+	 * Return the number of tracks.
+	 *
+	 * @return int
+	 */
+	public function getNtrks()
+	{
+		return $this->ntrks;
 	}
 
 	/**
@@ -800,6 +811,16 @@ class MIDIFile
 	}
 
 	/**
+	 * Return the number of tracks.
+	 *
+	 * @return int
+	 */
+	public function getNtrks()
+	{
+		return $this->header->getNtrks();
+	}
+
+	/**
 	 * Add an empty track to the file.
 	 * If no track name provided, make one up.
 	 * Add the TrackName event.
@@ -820,6 +841,32 @@ class MIDIFile
 		$this->tracks[$tracknum]->addEvent(new TrackName(0, $name));
 
 		return $this->tracks[$tracknum];
+	}
+
+	/**
+	 * Delete a track.
+	 *
+	 * @param int $track_num
+	 * @return void
+	 */
+	public function deleteTrack($track_num)
+	{
+		if (empty($track_num))
+			return;
+
+		if (!isset($this->tracks[$track_num]))
+			return;
+
+		// Delete it
+		unset($this->tracks[$track_num]);
+
+		// Decrement # of tracks
+		$this->header->decNtrks();
+
+		// Renumber tracks
+		$this->tracks = array_merge($this->tracks);
+
+		return;
 	}
 
 	/**

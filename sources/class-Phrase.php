@@ -120,6 +120,26 @@ class Phrase
 	}
 
 	/**
+	 * Get current Phrase start...
+	 *
+	 * @return int
+	 */
+	public function getStart()
+	{
+		return $this->start;
+	}
+
+	/**
+	 * Get current Phrase dur...
+	 *
+	 * @return int
+	 */
+	public function getDur()
+	{
+		return $this->Dur;
+	}
+
+	/**
 	 * Get specified note object from note_arr...
 	 *
 	 * @param int $notenum
