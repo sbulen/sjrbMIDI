@@ -2,6 +2,7 @@
 /**
  * sjrbMIDI example
  * Demonstrates generating chord progressions.  Melodies following each other.
+ * Also demonstrates use of the Dynamics object to vary velocities.
  * Simple ABCDx4 song structure.  Random rhythm.  Random-ish chords within key.
  */
 
@@ -33,13 +34,15 @@ $rhythm = new Rhythm(1, 3, 1, 3, 2, 2, 2, 2);
 print_r($rhythm);
 echo '<br>';
 
+// dynamics setup... (params: measure duration, start beat, maxvel, minvel, dropoff)
+$dynamics = new Dynamics($rhythm, $myFile->b2dur(4), 1, 120, 30, 10);
+
 /**
  * Chord progression & layered harmony-ish
  */
 
 // AABC song structure.
 $chan = 0;
-$vel = 120;
 $bass_chan = 0;
 $harm1_chan = 1;
 $harm2_chan = 2;
@@ -62,17 +65,17 @@ foreach(array(0, 1, 2, 3) AS $chunk)
 		// Pad chords & bass
 		$time = $myFile->mbt2at($meas, 1, 0);
 		$dur = $myFile->b2dur(4);
-		$pad_track->addChord($time, $chan, $chord, $vel, $myFile->b2dur(4));
-		$bass_track->addNote($time, $bass_chan, $key->d2m($bassnote), $vel, $myFile->b2dur(4));
+		$pad_track->addChord($time, $chan, $chord, $dynamics->getVel($time), $myFile->b2dur(4));
+		$bass_track->addNote($time, $bass_chan, $key->d2m($bassnote), $dynamics->getVel($time), $myFile->b2dur(4));
 
 		// Solos & harmonies...
 		// Hold solo notes in 4th measure...
 		if (($meas % 4) == 0)
 		{
 			$time = $myFile->mbt2at($meas, 1, 0);
-			$harm1_track->addNote($time, $harm1_chan, $key->d2m($harm1_note), $vel, $myFile->b2dur(4));
-			$harm2_track->addNote($time, $harm2_chan, $key->d2m($harm2_note), $vel, $myFile->b2dur(4));
-			$harm3_track->addNote($time, $harm3_chan, $key->d2m($harm3_note), $vel, $myFile->b2dur(4));
+			$harm1_track->addNote($time, $harm1_chan, $key->d2m($harm1_note), $dynamics->getVel($time), $myFile->b2dur(4));
+			$harm2_track->addNote($time, $harm2_chan, $key->d2m($harm2_note), $dynamics->getVel($time), $myFile->b2dur(4));
+			$harm3_track->addNote($time, $harm3_chan, $key->d2m($harm3_note), $dynamics->getVel($time), $myFile->b2dur(4));
 		}
 		// Otherwise follow each other...
 		else
@@ -85,11 +88,11 @@ foreach(array(0, 1, 2, 3) AS $chunk)
 				$subeuclid->setStartDur($start, $info['dur']);
 				foreach ($subeuclid->walkSD AS $substart => $subdur)
 				{
-					$harm1_track->addNote($substart, $harm1_chan, $key->d2m($harm1_note), $vel, $subdur);
+					$harm1_track->addNote($substart, $harm1_chan, $key->d2m($harm1_note), $dynamics->getVel($substart), $subdur);
 					if ($harm2_note != null)
-						$harm2_track->addNote($substart, $harm2_chan, $key->d2m($harm2_note), $vel, $subdur);
+						$harm2_track->addNote($substart, $harm2_chan, $key->d2m($harm2_note), $dynamics->getVel($substart), $subdur);
 					if ($harm3_note != null)
-						$harm3_track->addNote($substart, $harm3_chan, $key->d2m($harm3_note), $vel, $subdur);
+						$harm3_track->addNote($substart, $harm3_chan, $key->d2m($harm3_note), $dynamics->getVel($substart), $subdur);
 
 					$harm3_note = $harm2_note;
 					$harm2_note = $harm1_note;
@@ -120,7 +123,6 @@ $harm3_track->addTrackEnd($myFile->mbt2at(17,1,0));
 $drum_track = $myFile->addTrack('Drums');
 
 $chan = 9;
-$vel = 120;
 
 for ($meas = 1; $meas <= 16; $meas++)
 {
@@ -133,7 +135,7 @@ for ($meas = 1; $meas <= 16; $meas++)
 		$subeuclid->setStartDur($start, $info['dur']);
 		foreach ($subeuclid->walkSD AS $substart => $subdur)
 		{
-			$drum_track->addNote($substart, $chan, MIDIEvent::DRUM_AC_BASS, $vel, $subdur);
+			$drum_track->addNote($substart, $chan, MIDIEvent::DRUM_AC_BASS, $dynamics->getVel($substart), $subdur);
 		}
 
 		// Snare...
@@ -142,7 +144,7 @@ for ($meas = 1; $meas <= 16; $meas++)
 		$subeuclid->setStartDur($start, $info['dur']);
 		foreach ($subeuclid->walkSD AS $substart => $subdur)
 		{
-			$drum_track->addNote($substart, $chan, MIDIEvent::DRUM_AC_SNARE, $vel, $subdur);
+			$drum_track->addNote($substart, $chan, MIDIEvent::DRUM_AC_SNARE, $dynamics->getVel($substart), $subdur);
 		}
 
 		// Ride bell...
@@ -151,7 +153,7 @@ for ($meas = 1; $meas <= 16; $meas++)
 		$subeuclid->setStartDur($start, $info['dur']);
 		foreach ($subeuclid->walkSD AS $substart => $subdur)
 		{
-			$drum_track->addNote($substart, $chan, MIDIEvent::DRUM_RIDE_BELL, $vel, $subdur);
+			$drum_track->addNote($substart, $chan, MIDIEvent::DRUM_RIDE_BELL, $dynamics->getVel($substart), $subdur);
 		}
 
 		// Ride...
@@ -160,7 +162,7 @@ for ($meas = 1; $meas <= 16; $meas++)
 		$subeuclid->setStartDur($start, $info['dur']);
 		foreach ($subeuclid->walkSD AS $substart => $subdur)
 		{
-			$drum_track->addNote($substart, $chan, MIDIEvent::DRUM_RIDE, $vel, $subdur);
+			$drum_track->addNote($substart, $chan, MIDIEvent::DRUM_RIDE, $dynamics->getVel($substart), $subdur);
 		}
 	}
 }

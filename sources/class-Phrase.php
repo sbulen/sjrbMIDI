@@ -31,9 +31,9 @@ class Phrase
 	const TRANS_START_DUR = 0;
 	const TRANS_TRANSPOSE = 1;
 	const TRANS_ROTATE = 2;
-	const TRANS_INVERSION = 3;
-	const TRANS_MULT_MOD = 4;
-	const TRANS_RETROGRADE = 5;
+	const TRANS_RETROGRADE = 3;
+	const TRANS_INVERT = 4;
+	const TRANS_INVERT_SET = 5;
 
 	/*
 	 * Properties
@@ -250,7 +250,7 @@ class Phrase
 	/**
 	 * Transformation - Invert...
 	 * A vertical mirroring.  The old high note is the new low note & vice versa.
-	 * E.g., ABCCC becomes CBAAA.
+	 * E.g., ABGGG becomes GFAAA.
 	 *
 	 * @return void
 	 */
@@ -290,6 +290,57 @@ class Phrase
 			$new_note['sf'] = $high_note['sf'] - $interval['sf'];
 
 			// Update note...
+			$note->setDNote($new_note);
+		}
+
+		return;
+	}
+
+	/**
+	 * Transformation - Invert within note set, only using existing notes
+	 * A vertical mirroring.  The old high note is the new low note & vice versa.
+	 * E.g., ABGGG becomes GBAAA.
+	 *
+	 * @return void
+	 */
+	public function invert_set()
+	{
+		// First, save off working copy of all the dnotes...
+		$notes = array();
+		foreach ($this->note_arr as $note)
+			$notes[] = $note->getDNote();
+
+		// Sort by diatonic note, then sf.
+		// Yes, I know this isn't always true *in terms of tones*, e.g., in the key of C, Cb < B#...
+		// But this is intended to be an abstraction for all keys & modals, allowing for transpositions, etc.
+		// This model provides meaningful output thru all transpositions, all keys, all modals.
+		usort($notes, function($a, $b) {
+			if ($a['dn'] == $b['dn'])
+				return $a['sf'] - $b['sf'];
+			else
+				return $a['dn'] - $b['dn'];
+			}
+		);
+
+		// Eliminate dupes. It'd be nice if array_unique worked here...
+		$prev_note = array();
+		foreach ($notes AS $ix => $note)
+		{
+			if ($note === $prev_note)
+				unset($notes[$ix]);
+			else
+				$prev_note = $note;
+		}
+
+		// Renumber keys...
+		$notes = array_merge($notes);
+		$maxix = count($notes) - 1;
+
+		// For each note, invert it within the range of existing notes.
+		foreach ($this->note_arr as $ix => $note)
+		{
+			$key = array_search($note->getDnote(), $notes);
+			$new_note = $notes[$maxix - $key];
 			$note->setDNote($new_note);
 		}
 
