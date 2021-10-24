@@ -2,7 +2,7 @@
 /**
  *	MIDI class for a Dynamics object.  This is intended to help automate setting
  *	velocities, emphasizing notes on time divisions.  1/2 notes get emphasized 
- *  heavily, 1/4 notes a little less so, 1/8 notes less so, etc.
+ *	heavily, 1/4 notes a little less so, 1/8 notes less so, etc.
  *
  *	Copyright 2020-2021 Shawn Bulen
  *
@@ -196,6 +196,9 @@ class Dynamics
 		else
 			$this->rhythm = new Rhythm();
 
+		// If these had been built, they need to be redone...
+		$this->buckets = array();
+
 		return;
 	}
 
@@ -220,6 +223,10 @@ class Dynamics
 	public function setDur($dur = 960)
 	{
 		$this->dur = MIDIEvent::rangeCheck($dur, 1, 0xFFFFFFF);
+
+		// If these had been built, they need to be redone...
+		$this->buckets = array();
+
 		return;
 	}
 
@@ -234,6 +241,10 @@ class Dynamics
 	{
 		$this->maxvel = MIDIEvent::rangeCheck($maxvel, 0, 0x7F);
 		$this->minvel = MIDIEvent::rangeCheck($this->minvel, 0, $this->maxvel);
+
+		// If these had been built, they need to be redone...
+		$this->buckets = array();
+
 		return;
 	}
 
@@ -248,6 +259,10 @@ class Dynamics
 	{
 		$this->minvel = MIDIEvent::rangeCheck($minvel, 0, 0x7F);
 		$this->maxvel = MIDIEvent::rangeCheck($this->maxvel, $this->minvel, 0x7F);
+
+		// If these had been built, they need to be redone...
+		$this->buckets = array();
+
 		return;
 	}
 
@@ -260,6 +275,10 @@ class Dynamics
 	public function setSpread($spread = 10)
 	{
 		$this->spread = MIDIEvent::rangeCheck($spread, 0, 0x7F);
+
+		// If these had been built, they need to be redone...
+		$this->buckets = array();
+
 		return;
 	}
 
@@ -272,6 +291,10 @@ class Dynamics
 	public function setTimeSigTop($timesigtop = 4)
 	{
 		$this->timesigtop = MIDIEvent::rangeCheck($timesigtop, 1, 0x7F);
+
+		// If these had been built, they need to be redone...
+		$this->buckets = array();
+
 		return;
 	}
 
@@ -285,6 +308,9 @@ class Dynamics
 	{
 		if (MathFuncs::isPow2($timesigbot))
 			$this->timesigbot = MIDIEvent::rangeCheck($timesigbot, 1, 0x7F);
+
+		// If these had been built, they need to be redone...
+		$this->buckets = array();
 
 		return;
 	}
