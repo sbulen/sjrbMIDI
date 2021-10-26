@@ -103,6 +103,11 @@ class DrumGenerator
 		MIDIEvent::DRUM_RIDE => array('min_hits' => 0, 'max_hits' => -1, 'vel_factor' => .7),
 	);
 
+	// To be passed when Dynamics obj built
+	protected $maxvel = 120;
+	protected $minvel = 30;
+	protected $spread = 10;
+
 	/**
 	 * Constructor
 	 *
@@ -122,7 +127,7 @@ class DrumGenerator
 
 		$this->chan = MIDIEvent::rangeCheck($chan, 0x0, 0xF);
 
-		$this->start_measure = MIDIEvent::rangeCheck($start_measure, 0, 0xFFFFFFF);
+		$this->start_measure = MIDIEvent::rangeCheck($start_measure, 1, 0xFFFFFFF);
 
 		if ($seqs !== null && is_array($seqs))
 			$this->seqs = $seqs;
@@ -170,7 +175,7 @@ class DrumGenerator
 		}
 
 		// dynamics setup... (params: rhythm, measure duration, start beat, maxvel, minvel, dropoff, time sig top, time sig bottom)
-		$this->dynamics = new Dynamics($rhythm, $this->midi_file->b2dur($this->midi_file->getTimeSignature()['top']), $db, 120, 30, 10, $this->midi_file->getTimeSignature()['top'], $this->midi_file->getTimeSignature()['bottom']);
+		$this->dynamics = new Dynamics($rhythm, $this->midi_file->b2dur($this->midi_file->getTimeSignature()['top']), $db, $this->maxvel, $this->minvel, $this->spread, $this->midi_file->getTimeSignature()['top'], $this->midi_file->getTimeSignature()['bottom']);
 
 		// Do your pattern measures
 		$rhythm->setStartDur($this->midi_file->mbt2at($this->curr_measure), $this->midi_file->b2dur($this->midi_file->getTimeSignature()['top']));
@@ -374,9 +379,55 @@ class DrumGenerator
 		{
 			$events[] = new NoteOn($note['start'], $this->chan, $note['note'], $note['vel']);
 			$events[] = new NoteOff($note['start'] + $note['dur'], $this->chan, $note['note'], 0x40);
+
+			// If a high hat, attempt a proper open-close.
+			// Of course this assumes they're using standard notes, & not everyone does, but worth a try...
+			// (Subtract 1 tick so it's properly closed at the end of loops...)
+			if ($note['note'] === MIDIEvent::DRUM_OPEN_HH)
+				$events[] = new NoteOff($note['start'] + $note['dur'] - 1, $this->chan, MIDIEvent::DRUM_PEDAL_HH, $note['vel']);
 		}
 
 		return $events;
+	}
+
+	/**
+	 * Set maxvel...
+	 * May need to tweak minvel accordingly
+	 *
+	 * @param int $maxvel - max velocity
+	 * @return void
+	 */
+	public function setMaxvel($maxvel = 0x7F)
+	{
+		$this->maxvel = MIDIEvent::rangeCheck($maxvel, 0, 0x7F);
+		$this->minvel = MIDIEvent::rangeCheck($this->minvel, 0, $this->maxvel);
+		return;
+	}
+
+	/**
+	 * Set minvel...
+	 * May need to tweak maxvel accordingly
+	 *
+	 * @param int $minvel - min velocity
+	 * @return void
+	 */
+	public function setMinvel($minvel = 0)
+	{
+		$this->minvel = MIDIEvent::rangeCheck($minvel, 0, 0x7F);
+		$this->maxvel = MIDIEvent::rangeCheck($this->maxvel, $this->minvel, 0x7F);
+		return;
+	}
+
+	/**
+	 * Set spread...
+	 *
+	 * @param int $spread - variance between note divisions
+	 * @return void
+	 */
+	public function setSpread($spread = 10)
+	{
+		$this->spread = MIDIEvent::rangeCheck($spread, 0, 0x7F);
+		return;
 	}
 
 }
