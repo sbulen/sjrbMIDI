@@ -152,7 +152,7 @@ class DrumGenerator
 			if ($pattern == null)
 			{
 				$rhythm = new Euclid();
-				$rhythm->randomRhythm($default_pulses);
+				$rhythm->randomize($default_pulses);
 			}
 			else
 			{
@@ -164,7 +164,7 @@ class DrumGenerator
 			if ($pattern == null)
 			{
 				$rhythm = new Rhythm();
-				$rhythm->randomRhythm($default_pulses);
+				$rhythm->randomize($default_pulses);
 			}
 			else
 				$rhythm = new Rhythm(...$pattern);

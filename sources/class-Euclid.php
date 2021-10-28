@@ -105,12 +105,12 @@ class Euclid extends Rhythm
 	 * @param int $pulses
 	 * @return Euclid
 	 */
-	public function randomRhythm($pulses)
+	public function randomize($pulses)
 	{
 		$beats = rand(1, $pulses);
 		$rests = $pulses - $beats;
 
-		return self::__construct($beats, $rests);
+		self::__construct($beats, $rests);
 	}
 }
 ?>

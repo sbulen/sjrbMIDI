@@ -138,7 +138,7 @@ class Rhythm
 	 * @param int $pulses
 	 * @return Rhythm
 	 */
-	public function randomRhythm($pulses)
+	public function randomize($pulses)
 	{
 		$lengths = array();
 
@@ -169,7 +169,7 @@ class Rhythm
 			$lengths[$beats - 1] = $pulses - array_sum($lengths) + $lengths[$beats - 1];
 		}
 
-		return self::__construct(...$lengths);
+		self::__construct(...$lengths);
 	}
 }
 ?>
