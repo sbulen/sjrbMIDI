@@ -151,27 +151,23 @@ class DrumGenerator
 		{
 			if ($pattern == null)
 			{
-				$beats = rand(1, $default_pulses);
-				$rests = $default_pulses - $beats;
+				$rhythm = new Euclid();
+				$rhythm->randomRhythm($default_pulses);
 			}
 			else
 			{
-				$beats = $pattern[0];
-				$rests = $pattern[1];
+				$rhythm = new Euclid($pattern[0], $pattern[1]);
 			}
-			$rhythm = new Euclid($beats, $rests);
 		}
 		else
 		{
 			if ($pattern == null)
 			{
-				$beats = rand(1, $default_pulses);
-				$rhythm_array = $this->randomRhythm($beats, $default_pulses);
+				$rhythm = new Rhythm();
+				$rhythm->randomRhythm($default_pulses);
 			}
 			else
-				$rhythm_array = $pattern;
-
-			$rhythm = new Rhythm(...$rhythm_array);
+				$rhythm = new Rhythm(...$pattern);
 		}
 
 		// dynamics setup... (params: rhythm, measure duration, start beat, maxvel, minvel, dropoff, time sig top, time sig bottom)
@@ -189,44 +185,6 @@ class DrumGenerator
 
 		return $notes;
 
-	}
-
-	// Generate an array of lengths with $beats # of elements that add up to $pulses.
-	// All lengths must be ints > 0.
-	private function randomRhythm($beats, $pulses)
-	{
-		$lengths = array();
-
-		if (($beats < 1) || ($pulses < 1) || ($beats > $pulses))
-			return $lengths;
-
-		// Need to repeat truing up the last entry, because it sometimes comes up with 0 or negative
-		// values if too many rounding errors in individual lengths...
-		// So keep trying until you get something that makes sense.
-		while (!isset($lengths[$beats - 1]) || ($lengths[$beats - 1] < 1))
-		{
-			// Pick random set
-			for ($i = 0; $i < $beats; $i++)
-				$lengths[$i] = rand(1, $pulses);
-		
-			// Adjust all but last entry downward to match total, while keeping all entries > 0
-			$factor = $pulses / array_sum($lengths);
-			for ($i = 0; $i < $beats - 1; $i++)
-			{
-				$lengths[$i] = (int) ($lengths[$i] * $factor);
-				if ($lengths[$i] == 0)
-					$lengths[$i] = 1;
-			}
-		
-			// True up last entry...
-			$lengths[$beats - 1] = $pulses - array_sum($lengths) + $lengths[$beats - 1];
-		}
-
-		echo 'Random rhythm generated:<br>';
-		print_r($lengths);
-		echo '<br>';
-
-		return $lengths;
 	}
 
 	// Generate drums & copy measures

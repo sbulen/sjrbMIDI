@@ -32,7 +32,7 @@ class Euclid extends Rhythm
 	 * @param int $rests
 	 * @return void
 	 */
-	function __construct($beats, $rests)
+	function __construct($beats = 0, $rests = 0)
 	{
 		$this->beats = $beats;
 		$this->rests = $rests;
@@ -97,6 +97,20 @@ class Euclid extends Rhythm
 	public function getPattern()
 	{
 		return $this->pattern;
+	}
+
+	/**
+	 * Randomize current object...
+	 *
+	 * @param int $pulses
+	 * @return Euclid
+	 */
+	public function randomRhythm($pulses)
+	{
+		$beats = rand(1, $pulses);
+		$rests = $pulses - $beats;
+
+		return self::__construct($beats, $rests);
 	}
 }
 ?>

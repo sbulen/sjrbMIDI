@@ -129,5 +129,47 @@ class Rhythm
 		$this->walkAll = new RhythmWalkAll($this->rhythm, $this->start, $this->dur);
 	}
 
+	/**
+	 * Randomize current object...
+	 * First, generate an array of lengths with $beats # of elements that add up to $pulses.
+	 * All lengths must be ints > 0.
+	 * Then invoke the constructor to rebuild the object.
+	 *
+	 * @param int $pulses
+	 * @return Rhythm
+	 */
+	public function randomRhythm($pulses)
+	{
+		$lengths = array();
+
+		if ($pulses < 1)
+			return $lengths;
+
+		$beats = rand(1, $pulses);
+
+		// Need to repeat truing up the last entry, because it sometimes comes up with 0 or negative
+		// values if too many rounding errors in individual lengths...
+		// So keep trying until you get something that makes sense.
+		while (!isset($lengths[$beats - 1]) || ($lengths[$beats - 1] < 1))
+		{
+			// Pick random set
+			for ($i = 0; $i < $beats; $i++)
+				$lengths[$i] = rand(1, $pulses);
+
+			// Adjust all but last entry downward to match total, while keeping all entries > 0
+			$factor = $pulses / array_sum($lengths);
+			for ($i = 0; $i < $beats - 1; $i++)
+			{
+				$lengths[$i] = (int) ($lengths[$i] * $factor);
+				if ($lengths[$i] == 0)
+					$lengths[$i] = 1;
+			}
+
+			// True up last entry...
+			$lengths[$beats - 1] = $pulses - array_sum($lengths) + $lengths[$beats - 1];
+		}
+
+		return self::__construct(...$lengths);
+	}
 }
 ?>
