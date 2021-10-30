@@ -155,9 +155,7 @@ class DrumGenerator
 				$rhythm->randomize($default_pulses);
 			}
 			else
-			{
 				$rhythm = new Euclid($pattern[0], $pattern[1]);
-			}
 		}
 		else
 		{
@@ -170,7 +168,7 @@ class DrumGenerator
 				$rhythm = new Rhythm(...$pattern);
 		}
 
-		// dynamics setup... (params: rhythm, measure duration, start beat, maxvel, minvel, dropoff, time sig top, time sig bottom)
+		// Dynamics setup... (params: rhythm, measure duration, start beat, maxvel, minvel, dropoff, time sig top, time sig bottom)
 		$this->dynamics = new Dynamics($rhythm, $this->midi_file->b2dur($this->midi_file->getTimeSignature()['top']), $db, $this->maxvel, $this->minvel, $this->spread, $this->midi_file->getTimeSignature()['top'], $this->midi_file->getTimeSignature()['bottom']);
 
 		// Do your pattern measures
@@ -287,7 +285,7 @@ class DrumGenerator
 	 */
 	public function setSequences($seqs)
 	{
-		if (is_array($seqs))
+		if (!empty($seqs) && is_array($seqs))
 			$this->sequences = $seqs;
 	}
 
@@ -299,7 +297,7 @@ class DrumGenerator
 	 */
 	public function setInstruments($instruments)
 	{
-		if (is_array($instruments))
+		if (!empty($instruments) && is_array($instruments))
 			$this->instruments = $instruments;
 	}
 
