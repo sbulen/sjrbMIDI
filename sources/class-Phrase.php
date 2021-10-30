@@ -22,7 +22,7 @@
  *
  */
 
-class Phrase
+class Phrase implements IteratorAggregate
 {
 	/**
 	 * Bunch of constants
@@ -101,6 +101,16 @@ class Phrase
 		$this->walkSD = new PhraseWalkSD($this->note_arr, $this->start, $this->dur);
 		$this->walkAll = new PhraseWalkAll($this->note_arr, $this->start, $this->dur);
 	}
+
+
+	/**
+	 * Allow for iteration thru note objects...
+	 *
+	 * @return MIDIEvent[]
+	 */
+    public function getIterator() : Traversable {
+        return new ArrayIterator($this->note_arr);
+    }
 
 	/**
 	 * Get note events...
