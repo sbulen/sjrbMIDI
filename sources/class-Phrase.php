@@ -102,6 +102,19 @@ class Phrase implements IteratorAggregate
 		$this->walkAll = new PhraseWalkAll($this->note_arr, $this->start, $this->dur);
 	}
 
+	/**
+	 * Clone method
+	 *
+	 * Ensure all subobjects are actually new objects
+	 *    ...or bad things happen.
+	 *
+	 * @return void
+	 */
+	function __clone()
+	{
+		foreach($this->note_arr AS $ix => $note)
+			$this->note_arr[$ix] = clone $this->note_arr[$ix];
+	}
 
 	/**
 	 * Allow for iteration thru note objects...
