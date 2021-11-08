@@ -333,8 +333,11 @@ class Key
 
 		$dnote['dn'] = base_convert($dnote['dn'], 7, 10);
 		$dnote['dn'] += $interval;
+		// It can occasionally break here, due to randomness of input...
+		$dnote['dn'] = MIDIEvent::rangeCheck($dnote['dn'], 0, 144);
 		$dnote['dn'] = base_convert($dnote['dn'], 10, 7);
 
+		// Sanity check...
 		$dnote['dn'] = MIDIEvent::rangeCheck($dnote['dn'], 0, 144);
 
 		return $dnote;
