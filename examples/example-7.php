@@ -10,6 +10,7 @@ spl_autoload_register(function ($class_name) {
 );
 
 $out_name = 'example-7.mid';
+Errors::setVerbosity(false);
 
 $myFile = new MIDIFile();
 $myFile->setBPM(103);
@@ -17,8 +18,6 @@ $track1 = $myFile->addTrack('Testing...');
 
 // Set key signature for use by note/chord processing
 $key = new Key(Key::C_NOTE, Key::MAJOR_SCALE);
-print_r($key);
-echo '<br>';
 
 $currnote = $key->getD(5, 0);
 $sf = 0;
@@ -76,8 +75,9 @@ $track1->addEvents($phrase->getNotes());
 
 $track1->addTrackEnd();
 
+// Write & dump the file if you wanna
 $myFile->writeMIDIFile($out_name);
-$myFile->displayMIDIFile();
+//$myFile->displayMIDIFile();
 
 return;
 

@@ -60,7 +60,7 @@ class Dynamics
 		if (is_a($rhythm, 'Rhythm'))
 			$this->rhythm = $rhythm;
 		else
-			die('Rhythm must be passed to dynamics object');
+			Errors::fatal('req_rhythm');
 
 		$this->downbeat = MIDIEvent::rangeCheck($downbeat, 1, 0xF);
 		$this->dur = MIDIEvent::rangeCheck($dur, 1, 0xFFFFFFF);

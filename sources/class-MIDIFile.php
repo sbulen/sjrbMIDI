@@ -414,6 +414,8 @@ class MIDIFile
 		else
 			$this->file_name = $file;
 
+		Errors::info('write_file', $file);
+
 		$this->file_raw_contents = file_get_contents($this->file_name);
 
 		// Load the chunks...
@@ -802,6 +804,8 @@ class MIDIFile
 	 */
 	public function writeMIDIFile($file)
 	{
+		Errors::info('write_file', $file);
+
 		// Set this object's name to match file...
 		$this->file_name = $file;
 		// Recalc raw_file_contents...

@@ -1,6 +1,6 @@
 <?php
 /**
- *	Drum Generator
+ *	Tonal Generator
  *
  *	Copyright 2021 Shawn Bulen
  *
@@ -21,7 +21,7 @@
  *
  */
 
-class DrumGenerator extends AbstractGenerator
+class TonalGenerator extends AbstractGenerator
 {
 	/**
 	 * Constructor
@@ -29,6 +29,7 @@ class DrumGenerator extends AbstractGenerator
 	 * @param MidiFile $midi_file - MidiFile object
 	 * @param array $seqs - array that defines sequences to be generated
 	 * @param array $instruments - array that defines instruments to be used
+	 * @param array $root_seq - array that defines roots of chords/phrases to be generated
 	 * @return void
 	 */
 	function __construct($midi_file, $seqs = null, $instruments = null)
@@ -52,29 +53,20 @@ class DrumGenerator extends AbstractGenerator
 	 */
 	function doInstrument($start, $dur, $chan, $tone, $sub_inst_vars, $rhythm_vars, $sub_euclid_vars, $seq, &$new_notes)
 	{
-		// Drums use the sub_inst tones.
-		// But the tones are in mnotes...  We have to convert them to dnotes here...
-		$dnote = $this->key->m2d($tone);
-		
-		// Dummy out vel, it's set later
-		$note = new Note($chan, $start, $dnote, 0, $dur);
+		// Chose one of the phrases & transform
+		// Transpose is based on beat of primary rhythm...
+		$beat = $rhythm_vars['beat'];
+		$phrases = count($seq->getPhrases());
+		$phrase = clone $seq->getPhrases()[rand(0, $phrases - 1)];
+		$phrase->setStartDur($start, $dur);
+		$phrase->transpose($seq->getIntervals()[$beat % count($seq->getIntervals())]);
 
-		// Use the common func here...
-		$this->genNote($note, $sub_inst_vars['vel_factor'], $seq->getNotePct(), $seq->getTripPct(), $new_notes);
-	}
-
-	// Add one note to a track...  Special version for drums, so we can close an open hi-hat...
-	protected function addNoteToTrack($note)
-	{
-		$mnote = $this->key->d2m($note->getDnote());
-		$this->instruments[$note->getChan()]->getTrack()->addEvent(new NoteOn($note->getAt(), $note->getChan(), $mnote, $note->getVel()));
-		$this->instruments[$note->getChan()]->getTrack()->addEvent(new NoteOff($note->getAt() + $note->getDur(), $note->getChan(), $mnote, 0x40));
-
-		// If a high hat, attempt a proper open-close.
-		// Of course this assumes they're using standard notes, & not everyone does, but worth a try...
-		// (Subtract 1 tick so it's properly closed at the end of loops...)
-		if ($mnote === MIDIEvent::DRUM_OPEN_HH)
-			$this->instruments[$note->getChan()]->getTrack()->addEvent(new NoteOff($note->getAt() + $note->getDur() - 1, $note->getChan(), MIDIEvent::DRUM_PEDAL_HH, $note->getVel()));
+		// Use the common func here...  Always use the instrument channel...
+		foreach ($phrase AS $note_obj)
+		{
+			$note_obj->setChan($chan);
+			$this->genNote($note_obj, $sub_inst_vars['vel_factor'], $seq->getNotePct(), $seq->getTripPct(), $new_notes);
+		}
 	}
 }
 ?>

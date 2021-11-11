@@ -10,6 +10,7 @@ spl_autoload_register(function ($class_name) {
 );
 
 $out_name = 'example-2.mid';
+Errors::setVerbosity(false);
 
 $myFile = new MIDIFile();
 $myFile->setBPM(97);
@@ -61,8 +62,8 @@ for ($meas = 1; $meas <= 16; $meas++)
 // Last step for each track...
 $new_track->addTrackEnd($myFile->mbt2at(17,1,0));
 
-// Write it & dump it...
+// Write & dump the file if you wanna
 $myFile->writeMIDIFile($out_name);
-$myFile->displayMIDIFile();
+//$myFile->displayMIDIFile();
 
 ?>

@@ -50,6 +50,10 @@ class Rhythm
 	 */
 	function __construct(...$lengths)
 	{
+		// Make sure destinations are all ints
+		if (!is_array($lengths) || ($lengths != array_filter($lengths, function($a) {return is_int($a);})))
+			Errors::fatal('inv_rhylens');
+
 		$this->beats = 0;
 		$this->rests = 0;
 		$this->pulses = 0;
@@ -140,10 +144,10 @@ class Rhythm
 	 */
 	public function randomize($pulses)
 	{
-		$lengths = array();
+		if (!is_int($pulses) || ($pulses < 1))
+			Errors::fatal('inv_pulses');
 
-		if ($pulses < 1)
-			return $lengths;
+		$lengths = array();
 
 		$beats = rand(1, $pulses);
 

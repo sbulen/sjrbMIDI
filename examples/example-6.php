@@ -12,6 +12,7 @@ spl_autoload_register(function ($class_name) {
 );
 
 $out_name = 'example-6.mid';
+Errors::setVerbosity(false);
 
 $myFile = new MIDIFile();
 $myFile->setBPM(97);
@@ -23,16 +24,12 @@ $harm3_track = $myFile->addTrack('Harm 3');
 
 // Set key signature for use by note/chord processing
 $key = new Key(Key::G_NOTE, Key::MIXOLYDIAN_MODAL);
-print_r($key);
-echo '<br>';
 
 // Sync with file's MIDI key signature
 $myFile->setKeySignature($key->getMIDIsf(), $key->getMIDImm());
 
 // Rhythm...
 $rhythm = new Rhythm(1, 3, 1, 3, 2, 2, 2, 2);
-print_r($rhythm);
-echo '<br>';
 
 // dynamics setup... (params: measure duration, start beat, maxvel, minvel, dropoff)
 $dynamics = new Dynamics($rhythm, $myFile->b2dur(4), 1, 120, 30, 10);
@@ -170,9 +167,9 @@ for ($meas = 1; $meas <= 16; $meas++)
 // Last step for each track...
 $drum_track->addTrackEnd($myFile->mbt2at(17,1,0));
 
-// Write & dump the file
+// Write & dump the file if you wanna
 $myFile->writeMIDIFile($out_name);
-$myFile->displayMIDIFile();
+//$myFile->displayMIDIFile();
 
 return;
 

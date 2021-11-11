@@ -11,6 +11,7 @@ spl_autoload_register(function ($class_name) {
 );
 
 $out_name = 'example-5.mid';
+Errors::setVerbosity(false);
 
 $myFile = new MIDIFile();
 $myFile->setBPM(97);
@@ -20,8 +21,6 @@ $solo_track = $myFile->addTrack('Solo');
 
 // Set key signature for use by note/chord processing
 $key = new Key(Key::Eb_NOTE, Key::LOCRIAN_MODAL);
-print_r($key);
-echo '<br>';
 
 // Sync with file's MIDI key signature
 $myFile->setKeySignature($key->getMIDIsf(), $key->getMIDImm());
@@ -30,8 +29,6 @@ $myFile->setKeySignature($key->getMIDIsf(), $key->getMIDImm());
 $pulses = 16;
 $notes = rand(1, 13);
 $euclid = new Euclid($notes, $pulses - $notes);
-print_r($euclid);
-echo '<br>';
 
 /**
  * Chord progression & SOLO
@@ -307,9 +304,9 @@ for ($meas = 1; $meas <= 16; $meas++)
 // Last step for each track...
 $drum_track->addTrackEnd($myFile->mbt2at(17,1,0));
 
-// Write & dump the file
+// Write & dump the file if you wanna
 $myFile->writeMIDIFile($out_name);
-$myFile->displayMIDIFile();
+//$myFile->displayMIDIFile();
 
 return;
 

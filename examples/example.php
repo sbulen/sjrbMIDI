@@ -10,6 +10,7 @@ spl_autoload_register(function ($class_name) {
 );
 
 $out_name = 'example.mid';
+Errors::setVerbosity(true);
 
 $myFile = new MIDIFile();
 $myFile->setBPM(97);
@@ -19,8 +20,6 @@ $new_track = $myFile->addTrack();
 $pulses = 16;
 $notes = rand(1, $pulses);
 $euclid = new Euclid($notes, $pulses - $notes);
-print_r($euclid);
-echo '<br>';
 
 // Note setup...
 $chan = 0;
@@ -61,8 +60,8 @@ for ($meas = 1; $meas <= 16; $meas++)
 // Each track must have a TrackEnd
 $new_track->addTrackEnd($myFile->mbt2at(17,1,0));
 
-// Write & dump the file
+// Write & dump the file if you wanna
 $myFile->writeMIDIFile($out_name);
-$myFile->displayMIDIFile();
+//$myFile->displayMIDIFile();
 
 ?>

@@ -1,6 +1,6 @@
 <?php
 /**
- *	Drum Generator
+ *	Chord Sequence Generator
  *
  *	Copyright 2021 Shawn Bulen
  *
@@ -21,7 +21,7 @@
  *
  */
 
-class DrumGenerator extends AbstractGenerator
+class ChordGenerator extends AbstractGenerator
 {
 	/**
 	 * Constructor
@@ -29,6 +29,7 @@ class DrumGenerator extends AbstractGenerator
 	 * @param MidiFile $midi_file - MidiFile object
 	 * @param array $seqs - array that defines sequences to be generated
 	 * @param array $instruments - array that defines instruments to be used
+	 * @param array $root_seq - array that defines roots of chords/phrases to be generated
 	 * @return void
 	 */
 	function __construct($midi_file, $seqs = null, $instruments = null)
@@ -52,29 +53,41 @@ class DrumGenerator extends AbstractGenerator
 	 */
 	function doInstrument($start, $dur, $chan, $tone, $sub_inst_vars, $rhythm_vars, $sub_euclid_vars, $seq, &$new_notes)
 	{
-		// Drums use the sub_inst tones.
-		// But the tones are in mnotes...  We have to convert them to dnotes here...
-		$dnote = $this->key->m2d($tone);
-		
-		// Dummy out vel, it's set later
-		$note = new Note($chan, $start, $dnote, 0, $dur);
+		// Chose one of the phrases & transform
+		// Transpose is based on beat of primary rhythm...
+		$beat = $rhythm_vars['beat'];
+		$chords = count($seq->getChords());
+		$chord = clone $seq->getChords()[rand(0, $chords - 1)];
 
-		// Use the common func here...
-		$this->genNote($note, $sub_inst_vars['vel_factor'], $seq->getNotePct(), $seq->getTripPct(), $new_notes);
-	}
+		// Get raw info from chord
+		$dnote = $chord->getDnote();
+		$ints = $chord->getIntervals();
 
-	// Add one note to a track...  Special version for drums, so we can close an open hi-hat...
-	protected function addNoteToTrack($note)
-	{
-		$mnote = $this->key->d2m($note->getDnote());
-		$this->instruments[$note->getChan()]->getTrack()->addEvent(new NoteOn($note->getAt(), $note->getChan(), $mnote, $note->getVel()));
-		$this->instruments[$note->getChan()]->getTrack()->addEvent(new NoteOff($note->getAt() + $note->getDur(), $note->getChan(), $mnote, 0x40));
+		// Transpose, & convert to array of note objs
+		$dnote = $seq->getKey()->dAdd($dnote, $seq->getIntervals()[$beat % count($seq->getIntervals())]);
 
-		// If a high hat, attempt a proper open-close.
-		// Of course this assumes they're using standard notes, & not everyone does, but worth a try...
-		// (Subtract 1 tick so it's properly closed at the end of loops...)
-		if ($mnote === MIDIEvent::DRUM_OPEN_HH)
-			$this->instruments[$note->getChan()]->getTrack()->addEvent(new NoteOff($note->getAt() + $note->getDur() - 1, $note->getChan(), MIDIEvent::DRUM_PEDAL_HH, $note->getVel()));
+		$note_arr = array();
+		$note_arr[] = new Note($chan, $start, $dnote, 100, $dur);
+		foreach ($ints AS $int)
+			$note_arr[] = new Note($chan, $start, $seq->getKey()->dAdd($dnote, $int), 100, $dur);
+
+
+		// split chord triplets here....
+		$trip_dur = (int) ($dur / 3);
+		if (MathFuncs::randomFloat() <= $seq->getChordTripPct())
+			foreach ($note_arr AS $note)
+			{
+				$note->setDur($trip_dur);
+				for ($i = 0; $i < 3; $i++)
+				{
+					$trip_note = clone $note;
+					$trip_note->setAt($start + ($trip_dur * $i));
+					$this->genNote($trip_note, $sub_inst_vars['vel_factor'], $seq->getNotePct(), $seq->getTripPct(), $new_notes);
+				}
+			}
+		else
+			foreach ($note_arr AS $note)
+				$this->genNote($note, $sub_inst_vars['vel_factor'], $seq->getNotePct(), $seq->getTripPct(), $new_notes);
 	}
 }
 ?>

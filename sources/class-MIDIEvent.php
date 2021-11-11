@@ -123,9 +123,15 @@ abstract class MIDIEvent
 	 */
 	public static function rangeCheck($value, $min = 0, $max = 127) {
 		if ($value < $min)
+		{
 			$value = $min;
+			Errors::warning('out_of_range');
+		}
 		elseif ($value > $max)
+		{
 			$value = $max;
+			Errors::warning('out_of_range');
+		}
 
 		return $value;
 	}
