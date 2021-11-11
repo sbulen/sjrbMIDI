@@ -28,7 +28,6 @@ class TonalInstrument extends AbstractInstrument
 	/**
 	 * Properties
 	 */
-	protected $hands;				// Hands - how many parallel lines are possible, e.g., piano = 2, clarinet = 1
 	protected $max_notes_per_hand;	// Max notes per hand = Not many folks have 6 fingers...
 	protected $spread_per_hand;		// Range each hand can cover; not many folks have 8" fingers; in diatonic tones, 7 = an octave
 
@@ -39,16 +38,11 @@ class TonalInstrument extends AbstractInstrument
 	 *
 	 * @return void
 	 */
-	function __construct($channel, $track_name = 'Track', $sub_insts = array(-1 => array(1, 1, 1)), $hands = 2, $max_notes_per_hand = 5, $spread_per_hand = 7)
+	function __construct($channel, $track_name = 'Track', $sub_insts = array(-1 => array(1, 1, 1)), $max_notes_per_hand = 5, $spread_per_hand = 7)
 	{
 		// For tonal instruments, only one instrument per definition
 		if (count($sub_insts) > 1)
 			Errors::fatal('inv_subinst');
-
-		if (is_int($hands) && ($hands >= 0))
-			$this->hands = $hands;
-		else
-			Errors::fatal('inv_hands');
 
 		if (is_int($max_notes_per_hand) && ($max_notes_per_hand >= 0))
 			$this->max_notes_per_hand = $max_notes_per_hand;
@@ -61,28 +55,6 @@ class TonalInstrument extends AbstractInstrument
 			Errors::fatal('inv_spread');
 
 		parent::__construct($channel, $track_name, $sub_insts);
-	}
-
-	/**
-	 * Get start_oct...
-	 *
-	 * @return int
-	 */
-
-	public function getStartOct()
-	{
-		return $this->start_oct;
-	}
-
-	/*
-	 * Get hands...
-	 *
-	 * @return int
-	 */
-
-	public function getHands()
-	{
-		return $this->hands;
 	}
 
 	/*

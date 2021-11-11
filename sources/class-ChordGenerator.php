@@ -53,7 +53,7 @@ class ChordGenerator extends AbstractGenerator
 	 */
 	function doInstrument($start, $dur, $chan, $tone, $sub_inst_vars, $rhythm_vars, $sub_euclid_vars, $seq, &$new_notes)
 	{
-		// Chose one of the phrases & transform
+		// Chose one of the chords & transform
 		// Transpose is based on beat of primary rhythm...
 		$beat = $rhythm_vars['beat'];
 		$chords = count($seq->getChords());

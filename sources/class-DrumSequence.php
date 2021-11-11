@@ -25,42 +25,21 @@
 class DrumSequence extends AbstractSequence
 {
 	/**
-	 * Properties
-	 */
-	protected $channel;		// Channel for drum track generated
-
-	/**
 	 * Constructor
 	 *
 	 * Builds object to hold a set of parameters to generate some music.
 	 *
-	 * @param bool $euclid
-	 * @param int[] $pattern
+	 * @param Rhythm $rhythm
 	 * @param int $downbeat
 	 * @param int $duration
 	 * @param int[] $destinations
 	 * @param float $note_pct
 	 * @param float $trip_pct
-	 * @param int $channel
 	 * @return void
 	 */
-	function __construct($euclid = false, $pattern = array(4, 4, 4, 4), $downbeat = 1, $dur = 1, $dests = array(1), $note_pct = 1, $trip_pct = 0, $channel = 9)
+	function __construct($rhythm, $downbeat = 1, $dur = 1, $dests = array(1), $note_pct = 1, $trip_pct = 0)
 	{
-		$this->channel = MIDIEvent::rangeCheck($channel, 0, 0xF);
-
-		parent::__construct($euclid, $pattern, $downbeat, $dur, $dests, $note_pct, $trip_pct);
+		parent::__construct($rhythm, $downbeat, $dur, $dests, $note_pct, $trip_pct);
 	}
-
-	/**
-	 * Get channel...
-	 *
-	 * @return int	
-	 */
-
-	public function getChannel()
-	{
-		return $this->channel;
-	}
-
 }
 ?>

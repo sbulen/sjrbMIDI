@@ -58,11 +58,10 @@ $root_seq = $tonal_sequences[0]->getRootSeq();
 //	 - Min hits per rhythmic beat, always an int >= 0 
 //	 - Max hits per rhythmic beat, always an int >= -1; -1 means "use the # of pulses"
 //	 - Velocity factor, 0 - 1.0; scales back returned velocity this much, allowing you to blend drums better
-// - Hands - parallel instruments?  E.g., a piano is basically 2, one per hand, but a clarinet is 1
 // - Max notes per hand - You only have so many fingers, most piano compositions restrict to 4
 // - Spread per hand - Your fingers are only so big, normally restricted to an octave or so
 $tonal_instruments = array(
-	new TonalInstrument(2, 'Lead', array(-1 => array(0, 4, 1)), 1, 4, 7),
+	new TonalInstrument(2, 'Lead', array(-1 => array(0, 4, 1)), 4, 7),
 );
 
 // Multiple chords sequences can be requested.  Each request has the following params:
@@ -88,7 +87,7 @@ $chord_sequences = array(
 );
 // Chord instruments are tonal instruments....
 $chord_instruments = array(
-	new TonalInstrument(3, 'Chords', array(-1 => array(1, 1, .7)), 1, 4, 7),
+	new TonalInstrument(3, 'Chords', array(-1 => array(1, 1, .7)), 4, 7),
 );
 
 // Multiple sequences can be requested.  Each request has the following params:

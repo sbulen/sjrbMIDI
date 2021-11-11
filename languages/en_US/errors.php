@@ -61,7 +61,6 @@ $txt['inv_seqs'] = 'Invalid sequences!';
 $txt['unique_chans'] = 'Instrument channels must be unique!';
 $txt['inv_insts'] = 'Invalid instruments!';
 $txt['inv_subinst'] = 'Invalid sub_inst definition for instrument.';
-$txt['inv_hands'] = 'Invalid number of hands for instrument.';
 $txt['inv_mnph'] = 'Invalid max_notes_per_hand for instrument.';
 $txt['inv_spread'] = 'Invalid spread_per_hand for instrument.';
 $txt['inv_chan'] = 'Invalid channel value for instrument.';
