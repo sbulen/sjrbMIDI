@@ -90,7 +90,7 @@ abstract class EventSeries
 	 * Note that min > max is allowed; like in many audio packages, this will flip the shape.
 	 *
 	 * @param float $value - The value to be scaled
-	 * @return float
+	 * @return int
 	 */
 	private function scale($value)
 	{
@@ -100,7 +100,7 @@ abstract class EventSeries
 		$min_offset = $this->min_pct * $type_range / 100;
 
 		$result = (($value - $this->type_min) * $scale_range) + $this->type_min;
-		$result += $min_offset;
+		$result = (int) ($result + $min_offset);
 		$result = MIDIEvent::rangeCheck($result, $this->type_min, $this->type_max);
 
 		return $result;
@@ -178,6 +178,10 @@ abstract class EventSeries
 		$result = fmod($result, 1.0);
 		$result = (10 * $result) - 8.75;
 		$result = pow(10, $result) / 10;
+
+		// Sanity check...  expo can get big quick...
+		if ($result > 1)
+			$result = 1;
 
 		// Scale it to range for this controller
 		$range = $this->type_max - $this->type_min;
