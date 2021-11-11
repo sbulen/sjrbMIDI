@@ -154,8 +154,9 @@ class ChordSequence extends AbstractSequence
 	{
 		$chords = array();
 
-		// Generate starting roots with provided octave, no interval
-		$dnote = $this->key->getD($this->root_oct, 0);
+		// Generate using root from start of root_seq.
+		// Transpositions based on intervals from root_seq later...
+		$dnote = $this->key->cleanseDNote($this->root_seq[0]);
 
 		for ($notes = 1; $notes < $this->max_notes_per_chord; $notes++)
 		{

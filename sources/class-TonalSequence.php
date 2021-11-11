@@ -160,8 +160,9 @@ class TonalSequence extends AbstractSequence
 			$new_rhythm->setStartDur(0, $pulses * 3);
 			
 			$note_arr = array();
-			// Start or end on the root...
-			$dnote = $this->key->getD($this->root_oct, 0);
+			// Generate using root from start of root_seq.
+			// Transpositions based on intervals from root_seq later...
+			$dnote = $this->key->cleanseDNote($this->root_seq[0]);
 			foreach ($new_rhythm->walkSD AS $start => $dur)
 			{
 				// Apply a triplet?
