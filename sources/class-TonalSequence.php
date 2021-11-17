@@ -28,14 +28,15 @@ class TonalSequence extends AbstractSequence
 	 * Properties
 	 */
 	protected $key;
-	protected $phrases;			// Phrases passed as a simple array; if passed, used, if not passed, random phrases are generated
-	protected $root_seq;		// Array of roots of chords/phrases, if null, auto-generated
-	protected $root_oct;		// Where to start...  Used when generating chords/phrases
-	protected $num_phrases;		// Number of phrases to auto-generate
-	protected $phrase_note_pct;	// What percentage of notes are kept, when phrases are auto-generated
-	protected $phrase_trip_pct;	// What percentage of notes are triplets, when phrases are auto-generated
+	protected $phrases;					// Phrases passed as a simple array; if passed, used, if not passed, random phrases are generated
+	protected $root_seq;				// Array of roots of chords/phrases, if null, auto-generated
+	protected $root_oct;				// Where to start...  Used when generating chords/phrases
+	protected $num_phrases;				// Number of phrases to auto-generate
+	protected $max_notes_per_phrase;	// How big are the phrases, when auto-generated
+	protected $phrase_note_pct;			// What percentage of notes are kept, when phrases are auto-generated
+	protected $phrase_trip_pct;			// What percentage of notes are triplets, when phrases are auto-generated
 
-	protected $intervals;		// Derived from root_seq
+	protected $intervals;				// Derived from root_seq
 
 	/**
 	 * Constructor
@@ -53,11 +54,12 @@ class TonalSequence extends AbstractSequence
 	 * @param DNote[] $root_seq
 	 * @param int $root_oct
 	 * @param int $num_phrases
+	 * @param int $max_notes_per_phrase
 	 * @param float $phrase_note_pct
 	 * @param float $phrase_trip_pct
 	 * @return void
 	 */
-	function __construct($key, $rhythm, $downbeat = 1, $duration = 1, $dests = array(1), $note_pct = 1, $trip_pct = 0, $phrases = array(), $root_seq = null, $root_oct = 5, $num_phrases = 4, $phrase_note_pct = .8, $phrase_trip_pct = .1)
+	function __construct($key, $rhythm, $downbeat = 1, $duration = 1, $dests = array(1), $note_pct = 1, $trip_pct = 0, $phrases = array(), $root_seq = null, $root_oct = 5, $num_phrases = 4, $max_notes_per_phrase = 5, $phrase_note_pct = .8, $phrase_trip_pct = .1)
 	{
 		// Load all the basics first...
 		parent::__construct($rhythm, $downbeat, $duration, $dests, $note_pct, $trip_pct);
@@ -120,6 +122,12 @@ class TonalSequence extends AbstractSequence
 			else
 				Errors::fatal('inv_numphr');
 
+			// max notes per phrase
+			if (is_int($max_notes_per_phrase) && ($max_notes_per_phrase > 0))
+				$this->max_notes_per_phrase = $max_notes_per_phrase;
+			else
+				Errors::fatal('inv_mnpp');
+
 			// phrase_note_pct
 			if (is_numeric($phrase_note_pct) && ($phrase_note_pct >= 0) && ($phrase_note_pct <= 1))
 				$this->phrase_note_pct = $phrase_note_pct;
@@ -154,7 +162,11 @@ class TonalSequence extends AbstractSequence
 			// Get # of pulses from curr rhythm...
 			$pulses = $this->rhythm->getPulses();
 
-			// Create new random rhythm based same # of pulses... x3 in case of triplets...
+			// But don't let it get out of hand...
+			if ($pulses > $this->max_notes_per_phrase)
+				$pulses = $this->max_notes_per_phrase;
+
+			// Create new random rhythm based on # of pulses... x3 in case of triplets...
 			$new_rhythm = new Rhythm();
 			$new_rhythm->randomize($pulses);
 			$new_rhythm->setStartDur(0, $pulses * 3);

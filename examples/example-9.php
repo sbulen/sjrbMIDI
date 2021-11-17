@@ -41,13 +41,14 @@ $rhythm->randomize(16);
 // - Root seq - if null, auto-generated; array of roots of chords, if generated
 // - Root oct - of chords, if generated
 // - Num phrases - how many phrases to choose from, if generated
+// - Max notes per phrase - how many notes per phrase max, if generated
 // - Phrase note pct, 0 - 1.0, if generated
 // - Phrase triplet pct, 0 - 1.0, if generated
 $tonal_sequences = array(
-	new TonalSequence($key, $rhythm, 2, 4, array(1), 1, 0, null, null, 5, 1, 1, 0),
-	new TonalSequence($key, $rhythm, 2, 4, array(5), 1, 0, null, null, 5, 2, 1, 0),
-	new TonalSequence($key, $rhythm, 2, 4, array(9), 1, 0, null, null, 5, 2, 1, 0),
-	new TonalSequence($key, $rhythm, 2, 4, array(13), 1, 0, null, null, 5, 2, 1, 0),
+	new TonalSequence($key, $rhythm, 2, 4, array(1), 1, 0, null, null, 5, 1, 7, 1, 0),
+	new TonalSequence($key, $rhythm, 2, 4, array(5), 1, 0, null, null, 5, 2, 7, 1, 0),
+	new TonalSequence($key, $rhythm, 2, 4, array(9), 1, 0, null, null, 5, 2, 7, 1, 0),
+	new TonalSequence($key, $rhythm, 2, 4, array(13), 1, 0, null, null, 5, 2, 7, 1, 0),
 );
 $root_seq = $tonal_sequences[0]->getRootSeq();
 
@@ -87,7 +88,7 @@ $chord_sequences = array(
 );
 // Chord instruments are tonal instruments....
 $chord_instruments = array(
-	new TonalInstrument(3, 'Chords', array(-1 => array(1, 1, .7)), 4, 7),
+	new TonalInstrument(3, 'Chords', array(-1 => array(1, 2, .7)), 4, 7),
 );
 
 // Multiple sequences can be requested.  Each request has the following params:

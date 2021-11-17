@@ -42,6 +42,7 @@ $txt['inv_chord'] = 'Invalid chord passed for sequence.';
 $txt['inv_rootoct'] = 'Invalid root_oct value for sequence.';
 $txt['inv_rootseq'] = 'Invalid root sequence!';
 $txt['inv_mnpc'] = 'Invalid max_notes_per_chord value for chord sequence.';
+$txt['inv_mnpp'] = 'Invalid max_notes_per_phrase value for tonal sequence.';
 $txt['inv_invpct'] = 'Invalid inversion_pct value for chord sequence.';
 $txt['inv_chnotepct'] = 'Invalid chord_note_pct value for sequence.';
 $txt['inv_chtrippct'] = 'Invalid chord_trip_pct value for sequence.';
