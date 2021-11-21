@@ -16,6 +16,8 @@ PHP is such an easy language to work with, I wanted to be able to experiment wit
 7. A class exists for a musical Phrase, that allows you to operate on sets of notes a time.  Methods exist for various musical transformations, e.g., retrograde, transpose, inversion, etc.
 8. A class exists for Dynamics, that allows you to emphasize notes according to the rhythm and time signature being used.
 9. A class exists for a DrumGenerator, which will do what it says - generate a drum track.  Highly configurable, the DrumGenerator allows you to specify a set of sequences to be generated and a set of instrument properties.  The result can range from dreamy & spacey to manic metal jazz...
+10. A class exists for a ChordGenerator, which will generate chord sequences.
+11. A class exists for a TonalGenerator, which will generate melodic lines based on phrases.
 
 
 ## To use
