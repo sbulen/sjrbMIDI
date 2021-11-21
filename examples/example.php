@@ -10,7 +10,7 @@ spl_autoload_register(function ($class_name) {
 );
 
 $out_name = 'example.mid';
-Errors::setVerbosity(true);
+Errors::setVerbosity(false);
 
 $myFile = new MIDIFile();
 $myFile->setBPM(97);

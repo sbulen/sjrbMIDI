@@ -32,11 +32,14 @@ class ChordSequence extends AbstractSequence
 	protected $root_seq;			// Array of roots of chords/phrases
 	protected $root_oct;			// Where to start...  Used when generating chords/phrases
 	protected $max_notes_per_chord;	// How big are the chords, when auto-generated
+	protected $max_inc_dec;			// Max amount to inc or dec when building chord sequences
+	protected $min_dnote;			// Min dnote when building chord sequences
+	protected $max_dnote;			// Max dnote when building chord sequences
 	protected $inversion_pct;		// What percentage of chords are inverted, when auto-generated
-	protected $chord_note_pct;			// What percentage of chords are kept, when auto-generated
-	protected $chord_trip_pct;			// What percentage of chords are triplets, when auto-generated
+	protected $chord_note_pct;		// What percentage of chords are kept, when auto-generated
+	protected $chord_trip_pct;		// What percentage of chords are triplets, when auto-generated
 
-	protected $intervals;		// Derived from root_seq
+	protected $intervals;			// Derived from root_seq
 
 	/**
 	 * Constructor
@@ -54,12 +57,15 @@ class ChordSequence extends AbstractSequence
 	 * @param DNote[] $root_seq
 	 * @param int $root_oct
 	 * @param int $max_notes_per_chord
+	 * @param int $max_inc_dec
+	 * @param int $min_dnote
+	 * @param int $max_dnote
 	 * @param float $inversion_pct
 	 * @param float $chord_note_pct
 	 * @param float $chord_trip_pct
 	 * @return void
 	 */
-	function __construct($key, $rhythm, $downbeat = 1, $duration = 1, $dests = array(1), $note_pct = 1, $trip_pct = 0, $chords = array(), $root_seq = null, $root_oct = 5, $max_notes_per_chord = 4, $inversion_pct = 0, $chord_note_pct = .8, $chord_trip_pct = .1)
+	function __construct($key, $rhythm, $downbeat = 1, $duration = 1, $dests = array(1), $note_pct = 1, $trip_pct = 0, $chords = array(), $root_seq = null, $root_oct = 5, $max_notes_per_chord = 4, $max_inc_dec = 4, $min_dnote = 30, $max_dnote = 70, $inversion_pct = 0, $chord_note_pct = .8, $chord_trip_pct = .1)
 	{
 		// Load all the basics first...
 		parent::__construct($rhythm, $downbeat, $duration, $dests, $note_pct, $trip_pct);
@@ -93,17 +99,35 @@ class ChordSequence extends AbstractSequence
 			else
 				Errors::fatal('inv_rootoct');
 
+			// max inc dec
+			if (is_int($max_inc_dec) && ($max_inc_dec > 0) && ($max_inc_dec < 127))
+				$this->max_inc_dec = $max_inc_dec;
+			else
+				Errors::fatal('inv_maxid');
+
+			// min dnote
+			if (is_int($min_dnote) && ($min_dnote >= 0) && ($min_dnote <= 144))
+				$this->min_dnote = $min_dnote;
+			else
+				Errors::fatal('inv_minnote');
+
+			// max dnote
+			if (is_int($max_dnote) && ($max_dnote >= 0) && ($max_dnote <= 144) && ($max_dnote > $min_dnote))
+				$this->max_dnote = $max_dnote;
+			else
+				Errors::fatal('inv_maxnote');
+
 			// Load up array of roots...  Convert to DNotes...
 			if (empty($root_seq))
 			{
 				// start off...
-				$roots = $this->rhythm->getBeats() * $duration;
+				$roots = $this->rhythm->getBeats();
 				$note = $this->key->getD($this->root_oct, 0);
 				$this->root_seq = array();
 				for ($i = 0; $i < $roots; $i++)
 				{
 					$this->root_seq[] = $note;
-					$note = $this->key->dAdd($note, rand(-4, 4));
+					$note = $this->key->dAdd($note, $this->randIncDec($note));
 				}
 			}
 			// Might be an array of ints or an array of dnotes
@@ -178,6 +202,30 @@ class ChordSequence extends AbstractSequence
 		}
 
 		return $chords;
+	}
+
+	/*
+	 * Return a safe, random, amount to inc or dec by, honoring $max_inc_dec, $min_dnote & $max_dnote
+	 *
+	 * @param dnote
+	 * @return int
+	 */
+
+	public function randIncDec($curr_dnote)
+	{
+		$val = base_convert($curr_dnote['dn'], 7, 10);
+		$min = base_convert($this->min_dnote, 7, 10);
+		$max = base_convert($this->max_dnote, 7, 10);
+
+		$min_inc = -$this->max_inc_dec;
+		$max_inc = $this->max_inc_dec;
+
+		if (($val + $this->max_inc_dec) > $max)
+			$max_inc = 0;
+		if (($val - $this->max_inc_dec) < $min)
+			$min_inc = 0;
+
+		return rand($min_inc, $max_inc);
 	}
 
 	/*

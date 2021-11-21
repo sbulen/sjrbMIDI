@@ -42,13 +42,16 @@ $rhythm->randomize(16);
 // - Root oct - of chords, if generated
 // - Num phrases - how many phrases to choose from, if generated
 // - Max notes per phrase - how many notes per phrase max, if generated
+// - Max inc dec - max amount to inc or dec by
+// - Min dnote - range check, in dnote form (base 7)
+// - Max dnote - range check, in dnote form (base 7)
 // - Phrase note pct, 0 - 1.0, if generated
 // - Phrase triplet pct, 0 - 1.0, if generated
 $tonal_sequences = array(
-	new TonalSequence($key, $rhythm, 2, 4, array(1), 1, 0, null, null, 5, 1, 7, 1, 0),
-	new TonalSequence($key, $rhythm, 2, 4, array(5), 1, 0, null, null, 5, 2, 7, 1, 0),
-	new TonalSequence($key, $rhythm, 2, 4, array(9), 1, 0, null, null, 5, 2, 7, 1, 0),
-	new TonalSequence($key, $rhythm, 2, 4, array(13), 1, 0, null, null, 5, 2, 7, 1, 0),
+	new TonalSequence($key, $rhythm, 2, 4, array(1), 1, 0, null, null, 5, 2, 7, 3, 30, 100, 1, 0),
+	new TonalSequence($key, $rhythm, 2, 4, array(5), 1, 0, null, null, 5, 2, 7, 3, 30, 100, 1, 0),
+	new TonalSequence($key, $rhythm, 2, 4, array(9), 1, 0, null, null, 5, 2, 7, 3, 30, 100, 1, 0),
+	new TonalSequence($key, $rhythm, 2, 4, array(13), 1, 0, null, null, 5, 2, 7, 3, 30, 100, 1, 0),
 );
 $root_seq = $tonal_sequences[0]->getRootSeq();
 
@@ -77,14 +80,17 @@ $tonal_instruments = array(
 // - Root seq - if null, auto-generated; array of roots of chords, if generated
 // - Root oct - of chords, if generated
 // - Max_notes_per_chord
+// - Max inc dec - max amount to inc or dec by
+// - Min dnote - range check, in dnote form (base 7)
+// - Max dnote - range check, in dnote form (base 7)
 // - Inversion pct, 0 - 1.0, if generated
 // - Chord note pct, 0 - 1.0, if generated
 // - Chord triplet pct, 0 - 1.0, if generated
 $chord_sequences = array(
-	new ChordSequence($key, $rhythm, 2, 4, array(1), .8, 0, null, $root_seq, 5, 7, 1, 1, .1),
-	new ChordSequence($key, $rhythm, 2, 4, array(5), .8, 0, null, $root_seq, 5, 7, 1, 1, .1),
-	new ChordSequence($key, $rhythm, 2, 4, array(9), .8, 0, null, $root_seq, 5, 7, 1, 1, .1),
-	new ChordSequence($key, $rhythm, 2, 4, array(13), .8, 0, null, $root_seq, 5, 7, 1, 1, .1),
+	new ChordSequence($key, $rhythm, 2, 4, array(1), .8, 0, null, $root_seq, 5, 4, 3, 30, 100, .3, 1, .1),
+	new ChordSequence($key, $rhythm, 2, 4, array(5), .8, 0, null, $root_seq, 5, 4, 3, 30, 100, .3, 1, .1),
+	new ChordSequence($key, $rhythm, 2, 4, array(9), .8, 0, null, $root_seq, 5, 4, 3, 30, 100, .3, 1, .1),
+	new ChordSequence($key, $rhythm, 2, 4, array(13), .8, 0, null, $root_seq, 5, 4, 3, 30, 100, .3, 1, .1),
 );
 // Chord instruments are tonal instruments....
 $chord_instruments = array(

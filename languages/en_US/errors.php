@@ -75,5 +75,8 @@ $txt['inv_assoc'] = 'Invalid midi track association for instrument.';
 $txt['inv_rhylens'] = 'Invalid lengths passed for rhythm.';
 $txt['inv_pulses'] = 'Invalid pulses sent to rhythm randomize.';
 $txt['inv_bool'] = 'Only true & false allowed.';
+$txt['inv_maxid'] = 'Invalid max inc dec amount.';
+$txt['inv_minnote'] = 'Invalid value for min note.';
+$txt['inv_maxnote'] = 'Invalid value for max note.';
 
 ?>

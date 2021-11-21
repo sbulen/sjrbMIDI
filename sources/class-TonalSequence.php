@@ -33,6 +33,9 @@ class TonalSequence extends AbstractSequence
 	protected $root_oct;				// Where to start...  Used when generating chords/phrases
 	protected $num_phrases;				// Number of phrases to auto-generate
 	protected $max_notes_per_phrase;	// How big are the phrases, when auto-generated
+	protected $max_inc_dec;				// Max amount to inc or dec when building phrases
+	protected $min_dnote;				// Min dnote when building phrases
+	protected $max_dnote;				// Max dnote when building phrases
 	protected $phrase_note_pct;			// What percentage of notes are kept, when phrases are auto-generated
 	protected $phrase_trip_pct;			// What percentage of notes are triplets, when phrases are auto-generated
 
@@ -55,11 +58,14 @@ class TonalSequence extends AbstractSequence
 	 * @param int $root_oct
 	 * @param int $num_phrases
 	 * @param int $max_notes_per_phrase
+	 * @param int $max_inc_dec
+	 * @param int $min_dnote
+	 * @param int $max_dnote
 	 * @param float $phrase_note_pct
 	 * @param float $phrase_trip_pct
 	 * @return void
 	 */
-	function __construct($key, $rhythm, $downbeat = 1, $duration = 1, $dests = array(1), $note_pct = 1, $trip_pct = 0, $phrases = array(), $root_seq = null, $root_oct = 5, $num_phrases = 4, $max_notes_per_phrase = 5, $phrase_note_pct = .8, $phrase_trip_pct = .1)
+	function __construct($key, $rhythm, $downbeat = 1, $duration = 1, $dests = array(1), $note_pct = 1, $trip_pct = 0, $phrases = array(), $root_seq = null, $root_oct = 5, $num_phrases = 4, $max_notes_per_phrase = 5, $max_inc_dec = 4, $min_dnote = 30, $max_dnote = 70, $phrase_note_pct = .8, $phrase_trip_pct = .1)
 	{
 		// Load all the basics first...
 		parent::__construct($rhythm, $downbeat, $duration, $dests, $note_pct, $trip_pct);
@@ -92,17 +98,35 @@ class TonalSequence extends AbstractSequence
 			else
 				Errors::fatal('inv_rootoct');
 
+			// max inc dec
+			if (is_int($max_inc_dec) && ($max_inc_dec > 0) && ($max_inc_dec < 127))
+				$this->max_inc_dec = $max_inc_dec;
+			else
+				Errors::fatal('inv_maxid');
+
+			// min dnote
+			if (is_int($min_dnote) && ($min_dnote >= 0) && ($min_dnote <= 144))
+				$this->min_dnote = $min_dnote;
+			else
+				Errors::fatal('inv_minnote');
+
+			// max dnote
+			if (is_int($max_dnote) && ($max_dnote >= 0) && ($max_dnote <= 144) && ($max_dnote > $min_dnote))
+				$this->max_dnote = $max_dnote;
+			else
+				Errors::fatal('inv_maxnote');
+
 			// Load up array of roots...  Convert to DNotes...
 			if (empty($root_seq))
 			{
-				// start off...  
-				$roots = $this->rhythm->getBeats() * $duration;
+				// start off...
+				$roots = $this->rhythm->getBeats();
 				$note = $this->key->getD($this->root_oct, 0);
 				$this->root_seq = array();
 				for ($i = 0; $i < $roots; $i++)
 				{
 					$this->root_seq[] = $note;
-					$note = $this->key->dAdd($note, rand(-4, 4));
+					$note = $this->key->dAdd($note, $this->randIncDec($note, false));
 				}
 			}
 			// Might be an array of ints or an array of dnotes
@@ -187,7 +211,7 @@ class TonalSequence extends AbstractSequence
 						if (MathFuncs::randomFloat() <= $this->phrase_note_pct)
 							$note_arr[] = new Note($chan, $new_start, $dnote, $vel, $new_dur);
 
-						$dnote = $this->key->dAdd($dnote, rand(-2, 2));
+						$dnote = $this->key->dAdd($dnote, $this->randIncDec($dnote, true));
 						$new_start = $new_start + $new_dur;
 					}
 					continue;
@@ -197,7 +221,7 @@ class TonalSequence extends AbstractSequence
 				if (MathFuncs::randomFloat() <= $this->phrase_note_pct)
 					$note_arr[] = new Note($chan, $start, $dnote, $vel, $dur);
 
-				$dnote = $this->key->dAdd($dnote, rand(-2, 2));
+				$dnote = $this->key->dAdd($dnote, $this->randIncDec($dnote, true));
 			}
 
 			// Start or end on the root, 50/50...
@@ -208,6 +232,48 @@ class TonalSequence extends AbstractSequence
 			$phrase_objs[] = $phrase;
 		}
 		return $phrase_objs;
+	}
+
+	/*
+	 * Return a safe, random, amount to inc or dec by, honoring $max_inc_dec, $min_dnote & $max_dnote
+	 * Phrases need their own version...
+	 *
+	 * @param dnote
+	 * @return int
+	 */
+
+	public function randIncDec($curr_dnote, $phrase_gen = false)
+	{
+		// Adjust min/max based on (dnote - root_oct) during phrase generation.
+		// Otherwise phrases can get squished, e.g., when passed a root_seq.
+		// To fix, treat min/max as 'floating' during phrase generation.
+		// I.e., at this point, honor changes in root_seq, yet still keep narrow ranges if defined...
+		if ($phrase_gen)
+		{
+			$gen_root = $this->key->getD($this->root_oct, 0);
+			$diff = $this->key->dSub($curr_dnote, $gen_root);
+			$temp_min = $this->key->dAdd($this->min_dnote, $diff);
+			$temp_max = $this->key->dAdd($this->max_dnote, $diff);
+		}
+		else
+		{
+			$temp_min = Key::cleanseDNote($this->min_dnote);
+			$temp_max = Key::cleanseDNote($this->max_dnote);
+		}
+
+		$val = base_convert($curr_dnote['dn'], 7, 10);
+		$min = base_convert($temp_min['dn'], 7, 10);
+		$max = base_convert($temp_max['dn'], 7, 10);
+
+		$min_inc = -$this->max_inc_dec;
+		$max_inc = $this->max_inc_dec;
+
+		if (($val + $this->max_inc_dec) > $max)
+			$max_inc = 0;
+		if (($val - $this->max_inc_dec) < $min)
+			$min_inc = 0;
+
+		return rand($min_inc, $max_inc);
 	}
 
 	/*
