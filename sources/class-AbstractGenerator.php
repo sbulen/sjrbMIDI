@@ -63,7 +63,7 @@ abstract class AbstractGenerator
 			Errors::fatal('inv_seqs');
 
 		$this->instruments = array();
-		if ($instruments !== null && is_array($instruments) && ($instruments == array_filter($instruments, function($a) {return is_a($a, 'AbstractInstrument');})))
+		if ($instruments !== null && is_array($instruments) && ($instruments == array_filter($instruments, function($a) {return is_a($a, 'Instrument');})))
 			foreach($instruments AS $inst)
 			{
 				// Load into array...  Channel must be unique...
@@ -230,7 +230,7 @@ abstract class AbstractGenerator
 	public function setInstruments($instruments)
 	{
 		$this->instruments = array();
-		if ($instruments !== null && is_array($instruments) && ($instruments == array_filter($instruments, function($a) {return is_a($a, 'AbstractInstrument');})))
+		if ($instruments !== null && is_array($instruments) && ($instruments == array_filter($instruments, function($a) {return is_a($a, 'Instrument');})))
 			foreach($instruments AS $inst)
 			{
 				// Load into array...  Channel must be unique...

@@ -59,7 +59,7 @@ $sequences = array(
 //	 - Max hits per rhythmic beat, always an int >= -1; -1 means "use the # of pulses"
 //	 - Velocity factor, 0 - 1.0; scales back returned velocity this much, allowing you to blend drums better
 $instruments = array(
-	new DrumInstrument($chan, 'Drums', array(
+	new Instrument($chan, 'Drums', array(
 		MIDIEvent::DRUM_AC_BASS => array(0, 1, 1),
 		MIDIEvent::DRUM_AC_SNARE => array(0, 1, 1),
 		MIDIEvent::DRUM_LOW_MID_TOM => array(0, -1, .8),

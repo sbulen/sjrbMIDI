@@ -62,10 +62,8 @@ $root_seq = $tonal_sequences[0]->getRootSeq();
 //	 - Min hits per rhythmic beat, always an int >= 0 
 //	 - Max hits per rhythmic beat, always an int >= -1; -1 means "use the # of pulses"
 //	 - Velocity factor, 0 - 1.0; scales back returned velocity this much, allowing you to blend drums better
-// - Max notes per hand - You only have so many fingers, most piano compositions restrict to 4
-// - Spread per hand - Your fingers are only so big, normally restricted to an octave or so
 $tonal_instruments = array(
-	new TonalInstrument(2, 'Lead', array(-1 => array(0, 4, 1)), 4, 7),
+	new Instrument(2, 'Lead', array(-1 => array(0, 4, 1))),
 );
 
 // Multiple chords sequences can be requested.  Each request has the following params:
@@ -92,9 +90,9 @@ $chord_sequences = array(
 	new ChordSequence($key, $rhythm, 2, 4, array(9), .8, 0, null, $root_seq, 5, 4, 3, 30, 100, .3, 1, .1),
 	new ChordSequence($key, $rhythm, 2, 4, array(13), .8, 0, null, $root_seq, 5, 4, 3, 30, 100, .3, 1, .1),
 );
-// Chord instruments are tonal instruments....
+// Chord instrument...
 $chord_instruments = array(
-	new TonalInstrument(3, 'Chords', array(-1 => array(1, 2, .7)), 4, 7),
+	new Instrument(3, 'Chords', array(-1 => array(1, 2, .7)), 4, 7),
 );
 
 // Multiple sequences can be requested.  Each request has the following params:
@@ -117,7 +115,7 @@ $drum_sequences = array(
 //	 - Max hits per rhythmic beat, always an int >= -1; -1 means "use the # of pulses"
 //	 - Velocity factor, 0 - 1.0; scales back returned velocity this much, allowing you to blend drums better
 $drum_instruments = array(
-	new DrumInstrument(9, 'Drums', array(
+	new Instrument(9, 'Drums', array(
 		MIDIEvent::DRUM_AC_BASS => array(1, 1, 1),
 		MIDIEvent::DRUM_AC_SNARE => array(1, 1, .8),
 		MIDIEvent::DRUM_LOW_MID_TOM => array(0, 2, .6),

@@ -1,7 +1,11 @@
 <?php
 /**
- *	Abstract class for an instrument - a set of parameters defining instrument behavior.
+ *	Class for an instrument - a set of parameters defining instrument behavior.
  *	A simple model is honored here - one instrument per channel.
+ *	This class focuses on whether the instrument/tone/channel relationship...
+ *	Is the instrument defined by a fixed number of tones (like a drum kit)?  If so, multiple
+ *	sub-instruments are defined, one per drum in the set.  
+ *	All other instruments will only use a single sub-instrument.
  *
  *	Allows for sharing & consistency of instrument processing across drums & songs.
  *
@@ -24,7 +28,7 @@
  *
  */
 
-abstract class AbstractInstrument
+class Instrument
 {
 	/**
 	 * Properties
@@ -45,7 +49,7 @@ abstract class AbstractInstrument
 	 * @param array() $sub_insts
 	 * @return void
 	 */
-	protected function __construct($channel, $track_name = 'Track', $sub_insts = array(-1 => array(1, 1, 1)))
+	function __construct($channel, $track_name = 'Track', $sub_insts = array(-1 => array(1, 1, 1)))
 	{
 		Errors::info('load_insts');
 
