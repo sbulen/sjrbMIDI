@@ -242,11 +242,6 @@ foreach(array(16) AS $meas)
 	}
 }
 
-// Each track must have a TrackEnd
-$chord_track->addTrackEnd($myFile->mbt2at(17,1,0));
-$bass_track->addTrackEnd($myFile->mbt2at(17,1,0));
-$solo_track->addTrackEnd($myFile->mbt2at(17,1,0));
-
 /**
  * DRUMS
  * Main rhythm - same as chords above - throughout
@@ -300,9 +295,6 @@ for ($meas = 1; $meas <= 16; $meas++)
 		}
 	}
 }
-
-// Last step for each track...
-$drum_track->addTrackEnd($myFile->mbt2at(17,1,0));
 
 // Write & dump the file if you wanna
 $myFile->writeMIDIFile($out_name);

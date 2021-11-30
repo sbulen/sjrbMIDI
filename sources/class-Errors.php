@@ -48,7 +48,7 @@ class Errors
 	 *
 	 * @void
 	 */
-	public static function warning($key)
+	public static function warning($key, $more = '')
 	{
 		// Confirm it's loaded...
 		self::loadLanguage();
@@ -75,7 +75,7 @@ class Errors
 			$func = '';
 		}
 
-		echo self::$txt['warning'] . ': ' . $key . ' ' . $class . ' ' . $func . '<br>';
+		echo self::$txt['warning'] . ': ' . $key . ' ' . $class . ' ' . $func . ' ' . $more . '<br>';
 
 		if (self::$verbose)
 			echo '<pre>' . print_r($trace, true) . '</pre><br>';
@@ -86,7 +86,7 @@ class Errors
 	 *
 	 * @void
 	 */
-	public static function fatal($key)
+	public static function fatal($key, $more = '')
 	{
 		// Confirm it's loaded...
 		self::loadLanguage();
@@ -95,7 +95,7 @@ class Errors
 
 		$trace = debug_backtrace();
 
-		die(self::$txt['error'] . ': ' . $key . '<br><pre>' . print_r($trace, true) . '</pre><br>');
+		die(self::$txt['error'] . ': ' . $key . ' ' . $more . '<br><pre>' . print_r($trace, true) . '</pre><br>');
 	}
 
 	/**

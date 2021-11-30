@@ -41,17 +41,16 @@ class ChordGenerator extends AbstractGenerator
 	 * Do Instrument - Gen the notes per instructions for one particular instrument, one particular sequence
 	 *
 	 * @param int start
-	 * @param int dur
-	 * @param int chan
+	 * @param array sub euclid parameters
+	 * @param Instrument inst
 	 * @param int sub inst tone
 	 * @param array sub inst parameters
 	 * @param array primary rhythm parameters
-	 * @param array sub euclid parameters
 	 * @param Sequence
 	 * @param Note[]
 	 * @return void
 	 */
-	function doInstrument($start, $dur, $chan, $tone, $sub_inst_vars, $rhythm_vars, $sub_euclid_vars, $seq, &$new_notes)
+	function doInstrument($start, $subinfo, $inst, $tone, $sub_inst_vars, $rhythm_vars, $seq, &$new_notes)
 	{
 		// Chose one of the chords & transform
 		// Transpose is based on beat of primary rhythm...
@@ -67,13 +66,13 @@ class ChordGenerator extends AbstractGenerator
 		$dnote = $seq->getKey()->dAdd($dnote, $seq->getIntervals()[$beat % count($seq->getIntervals())]);
 
 		$note_arr = array();
-		$note_arr[] = new Note($chan, $start, $dnote, 100, $dur);
+		$note_arr[] = new Note($inst->getChan(), $start, $dnote, 100, $subinfo['dur']);
 		foreach ($ints AS $int)
-			$note_arr[] = new Note($chan, $start, $seq->getKey()->dAdd($dnote, $int), 100, $dur);
+			$note_arr[] = new Note($inst->getChan(), $start, $seq->getKey()->dAdd($dnote, $int), 100, $subinfo['dur']);
 
 
 		// split chord triplets here....
-		$trip_dur = (int) ($dur / 3);
+		$trip_dur = (int) ($subinfo['dur'] / 3);
 		if (MathFuncs::randomFloat() <= $seq->getChordTripPct())
 			foreach ($note_arr AS $note)
 			{
@@ -82,12 +81,12 @@ class ChordGenerator extends AbstractGenerator
 				{
 					$trip_note = clone $note;
 					$trip_note->setAt($start + ($trip_dur * $i));
-					$this->genNote($trip_note, $sub_inst_vars['vel_factor'], $seq->getNotePct(), $seq->getTripPct(), $new_notes);
+					$this->genNote($trip_note, $sub_inst_vars['vel_factor'], $seq->getNotePct(), $seq->getTripPct(), $inst->getTrackName(), $new_notes);
 				}
 			}
 		else
 			foreach ($note_arr AS $note)
-				$this->genNote($note, $sub_inst_vars['vel_factor'], $seq->getNotePct(), $seq->getTripPct(), $new_notes);
+				$this->genNote($note, $sub_inst_vars['vel_factor'], $seq->getNotePct(), $seq->getTripPct(), $inst->getTrackName(), $new_notes);
 	}
 }
 ?>

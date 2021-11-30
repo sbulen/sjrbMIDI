@@ -92,7 +92,7 @@ $chord_sequences = array(
 );
 // Chord instrument...
 $chord_instruments = array(
-	new Instrument(3, 'Chords', array(-1 => array(1, 2, .7)), 4, 7),
+	new Instrument(3, 'Chords', array(-1 => array(1, 2, .7))),
 );
 
 // Multiple sequences can be requested.  Each request has the following params:

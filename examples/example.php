@@ -46,7 +46,7 @@ for ($meas = 1; $meas <= 16; $meas++)
 	{
 		// Brownian walk to that random rhythm...
 		$new_track->addNote($start, $chan, $note, $vel, $dur);
-		$note = MIDIEvent::rangeCheck($note + rand(-12, 12));
+		$note = MIDIEvent::rangeCheck($note + rand(-4, 4));
 
 		// Bend down at the end of each note...
 		$new_track->addEvents($pw_series->genEvents($start, $dur));
@@ -56,9 +56,6 @@ for ($meas = 1; $meas <= 16; $meas++)
 		$new_track->addEvents($cc_series->genEvents($start, $dur));
 	}
 }
-
-// Each track must have a TrackEnd
-$new_track->addTrackEnd($myFile->mbt2at(17,1,0));
 
 // Write & dump the file if you wanna
 $myFile->writeMIDIFile($out_name);

@@ -73,8 +73,6 @@ $phrase->setStartDur($myFile->mbt2at($i), $eighth * 24);
 $phrase->rotate(2);
 $track1->addEvents($phrase->getNotes());
 
-$track1->addTrackEnd();
-
 // Write & dump the file if you wanna
 $myFile->writeMIDIFile($out_name);
 //$myFile->displayMIDIFile();

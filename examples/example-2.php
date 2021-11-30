@@ -59,9 +59,6 @@ for ($meas = 1; $meas <= 16; $meas++)
 		$new_track->addNote($start, $chan, MIDIEvent::DRUM_RIDE, $vel, $dur);
 }
 
-// Last step for each track...
-$new_track->addTrackEnd($myFile->mbt2at(17,1,0));
-
 // Write & dump the file if you wanna
 $myFile->writeMIDIFile($out_name);
 //$myFile->displayMIDIFile();

@@ -40,41 +40,40 @@ class DrumGenerator extends AbstractGenerator
 	 * Do Instrument - Gen the notes per instructions for one particular instrument, one particular sequence
 	 *
 	 * @param int start
-	 * @param int dur
-	 * @param int chan
+	 * @param array sub euclid parameters
+	 * @param Instrument inst
 	 * @param int sub inst tone
 	 * @param array sub inst parameters
 	 * @param array primary rhythm parameters
-	 * @param array sub euclid parameters
 	 * @param Sequence
 	 * @param Note[]
 	 * @return void
 	 */
-	function doInstrument($start, $dur, $chan, $tone, $sub_inst_vars, $rhythm_vars, $sub_euclid_vars, $seq, &$new_notes)
+	function doInstrument($start, $subinfo, $inst, $tone, $sub_inst_vars, $rhythm_vars, $seq, &$new_notes)
 	{
 		// Drums use the sub_inst tones.
 		// But the tones are in mnotes...  We have to convert them to dnotes here...
 		$dnote = $this->key->m2d($tone);
 		
 		// Dummy out vel, it's set later
-		$note = new Note($chan, $start, $dnote, 0, $dur);
+		$note = new Note($inst->getChan(), $start, $dnote, 0, $subinfo['dur']);
 
 		// Use the common func here...
-		$this->genNote($note, $sub_inst_vars['vel_factor'], $seq->getNotePct(), $seq->getTripPct(), $new_notes);
+		$this->genNote($note, $sub_inst_vars['vel_factor'], $seq->getNotePct(), $seq->getTripPct(), $inst->getTrackName(), $new_notes);
 	}
 
 	// Add one note to a track...  Special version for drums, so we can close an open hi-hat...
-	protected function addNoteToTrack($note)
+	protected function addNoteToTrack($note, $track_name)
 	{
 		$mnote = $this->key->d2m($note->getDnote());
-		$this->instruments[$note->getChan()]->getTrack()->addEvent(new NoteOn($note->getAt(), $note->getChan(), $mnote, $note->getVel()));
-		$this->instruments[$note->getChan()]->getTrack()->addEvent(new NoteOff($note->getAt() + $note->getDur(), $note->getChan(), $mnote, 0x40));
+		$this->instruments[$track_name]->getTrack()->addEvent(new NoteOn($note->getAt(), $note->getChan(), $mnote, $note->getVel()));
+		$this->instruments[$track_name]->getTrack()->addEvent(new NoteOff($note->getAt() + $note->getDur(), $note->getChan(), $mnote, 0x40));
 
 		// If a high hat, attempt a proper open-close.
 		// Of course this assumes they're using standard notes, & not everyone does, but worth a try...
 		// (Subtract 1 tick so it's properly closed at the end of loops...)
 		if ($mnote === MIDIEvent::DRUM_OPEN_HH)
-			$this->instruments[$note->getChan()]->getTrack()->addEvent(new NoteOff($note->getAt() + $note->getDur() - 1, $note->getChan(), MIDIEvent::DRUM_PEDAL_HH, $note->getVel()));
+			$this->instruments[$track_name]->getTrack()->addEvent(new NoteOff($note->getAt() + $note->getDur() - 1, $note->getChan(), MIDIEvent::DRUM_PEDAL_HH, $note->getVel()));
 	}
 }
 ?>

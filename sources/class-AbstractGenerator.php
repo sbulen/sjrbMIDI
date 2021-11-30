@@ -66,17 +66,34 @@ abstract class AbstractGenerator
 		if ($instruments !== null && is_array($instruments) && ($instruments == array_filter($instruments, function($a) {return is_a($a, 'Instrument');})))
 			foreach($instruments AS $inst)
 			{
-				// Load into array...  Channel must be unique...
-				if (key_exists($inst->getChan(), $this->instruments))
-					Errors::fatal('unique_chans');
-				$this->instruments[$inst->getChan()] = $inst;
+				// Load into array...  Track Name must be unique...
+				if (key_exists($inst->getTrackName(), $this->instruments))
+					Errors::fatal('unique_trknm');
+				$this->instruments[$inst->getTrackName()] = $inst;
 			}
 		else
 			Errors::fatal('inv_insts');
 
 		// Add a MIDItrk object for each instrument...
-		foreach ($this->instruments AS $chan => $inst)
-			$this->instruments[$chan]->setTrack($this->midi_file->addTrack($inst->getTrackName()));
+		// Either add track to the midi file or use an existing one with the same name if found.
+		foreach ($this->instruments AS $track_name => $inst)
+		{
+			$found = false;
+			foreach($midi_file->getTracks() AS $track)
+			{
+				$event = $track->getEvent(MIDIEvent::META_TRACK_NAME);
+				if (($event !== false) && ($event->getName() === $track_name))
+				{
+					$found = true;
+					break;
+				}
+			}
+
+			if ($found)
+				$this->instruments[$track_name]->setTrack($track);
+			else
+				$this->instruments[$track_name]->setTrack($this->midi_file->addTrack($track_name));
+		}
 	}
 
 	/**
@@ -100,18 +117,24 @@ abstract class AbstractGenerator
 		// Clone generated sequence to requested locations
 		foreach ($seq->getDestinations() AS $meas)
 		{
-			foreach ($new_notes AS $note)
+			foreach ($new_notes AS $track_name => $note_arr)
 			{
-				$note = clone $note;
-				$note->setAt($note->getAt() + (($meas - 1) * $this->midi_file->b2dur($this->midi_file->getTimeSignature()['top'])));
-				$notes[] = $note;
+				foreach ($note_arr AS $note)
+				{
+					$note = clone $note;
+					$note->setAt($note->getAt() + (($meas - 1) * $this->midi_file->b2dur($this->midi_file->getTimeSignature()['top'])));
+					$notes[$track_name][] = $note;
+				}
 			}
 		}
 
 		// OK, got all our notes for the sequence...  Add them to the tracks...
-		foreach ($notes AS $note)
+		foreach ($notes AS $track_name => $note_arr)
 		{
-			$this->addNoteToTrack($note);
+			foreach ($note_arr AS $note)
+			{
+				$this->addNoteToTrack($note, $track_name);
+			}
 		}
 	}
 
@@ -122,7 +145,7 @@ abstract class AbstractGenerator
 		foreach ($seq->getRhythm()->walkAll AS $start => $info)
 		{
 			// Now do subrhythms for each inst/sub_inst
-			foreach ($this->instruments AS $chan => $inst)
+			foreach ($this->instruments AS $track_name => $inst)
 			{
 				foreach ($inst->getSubInsts() AS $tone => $sub_inst_vars)
 				{
@@ -144,14 +167,14 @@ abstract class AbstractGenerator
 					$subeuclid = new Euclid($beats, $info['pulses'] - $beats);
 					$subeuclid->setStartDur($start, $info['dur']);
 					foreach ($subeuclid->walkAll AS $substart => $subinfo)
-						$this->doInstrument($substart, $subinfo['dur'], $chan, $tone, $sub_inst_vars, $info, $subinfo, $seq, $new_notes);
+						$this->doInstrument($substart, $subinfo, $inst, $tone, $sub_inst_vars, $info, $seq, $new_notes);
 				}
 			}
 		}
 	}
 
-	// Generate drum notes (consider a triplet a note...)
-	protected function genNote($note, $vel_factor, $npct, $tpct, &$new_notes)
+	// Generate notes (consider a triplet a note...)
+	protected function genNote($note, $vel_factor, $npct, $tpct, $track_name, &$new_notes)
 	{
 		// Apply a triplet?
 		if (MathFuncs::randomFloat() <= $tpct)
@@ -166,7 +189,7 @@ abstract class AbstractGenerator
 					$note = clone $note;
 					$note->setAt($start + ($i * $new_dur));
 					$note->setVel($this->dynamics->getVel($note->getAt()) * $vel_factor);
-					$new_notes[] = $note;
+					$new_notes[$track_name][] = $note;
 				}
 			}
 			return;
@@ -179,32 +202,31 @@ abstract class AbstractGenerator
 		// Apply dynamics
 		$note->setVel($this->dynamics->getVel($note->getAt()) * $vel_factor);
 
-		$new_notes[] = $note;
+		$new_notes[$track_name][] = $note;
 	}
 
 	// Add one note to a track...  Last step...  Split out to allow it to be overridden if needed...
-	protected function addNoteToTrack($note)
+	protected function addNoteToTrack($note, $track_name)
 	{
 		// Convert notes into MIDI events & add to the appropriate track
 		$mnote = $this->key->d2m($note->getDnote());
-		$this->instruments[$note->getChan()]->getTrack()->addNote($note->getAt(), $note->getChan(), $mnote, $note->getVel(), $note->getDur());
+		$this->instruments[$track_name]->getTrack()->addNote($note->getAt(), $note->getChan(), $mnote, $note->getVel(), $note->getDur());
 	}
 
 	/**
 	 * Do Instrument - Gen the notes per instructions for one particular instrument, one particular sequence
 	 *
 	 * @param int start
-	 * @param int dur
-	 * @param int chan
+	 * @param array sub euclid parameters
+	 * @param Instrument inst
 	 * @param int sub inst tone
 	 * @param array sub inst parameters
 	 * @param array primary rhythm parameters
-	 * @param array sub euclid parameters
 	 * @param Sequence
 	 * @param Note[]
 	 * @return void
 	 */
-	abstract function doInstrument($start, $dur, $chan, $tone, $sub_inst_vars, $rhythm_vars, $sub_euclid_vars, $seq, &$new_notes);
+	abstract function doInstrument($start, $subinfo, $inst, $tone, $sub_inst_vars, $rhythm_vars, $seq, &$new_notes);
 
 	/**
 	 * Set the sequences
@@ -234,9 +256,9 @@ abstract class AbstractGenerator
 			foreach($instruments AS $inst)
 			{
 				// Load into array...  Channel must be unique...
-				if (key_exists($inst->getChan(), $this->instruments))
-					Errors::fatal('unique_chans');
-				$this->instruments[$inst->getChan()] = $inst;
+				if (key_exists($inst->getTrackName(), $this->instruments))
+					Errors::fatal('unique_trknm');
+				$this->instruments[$inst->getTrackName()] = $inst;
 			}
 		else
 			Errors::fatal('inv_insts');
@@ -257,10 +279,6 @@ abstract class AbstractGenerator
 		// Process all of the sequences, building a single combined $notes array.
 		foreach($this->sequences AS $seq)
 			$this->doSequence($seq);
-
-		// Finally, add TrackEnd to each track...
-		foreach ($this->instruments AS $chan => $inst)
-			$inst->getTrack()->addTrackEnd();
 
 		Errors::info('ended');
 	}

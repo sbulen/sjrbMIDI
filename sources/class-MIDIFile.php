@@ -275,24 +275,30 @@ class MIDItrk extends MIDIChunk
 	 * If abs time specified, use it.
 	 * If not, find last abs time in track & put it there.
 	 *
+	 * Since it *must* be the last event, and folks may be putzing with events,
+	 * delete any TrackEnd events found & add our own, to guarantee it's the last...
+	 *
 	 * @param int $abs_time absolute time
 	 * @return void
 	 */
-	public function addTrackEnd($abs_time = null)
+	public function addTrackEnd($abs_time = 0)
 	{
-		if ($abs_time === null)
-		{
-			//Find greatest abs_time
-			$max_at = 0;
-			foreach($this->events AS $event)
-				if ($event->getAt() > $max_at)
-					$max_at = $event->getAt();
-			$this->events[] = new TrackEnd($max_at);
-		}
+		// Sanity check...
+		if (is_numeric($abs_time))
+			$abs_time = (int) $abs_time;
 		else
+			$abs_time = 0;
+			
+		//Find greatest abs_time
+		$max_at = 0;
+		foreach($this->events AS $ix => $event)
 		{
-			$this->events[] = new TrackEnd($abs_time);
+			if ($event->getAt() > $max_at)
+				$max_at = $event->getAt();
+			if (is_a($event, 'TrackEnd'))
+				unset($this->events[$ix]);
 		}
+		$this->events[] = new TrackEnd(max($max_at, $abs_time));
 
 		return;
 	}
@@ -377,7 +383,6 @@ class MIDIFile
 			$this->tracks[0]->addEvent(new TimeSignature());
 			$this->tracks[0]->addEvent(new KeySignature());
 			$this->tracks[0]->addEvent(new Tempo());
-			$this->tracks[0]->addEvent(new TrackEnd());
 
 			// Load up raw_file_contents in case you want to display it...
 			$this->raw_file_contents = $this->pack();
@@ -393,7 +398,7 @@ class MIDIFile
 	protected function pack()
 	{
 		$this->file_raw_contents = $this->header->pack();
-		foreach ($this->tracks AS &$track)
+		foreach ($this->tracks AS $track)
 			$this->file_raw_contents .= $track->pack();
 		return;
 	}
@@ -806,6 +811,10 @@ class MIDIFile
 	{
 		Errors::info('write_file', $file);
 
+		// Ensure all tracks have a TrackEnd event
+		foreach ($this->tracks AS $track)
+			$track->addTrackEnd();
+
 		// Set this object's name to match file...
 		$this->file_name = $file;
 		// Recalc raw_file_contents...
@@ -825,18 +834,40 @@ class MIDIFile
 	}
 
 	/**
+	 * Return all the tracks.
+	 *
+	 * @return MIDITrk[]
+	 */
+	public function getTracks()
+	{
+		return $this->tracks;
+	}
+
+	/**
 	 * Add an empty track to the file.
 	 * If no track name provided, make one up.
 	 * Add the TrackName event.
 	 * Return the track #.
+	 *
+	 * Note that sjrbMIDI wants tracks to be unique, so we can uniquely identify them and add to them.
+	 * The track name is used as the key for this purpose, so ensure the track name is unique.
 	 *
 	 * @param string $name
 	 * @return int
 	 */
 	public function addTrack($name = '')
 	{
+		// Generate a name if not provided...
 		if (empty($name))
 			$name = 'Track ' . $this->header->getNtrks();
+
+		// Ensure uniqueness...
+		foreach($this->tracks AS $track)
+		{
+			$event = $track->getEvent(MIDIEvent::META_TRACK_NAME);
+			if (($event !== false) && ($event->getName() === $name))
+				Errors::fatal('unique_trknm', $name);
+		}
 
 		$tracknum = $this->header->getNtrks();
 		$this->tracks[$tracknum] = new MIDITrk();

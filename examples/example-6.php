@@ -104,13 +104,6 @@ foreach(array(0, 1, 2, 3) AS $chunk)
 	}	// end measure
 }	// end chunk
 
-// Each track must have a TrackEnd
-$pad_track->addTrackEnd($myFile->mbt2at(17,1,0));
-$bass_track->addTrackEnd($myFile->mbt2at(17,1,0));
-$harm1_track->addTrackEnd($myFile->mbt2at(17,1,0));
-$harm2_track->addTrackEnd($myFile->mbt2at(17,1,0));
-$harm3_track->addTrackEnd($myFile->mbt2at(17,1,0));
-
 /**
  * DRUMS
  * Main rhythm - same as chords above - throughout
@@ -163,9 +156,6 @@ for ($meas = 1; $meas <= 16; $meas++)
 		}
 	}
 }
-
-// Last step for each track...
-$drum_track->addTrackEnd($myFile->mbt2at(17,1,0));
 
 // Write & dump the file if you wanna
 $myFile->writeMIDIFile($out_name);

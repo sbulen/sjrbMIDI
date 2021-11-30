@@ -769,6 +769,16 @@ class TrackName extends MIDIMetaEvent
 		$dt = new VLQ();
 		return $dt->setValue($this->delta_time) . chr($this->type) . chr($this->subtype) . $dt->setValue($this->length) . $this->track_name;
 	}
+
+	/**
+	 * Get the name
+	 *
+	 * @return string
+	 */
+	public function getName()
+	{
+		return $this->track_name;
+	}
 }
 
 class InstName extends MIDIMetaEvent

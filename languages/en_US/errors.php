@@ -59,7 +59,6 @@ $txt['inv_trippct'] = 'Invalid trip_pct value for sequence.';
 $txt['req_rhythm'] = 'Rhythm must be passed to dynamics object.';
 $txt['inv_midifile'] = 'Invalid midi file!';
 $txt['inv_seqs'] = 'Invalid sequences!';
-$txt['unique_chans'] = 'Instrument channels must be unique!';
 $txt['inv_insts'] = 'Invalid instruments!';
 $txt['inv_subinst'] = 'Invalid sub_inst definition for instrument.';
 $txt['inv_chan'] = 'Invalid channel value for instrument.';
@@ -76,5 +75,6 @@ $txt['inv_bool'] = 'Only true & false allowed.';
 $txt['inv_maxid'] = 'Invalid max inc dec amount.';
 $txt['inv_minnote'] = 'Invalid value for min note.';
 $txt['inv_maxnote'] = 'Invalid value for max note.';
+$txt['unique_trknm'] = 'Track name must be unique!';
 
 ?>

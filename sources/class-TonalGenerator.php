@@ -41,31 +41,30 @@ class TonalGenerator extends AbstractGenerator
 	 * Do Instrument - Gen the notes per instructions for one particular instrument, one particular sequence
 	 *
 	 * @param int start
-	 * @param int dur
-	 * @param int chan
+	 * @param array sub euclid parameters
+	 * @param Instrument inst
 	 * @param int sub inst tone
 	 * @param array sub inst parameters
 	 * @param array primary rhythm parameters
-	 * @param array sub euclid parameters
 	 * @param Sequence
 	 * @param Note[]
 	 * @return void
 	 */
-	function doInstrument($start, $dur, $chan, $tone, $sub_inst_vars, $rhythm_vars, $sub_euclid_vars, $seq, &$new_notes)
+	function doInstrument($start, $subinfo, $inst, $tone, $sub_inst_vars, $rhythm_vars, $seq, &$new_notes)
 	{
 		// Chose one of the phrases & transform
 		// Transpose is based on beat of primary rhythm...
 		$beat = $rhythm_vars['beat'];
 		$phrases = count($seq->getPhrases());
 		$phrase = clone $seq->getPhrases()[rand(0, $phrases - 1)];
-		$phrase->setStartDur($start, $dur);
+		$phrase->setStartDur($start, $subinfo['dur']);
 		$phrase->transpose($seq->getIntervals()[$beat % count($seq->getIntervals())]);
 
 		// Use the common func here...  Always use the instrument channel...
 		foreach ($phrase AS $note_obj)
 		{
-			$note_obj->setChan($chan);
-			$this->genNote($note_obj, $sub_inst_vars['vel_factor'], $seq->getNotePct(), $seq->getTripPct(), $new_notes);
+			$note_obj->setChan($inst->getChan());
+			$this->genNote($note_obj, $sub_inst_vars['vel_factor'], $seq->getNotePct(), $seq->getTripPct(), $inst->getTrackName(), $new_notes);
 		}
 	}
 }
