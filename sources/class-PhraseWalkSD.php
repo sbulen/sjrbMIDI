@@ -27,6 +27,7 @@ class PhraseWalkSD implements Iterator
 	protected $note_arr = array();
 	protected $start = 0;
 	protected $dur = 0;
+	protected $position = 0;
 
 	/**
 	 * Constructor
@@ -52,7 +53,7 @@ class PhraseWalkSD implements Iterator
 	 *
 	 * @return void
 	 */
-	public function rewind()
+	public function rewind(): void
 	{
 		$this->position = 0;
 	}
@@ -62,7 +63,7 @@ class PhraseWalkSD implements Iterator
 	 *
 	 * @return mixed
 	 */
-	public function current()
+	public function current(): int
 	{
 		return $this->note_arr[$this->position]->getDur();
 	}
@@ -72,7 +73,7 @@ class PhraseWalkSD implements Iterator
 	 *
 	 * @return int
 	 */
-	public function key()
+	public function key(): int
 	{
 		return $this->note_arr[$this->position]->getAt();
 	}
@@ -82,7 +83,7 @@ class PhraseWalkSD implements Iterator
 	 *
 	 * @return void
 	 */
-	public function next()
+	public function next(): void
 	{
 		++$this->position;
 	}
@@ -92,7 +93,7 @@ class PhraseWalkSD implements Iterator
 	 *
 	 * @return bool
 	 */
-	public function valid()
+	public function valid(): bool
 	{
 		return isset($this->note_arr[$this->position]);
 	}

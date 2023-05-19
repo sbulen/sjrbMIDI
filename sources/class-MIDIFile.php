@@ -384,8 +384,8 @@ class MIDIFile
 			$this->tracks[0]->addEvent(new KeySignature());
 			$this->tracks[0]->addEvent(new Tempo());
 
-			// Load up raw_file_contents in case you want to display it...
-			$this->raw_file_contents = $this->pack();
+			// Load up file_raw_contents in case you want to display it...
+			$this->file_raw_contents = $this->pack();
 		}
 	}
 
@@ -817,7 +817,7 @@ class MIDIFile
 
 		// Set this object's name to match file...
 		$this->file_name = $file;
-		// Recalc raw_file_contents...
+		// Recalc file_raw_contents...
 		$this->pack();
 		// Write it...
 		file_put_contents($this->file_name, $this->file_raw_contents);

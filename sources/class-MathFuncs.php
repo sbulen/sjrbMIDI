@@ -38,7 +38,7 @@ class MathFuncs
 	/**
 	 * Return true if number provided is a power of 2, e.g., 2, 4, 8, 16, 32...
 	 *
-	 * @param float| int 
+	 * @param float | int
 	 * @return bool
 	 */
 	static function isPow2($value)
@@ -49,7 +49,7 @@ class MathFuncs
 	/**
 	 * Return true if number provided is even
 	 *
-	 * @param float| int 
+	 * @param float | int
 	 * @return bool
 	 */
 	static function isEven($value)

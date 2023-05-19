@@ -27,6 +27,8 @@ class PhraseWalkAll implements Iterator
 	protected $note_arr = array();
 	protected $start = 0;
 	protected $dur = 0;
+	protected $position = 0;
+
 
 	/**
 	 * Constructor
@@ -52,7 +54,7 @@ class PhraseWalkAll implements Iterator
 	 *
 	 * @return void
 	 */
-	public function rewind()
+	public function rewind(): void
 	{
 		$this->position = 0;
 	}
@@ -62,7 +64,7 @@ class PhraseWalkAll implements Iterator
 	 *
 	 * @return Note
 	 */
-	public function current()
+	public function current(): Note
 	{
 		return $this->note_arr[$this->position];
 	}
@@ -72,7 +74,7 @@ class PhraseWalkAll implements Iterator
 	 *
 	 * @return int
 	 */
-	public function key()
+	public function key(): int
 	{
 		return $this->note_arr[$this->position]->getAt();
 	}
@@ -82,7 +84,7 @@ class PhraseWalkAll implements Iterator
 	 *
 	 * @return void
 	 */
-	public function next()
+	public function next(): void
 	{
 		++$this->position;
 	}
@@ -92,7 +94,7 @@ class PhraseWalkAll implements Iterator
 	 *
 	 * @return bool
 	 */
-	public function valid()
+	public function valid(): bool
 	{
 		return isset($this->note_arr[$this->position]);
 	}

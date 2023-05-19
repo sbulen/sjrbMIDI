@@ -64,7 +64,7 @@ class RhythmWalkAll implements Iterator
 	 *
 	 * @return void
 	 */
-	public function rewind()
+	public function rewind(): void
 	{
 		$this->position = 0;
 	}
@@ -75,7 +75,7 @@ class RhythmWalkAll implements Iterator
 	 *
 	 * @return mixed
 	 */
-	public function current()
+	public function current(): array
 	{
 		return array(
 			'dur' => (int) (round(($this->starts[$this->position + 1] * $this->dur) / $this->pulses) - round(($this->starts[$this->position] * $this->dur) / $this->pulses)),
@@ -89,7 +89,7 @@ class RhythmWalkAll implements Iterator
 	 *
 	 * @return int
 	 */
-	public function key()
+	public function key(): int
 	{
 		return (int) round((($this->starts[$this->position] * $this->dur) / $this->pulses) + $this->start);
 	}
@@ -99,7 +99,7 @@ class RhythmWalkAll implements Iterator
 	 *
 	 * @return void
 	 */
-	public function next()
+	public function next(): void
 	{
 		++$this->position;
 	}
@@ -109,7 +109,7 @@ class RhythmWalkAll implements Iterator
 	 *
 	 * @return bool
 	 */
-	public function valid()
+	public function valid(): bool
 	{
 		return isset($this->rhythm[$this->position]);
 	}
