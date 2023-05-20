@@ -3,7 +3,7 @@
  *	Definition of an Iterator for the Rhythm object.
  *	This provides an array of information for each beat, including $start, $dur, $beat# & $pulses.
  *
- *	Copyright 2020-2021 Shawn Bulen
+ *	Copyright 2020-2023 Shawn Bulen
  *
  *	This file is part of the sjrbMIDI library.
  *
@@ -24,12 +24,12 @@
 
 class RhythmWalkAll implements Iterator
 {
-	protected $rhythm = array();
-	protected $starts = array();
-	protected $start = 0;
-	protected $dur = 0;
-	protected $pulses = 0;
-	protected $position = 0;
+	protected array $rhythm = array();
+	protected array $starts = array();
+	protected int $start = 0;
+	protected int $dur = 0;
+	protected int $pulses = 0;
+	protected int $position = 0;
 
 	/**
 	 * Constructor
@@ -41,7 +41,7 @@ class RhythmWalkAll implements Iterator
 	 * @param int $dur - duration of this instance of rhythm
 	 * @return void
 	 */
-	function __construct($rhythm, $start, $dur)
+	function __construct(array $rhythm, int $start, int $dur)
 	{
 		$this->rhythm = $rhythm;
 		$this->start = $start;

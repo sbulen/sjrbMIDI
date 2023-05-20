@@ -7,7 +7,7 @@
  *	For purposes of d2m conversions, the key must be provided from 
  *	context, either from the associated Phrase object or MIDIFile object. ***
  *
- *	Copyright 2020-2021 Shawn Bulen
+ *	Copyright 2020-2023 Shawn Bulen
  *
  *	This file is part of the sjrbMIDI library.
  *
@@ -147,7 +147,7 @@ class Note
 	 * @param int $dur - duration in ticks
 	 * @return void
 	 */
-	public function setDur($dur = 960): void
+	public function setDur(int $dur = 960): void
 	{
 		$this->dur = MIDIEvent::rangeCheck($dur, 0, 0xFFFFFFF);
 	}

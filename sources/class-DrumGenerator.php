@@ -2,7 +2,7 @@
 /**
  *	Drum Generator
  *
- *	Copyright 2021 Shawn Bulen
+ *	Copyright 2021-2023 Shawn Bulen
  *
  *	This file is part of the sjrbMIDI library.
  *
@@ -31,7 +31,7 @@ class DrumGenerator extends AbstractGenerator
 	 * @param array $instruments - array that defines instruments to be used
 	 * @return void
 	 */
-	function __construct($midi_file, $seqs = null, $instruments = null)
+	function __construct(MIDIFile $midi_file, array $seqs = null, array $instruments = null)
 	{
 		parent::__construct($midi_file, $seqs, $instruments);
 	}
@@ -49,7 +49,7 @@ class DrumGenerator extends AbstractGenerator
 	 * @param Note[]
 	 * @return void
 	 */
-	function doInstrument($start, $subinfo, $inst, $tone, $sub_inst_vars, $rhythm_vars, $seq, &$new_notes)
+	function doInstrument(int $start, array $subinfo, Instrument $inst, int $tone, array $sub_inst_vars, array $rhythm_vars, AbstractSequence $seq, array &$new_notes): void
 	{
 		// Drums use the sub_inst tones.
 		// But the tones are in mnotes...  We have to convert them to dnotes here...
@@ -63,7 +63,7 @@ class DrumGenerator extends AbstractGenerator
 	}
 
 	// Add one note to a track...  Special version for drums, so we can close an open hi-hat...
-	protected function addNoteToTrack($note, $track_name)
+	protected function addNoteToTrack(Note $note, string $track_name): void
 	{
 		$mnote = $this->key->d2m($note->getDnote());
 		$this->instruments[$track_name]->getTrack()->addEvent(new NoteOn($note->getAt(), $note->getChan(), $mnote, $note->getVel()));

@@ -3,7 +3,7 @@
  *	Chord sequence - a set of parameters for generating a chord sequence.
  *	In general, one channel, one instrument (e.g., piano), lots of parameters (chords, phrases)...
  *
- *	Copyright 2020-2021 Shawn Bulen
+ *	Copyright 2020-2023 Shawn Bulen
  *
  *	This file is part of the sjrbMIDI library.
  *

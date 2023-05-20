@@ -2,7 +2,7 @@
 /**
  *	Simple class for info & error reporting.
  *
- *	Copyright 2020-2021 Shawn Bulen
+ *	Copyright 2020-2023 Shawn Bulen
  *
  *	This file is part of the sjrbMIDI library.
  *

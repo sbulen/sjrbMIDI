@@ -4,7 +4,7 @@
  *
  *  Some helpful math functions
  *
- *	Copyright 2021 Shawn Bulen
+ *	Copyright 2021-2023 Shawn Bulen
  *
  *	This file is part of the sjrbMIDI library.
  *
@@ -30,7 +30,7 @@ class MathFuncs
 	 *
 	 * @return float
 	 */
-	static function randomFloat()
+	static function randomFloat(): float
 	{
 		return (float)rand() / (float)getrandmax();
 	}
@@ -41,7 +41,7 @@ class MathFuncs
 	 * @param float | int
 	 * @return bool
 	 */
-	static function isPow2($value)
+	static function isPow2(float|int $value): Bool
 	{
 		return fmod(log($value, 2), 1) === 0;
 	}
@@ -52,7 +52,7 @@ class MathFuncs
 	 * @param float | int
 	 * @return bool
 	 */
-	static function isEven($value)
+	static function isEven(float|int $value): Bool
 	{
 		return $value % 2 === 0;
 	}

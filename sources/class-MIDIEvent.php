@@ -2,7 +2,7 @@
 /**
  *	MIDI class hierarchy for events.  ALL the events are here...
  *
- *	Copyright 2020-2021 Shawn Bulen
+ *	Copyright 2020-2023 Shawn Bulen
  *
  *	This file is part of the sjrbMIDI library.
  *
@@ -247,7 +247,7 @@ class NoteOff extends MIDIChannelEvent
 	 * @param int $veloicity - velocity
 	 * @return void
 	 */
-	function __construct($at = 0, $chan = 0, $note = 0, $velocity = 0)
+	function __construct(int $at = 0, int $chan = 0, int $note = 0, int $velocity = 0)
 	{
 		$this->abs_time = $this->rangeCheck($at, 0, 0xFFFFFFF);
 		$this->delta_time = 0;	//Needs to be set later...
@@ -306,7 +306,7 @@ class NoteOn extends MIDIChannelEvent
 	 * @param int $veloicity - velocity
 	 * @return void
 	 */
-	function __construct($at = 0, $chan = 0, $note = 0, $velocity = 0)
+	function __construct(int $at = 0, int $chan = 0, int $note = 0, int $velocity = 0)
 	{
 		$this->abs_time = $this->rangeCheck($at, 0, 0xFFFFFFF);
 		$this->delta_time = 0;	//Needs to be set later...
@@ -365,7 +365,7 @@ class PolyAfterTouch extends MIDIChannelEvent
 	 * @param int $value - aftertouch value
 	 * @return void
 	 */
-	function __construct($at = 0, $chan = 0, $note = 0, $value = 0)
+	function __construct(int $at = 0, int $chan = 0, int $note = 0, int $value = 0)
 	{
 		$this->abs_time = $this->rangeCheck($at, 0, 0xFFFFFFF);
 		$this->delta_time = 0;	//Needs to be set later...
@@ -404,7 +404,7 @@ class ControlChange extends MIDIChannelEvent
 	 * @param int $value - value
 	 * @return void
 	 */
-	function __construct($at = 0, $chan = 0, $controller = 0, $value = 0)
+	function __construct(int $at = 0, int $chan = 0, int $controller = 0, int $value = 0)
 	{
 		$this->abs_time = $this->rangeCheck($at, 0, 0xFFFFFFF);
 		$this->delta_time = 0;	//Needs to be set later...
@@ -451,7 +451,7 @@ class ProgramChange extends MIDIChannelEvent
 	 * @param int $program - new program #
 	 * @return void
 	 */
-	function __construct($at = 0, $chan = 0, $program = 0)
+	function __construct(int $at = 0, int $chan = 0, int $program = 0)
 	{
 		$this->abs_time = $this->rangeCheck($at, 0, 0xFFFFFFF);
 		$this->delta_time = 0;	//Needs to be set later...
@@ -487,7 +487,7 @@ class AfterTouch extends MIDIChannelEvent
 	 * @param int $value - aftertouch value
 	 * @return void
 	 */
-	function __construct($at = 0, $chan = 0, $value = 0)
+	function __construct(int $at = 0, int $chan = 0, int $value = 0)
 	{
 		$this->abs_time = $this->rangeCheck($at, 0, 0xFFFFFFF);
 		$this->delta_time = 0;	//Needs to be set later...
@@ -523,7 +523,7 @@ class PitchWheel extends MIDIChannelEvent
 	 * @param int $value - value
 	 * @return void
 	 */
-	function __construct($at = 0, $chan = 0, $value = 0)
+	function __construct(int $at = 0, int $chan = 0, int $value = 0)
 	{
 		$this->abs_time = $this->rangeCheck($at, 0, 0xFFFFFFF);
 		$this->delta_time = 0;	//Needs to be set later...
@@ -570,7 +570,7 @@ class Sysex extends MIDISysexEvent
 	 * @param string $data - binary string of data
 	 * @return void
 	 */
-	function __construct($at = 0, $data = '')
+	function __construct(int $at = 0, string $data = '')
 	{
 		$this->abs_time = $this->rangeCheck($at, 0, 0xFFFFFFF);
 		$this->delta_time = 0;	//Needs to be set later...
@@ -605,7 +605,7 @@ class SysexEscape extends MIDISysexEvent
 	 * @param string $data - raw binary data
 	 * @return void
 	 */
-	function __construct($at = 0, $data = '')
+	function __construct(int $at = 0, string $data = '')
 	{
 		$this->abs_time = $this->rangeCheck($at, 0, 0xFFFFFFF);
 		$this->delta_time = 0;	//Needs to be set later...
@@ -642,7 +642,7 @@ class SequenceNo extends MIDIMetaEvent
 	 * @param int $seq_no - sequence number
 	 * @return void
 	 */
-	function __construct($at = 0, $seq_no = 0)
+	function __construct(int $at = 0, int $seq_no = 0)
 	{
 		$this->abs_time = $this->rangeCheck($at, 0, 0xFFFFFFF);
 		$this->delta_time = 0;	//Needs to be set later...
@@ -678,7 +678,7 @@ class Text extends MIDIMetaEvent
 	 * @param string $text - text
 	 * @return void
 	 */
-	function __construct($at = 0, $text = '')
+	function __construct(int $at = 0, string $text = '')
 	{
 		$this->abs_time = $this->rangeCheck($at, 0, 0xFFFFFFF);
 		$this->delta_time = 0;	//Needs to be set later...
@@ -715,7 +715,7 @@ class Copyright extends MIDIMetaEvent
 	 * @param string $copyright - copyright
 	 * @return void
 	 */
-	function __construct($at = 0, $copyright = '')
+	function __construct(int $at = 0, string $copyright = '')
 	{
 		$this->abs_time = $this->rangeCheck($at, 0, 0xFFFFFFF);
 		$this->delta_time = 0;	//Needs to be set later...
@@ -752,7 +752,7 @@ class TrackName extends MIDIMetaEvent
 	 * @param string $track_name - track name
 	 * @return void
 	 */
-	function __construct($at = 0, $track_name = '')
+	function __construct(int $at = 0, string $track_name = '')
 	{
 		$this->abs_time = $this->rangeCheck($at, 0, 0xFFFFFFF);
 		$this->delta_time = 0;	//Needs to be set later...
@@ -799,7 +799,7 @@ class InstName extends MIDIMetaEvent
 	 * @param string $inst_name - instrument name
 	 * @return void
 	 */
-	function __construct($at = 0, $inst_name = '')
+	function __construct(int $at = 0, string $inst_name = '')
 	{
 		$this->abs_time = $this->rangeCheck($at, 0, 0xFFFFFFF);
 		$this->delta_time = 0;	//Needs to be set later...
@@ -836,7 +836,7 @@ class Lyric extends MIDIMetaEvent
 	 * @param string $lyric - lyric
 	 * @return void
 	 */
-	function __construct($at = 0, $lyric = '')
+	function __construct(int $at = 0, string $lyric = '')
 	{
 		$this->abs_time = $this->rangeCheck($at, 0, 0xFFFFFFF);
 		$this->delta_time = 0;	//Needs to be set later...
@@ -873,7 +873,7 @@ class Marker extends MIDIMetaEvent
 	 * @param string $marker - marker
 	 * @return void
 	 */
-	function __construct($at = 0, $marker = '')
+	function __construct(int $at = 0, string $marker = '')
 	{
 		$this->abs_time = $this->rangeCheck($at, 0, 0xFFFFFFF);
 		$this->delta_time = 0;	//Needs to be set later...
@@ -910,7 +910,7 @@ class Cue extends MIDIMetaEvent
 	 * @param string $cue - cue
 	 * @return void
 	 */
-	function __construct($at = 0, $cue = '')
+	function __construct(int $at = 0, string $cue = '')
 	{
 		$this->abs_time = $this->rangeCheck($at, 0, 0xFFFFFFF);
 		$this->delta_time = 0;	//Needs to be set later...
@@ -947,7 +947,7 @@ class ChannelPrefix extends MIDIMetaEvent
 	 * @param int $channel - channel
 	 * @return void
 	 */
-	function __construct($at = 0, $channel = 0)
+	function __construct(int $at = 0, int $channel = 0)
 	{
 		$this->abs_time = $this->rangeCheck($at, 0, 0xFFFFFFF);
 		$this->delta_time = 0;	//Needs to be set later...
@@ -1016,7 +1016,7 @@ class Tempo extends MIDIMetaEvent
 	 * @param int $tempo - tempo, default to 120 bpm
 	 * @return void
 	 */
-	function __construct($at = 0, $tempo = 500000)
+	function __construct(int $at = 0, int $tempo = 500000)
 	{
 		$this->abs_time = $this->rangeCheck($at, 0, 0xFFFFFFF);
 		$this->delta_time = 0;	//Needs to be set later...
@@ -1029,7 +1029,7 @@ class Tempo extends MIDIMetaEvent
 	 * @param int $tempo defaults to 120 bpm
 	 * @return void
 	 */
-	public function setTempo($tempo = 500000): void
+	public function setTempo(int $tempo = 500000): void
 	{
 		$this->tempo = $this->rangeCheck($tempo, 0, 0xFFFFFF);
 	}
@@ -1083,7 +1083,7 @@ class SmpteOffset extends MIDIMetaEvent
 	 * @param int $ff - fractional frames
 	 * @return void
 	 */
-	function __construct($at = 0, $hh = 0, $mm = 0, $se = 0, $fr = 0, $ff = 0)
+	function __construct(int $at = 0, int $hh = 0, int $mm = 0, int $se = 0, int $fr = 0, int $ff = 0)
 	{
 		$this->abs_time = $this->rangeCheck($at, 0, 0xFFFFFFF);
 		$this->delta_time = 0;	//Needs to be set later...
@@ -1129,7 +1129,7 @@ class TimeSignature extends MIDIMetaEvent
 	 * @param int $bb - 1/32 notes per 24 clocks
 	 * @return void
 	 */
-	function __construct($at = 0, $top = 4, $bottom = 2, $cc = 24, $bb = 8)
+	function __construct(int $at = 0, int $top = 4, int $bottom = 2, int $cc = 24, int $bb = 8)
 	{
 		$this->abs_time = $this->rangeCheck($at, 0, 0xFFFFFFF);
 		$this->delta_time = 0;	//Needs to be set later...
@@ -1148,7 +1148,7 @@ class TimeSignature extends MIDIMetaEvent
 	 * @param int $bb Number of 1/32 notes per 24 MICI clock ticks (8 standard)
 	 * @return void
 	 */
-	public function setTimeSignature($top = 4, $bottom = 2, $cc = 24, $bb = 8): void
+	public function setTimeSignature(int $top = 4, int $bottom = 2, int $cc = 24, int $bb = 8): void
 	{
 		$this->top = $this->rangeCheck($top);
 		$this->bottom = $this->rangeCheck($bottom);
@@ -1197,7 +1197,7 @@ class KeySignature extends MIDIMetaEvent
 	 * @param int $minor
 	 * @return void
 	 */
-	function __construct($at = 0, $sharps = 0, $minor = 0)
+	function __construct(int $at = 0, int $sharps = 0, int $minor = 0)
 	{
 		$this->abs_time = $this->rangeCheck($at, 0, 0xFFFFFFF);
 		$this->delta_time = 0;	//Needs to be set later...
@@ -1212,7 +1212,7 @@ class KeySignature extends MIDIMetaEvent
 	 * @param int $minor
 	 * @return void
 	 */
-	public function setKeySignature($sharps = 0, $minor = 0): void
+	public function setKeySignature(int $sharps = 0, int $minor = 0): void
 	{
 		$this->sharps = $this->rangeCheck($sharps, -7, 7);
 		$this->minor = $this->rangeCheck($minor, 0, 1);

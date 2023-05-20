@@ -3,7 +3,7 @@
  *	Abstract Generator - helps with reuse and consistency across 
  *	DrumGenerator and SongGenerator.
  *
- *	Copyright 2021 Shawn Bulen
+ *	Copyright 2021-2023 Shawn Bulen
  *
  *	This file is part of the sjrbMIDI library.
  *
@@ -24,17 +24,17 @@
 
 abstract class AbstractGenerator
 {
-	protected $midi_file = null;
-	protected $sequences = array();
-	protected $instruments = array();
+	protected ?MIDIFile $midi_file = null;
+	protected array $sequences = array();
+	protected array $instruments = array();
 
-	protected $dynamics = null;
-	protected $key = null;
+	protected ?Dynamics $dynamics = null;
+	protected ?int $key = null;
 
 	// To be passed when Dynamics obj built
-	protected $maxvel = 120;
-	protected $minvel = 30;
-	protected $spread = 10;
+	protected int $maxvel = 120;
+	protected int $minvel = 30;
+	protected int $spread = 10;
 
 	/**
 	 * Constructor
@@ -44,7 +44,7 @@ abstract class AbstractGenerator
 	 * @param array $instruments - array that defines instruments to be used
 	 * @return void
 	 */
-	function __construct($midi_file, $sequences = null, $instruments = null)
+	function __construct(MIDIFile $midi_file, array $sequences = null, array $instruments = null)
 	{
 		if (is_a($midi_file, 'MIDIFile'))
 			$this->midi_file = $midi_file;
@@ -101,7 +101,7 @@ abstract class AbstractGenerator
 	 *
 	 * @return array
 	 */
-	private function doSequence($seq)
+	private function doSequence(AbstractSequence $seq): array
 	{
 		$notes = array();
 
@@ -139,7 +139,7 @@ abstract class AbstractGenerator
 	}
 
 	// Loop thru whatever instruments you're asked to do...
-	private function doInstruments($seq, &$new_notes)
+	private function doInstruments(AbstractSequence $seq, array &$new_notes): void
 	{
 		// Step thru primary rhythm
 		foreach ($seq->getRhythm()->walkAll AS $start => $info)
@@ -174,7 +174,7 @@ abstract class AbstractGenerator
 	}
 
 	// Generate notes (consider a triplet a note...)
-	protected function genNote($note, $vel_factor, $npct, $tpct, $track_name, &$new_notes)
+	protected function genNote(Note $note, float $vel_factor, float $npct, float $tpct, string $track_name, array &$new_notes): void
 	{
 		// Apply a triplet?
 		if (MathFuncs::randomFloat() <= $tpct)
@@ -206,7 +206,7 @@ abstract class AbstractGenerator
 	}
 
 	// Add one note to a track...  Last step...  Split out to allow it to be overridden if needed...
-	protected function addNoteToTrack($note, $track_name)
+	protected function addNoteToTrack(Note $note, string $track_name): void
 	{
 		// Convert notes into MIDI events & add to the appropriate track
 		$mnote = $this->key->d2m($note->getDnote());
@@ -226,7 +226,7 @@ abstract class AbstractGenerator
 	 * @param Note[]
 	 * @return void
 	 */
-	abstract function doInstrument($start, $subinfo, $inst, $tone, $sub_inst_vars, $rhythm_vars, $seq, &$new_notes);
+	abstract function doInstrument(int $start, array $subinfo, Instrument $inst, int $tone, array $sub_inst_vars, array $rhythm_vars, AbstractSequence $seq, array &$new_notes);
 
 	/**
 	 * Set the sequences
@@ -234,7 +234,7 @@ abstract class AbstractGenerator
 	 * @param Sequence[]
 	 * @return void
 	 */
-	public function setSequences($sequences)
+	public function setSequences(array $sequences): void
 	{
 		$this->sequences = array();
 		if ($sequences !== null && is_array($sequences) && ($sequences == array_filter($sequences, function($a) {return is_a($a, 'AbstractSequence');})))
@@ -249,7 +249,7 @@ abstract class AbstractGenerator
 	 * @param array $instruments
 	 * @return void
 	 */
-	public function setInstruments($instruments)
+	public function setInstruments(array $instruments): void
 	{
 		$this->instruments = array();
 		if ($instruments !== null && is_array($instruments) && ($instruments == array_filter($instruments, function($a) {return is_a($a, 'Instrument');})))
@@ -272,7 +272,7 @@ abstract class AbstractGenerator
 	 *
 	 * @return MIDIEvents[]
 	 */
-	public function generate()
+	public function generate(): array
 	{
 		Errors::info('started');
 
@@ -290,7 +290,7 @@ abstract class AbstractGenerator
 	 * @param int $maxvel - max velocity
 	 * @return void
 	 */
-	public function setMaxvel($maxvel = 0x7F)
+	public function setMaxvel(int $maxvel = 0x7F): array
 	{
 		$this->maxvel = MIDIEvent::rangeCheck($maxvel, 0, 0x7F);
 		$this->minvel = MIDIEvent::rangeCheck($this->minvel, 0, $this->maxvel);
@@ -303,7 +303,7 @@ abstract class AbstractGenerator
 	 * @param int $minvel - min velocity
 	 * @return void
 	 */
-	public function setMinvel($minvel = 0)
+	public function setMinvel(int $minvel = 0): void
 	{
 		$this->minvel = MIDIEvent::rangeCheck($minvel, 0, 0x7F);
 		$this->maxvel = MIDIEvent::rangeCheck($this->maxvel, $this->minvel, 0x7F);
@@ -315,7 +315,7 @@ abstract class AbstractGenerator
 	 * @param int $spread - variance between note divisions
 	 * @return void
 	 */
-	public function setSpread($spread = 10)
+	public function setSpread(int $spread = 10): void
 	{
 		$this->spread = MIDIEvent::rangeCheck($spread, 0, 0x7F);
 	}

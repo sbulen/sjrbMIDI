@@ -3,7 +3,7 @@
  *	Definition of an Iterator for the Phrase object.
  *	Simple one - returns $start => $dur for each note.
  *
- *	Copyright 2020-2021 Shawn Bulen
+ *	Copyright 2020-2023 Shawn Bulen
  *
  *	This file is part of the sjrbMIDI library.
  *
@@ -24,10 +24,10 @@
 
 class PhraseWalkSD implements Iterator
 {
-	protected $note_arr = array();
-	protected $start = 0;
-	protected $dur = 0;
-	protected $position = 0;
+	protected array $note_arr = array();
+	protected int $start = 0;
+	protected int $dur = 0;
+	protected int $position = 0;
 
 	/**
 	 * Constructor
@@ -39,7 +39,7 @@ class PhraseWalkSD implements Iterator
 	 * @param int $dur - duration of this instance of rhythm
 	 * @return void
 	 */
-	function __construct($note_arr, $start, $dur)
+	function __construct(array $note_arr, int $start, int $dur)
 	{
 		$this->note_arr = $note_arr;
 		$this->start = $start;

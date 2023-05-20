@@ -3,7 +3,7 @@
  *	Abstract class for series of Controller or PitchWheel events
  *	Allows for sharing & consistency of all calculations for shapes & scaling.
  *
- *	Copyright 2020-2021 Shawn Bulen
+ *	Copyright 2020-2023 Shawn Bulen
  *
  *	This file is part of the sjrbMIDI library.
  *

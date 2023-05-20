@@ -3,7 +3,7 @@
  *	MIDI class for a musical Phrase.
  *	Includes various transformations, e.g., inversion, retrograde & snowflake.
  *
- *	Copyright 2020-2021 Shawn Bulen
+ *	Copyright 2020-2023 Shawn Bulen
  *
  *	This file is part of the sjrbMIDI library.
  *

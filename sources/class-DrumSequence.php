@@ -3,7 +3,7 @@
  *	Drum sequence - a set of parameters for generating some music, oriented toward drum tracks.
  *	In general, one channel, multiple instruments (e.g., kick, hihat, toms, cymbals), simple parameters...
  *
- *	Copyright 2020-2021 Shawn Bulen
+ *	Copyright 2020-2023 Shawn Bulen
  *
  *	This file is part of the sjrbMIDI library.
  *

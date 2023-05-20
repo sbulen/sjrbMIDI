@@ -4,7 +4,7 @@
  *	velocities, emphasizing notes on time divisions.  1/2 notes get emphasized 
  *	heavily, 1/4 notes a little less so, 1/8 notes less so, etc.
  *
- *	Copyright 2020-2021 Shawn Bulen
+ *	Copyright 2020-2023 Shawn Bulen
  *
  *	This file is part of the sjrbMIDI library.
  *

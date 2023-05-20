@@ -3,7 +3,7 @@
  *	MIDI class for a musical Chord.
  *	Includes various transformations, e.g., inversion, retrograde & snowflake.
  *
- *	Copyright 2020-2021 Shawn Bulen
+ *	Copyright 2020-2023 Shawn Bulen
  *
  *	This file is part of the sjrbMIDI library.
  *
@@ -27,19 +27,19 @@ class Chord
 	/*
 	 * Properties
 	 */
-	protected $dnote;
-	protected $intervals;
+	protected int|array $dnote;
+	protected array $intervals;
 
 	/**
 	 * Constructor
 	 *
 	 * Builds a Chord object
 	 *
-	 * @param dnote - root of chord
+	 * @param int|array dnote - root of chord
 	 * @param int[] - array of intervals
 	 * @return void
 	 */
-	function __construct($dnote, $intervals = array(2, 4))
+	function __construct(int|array $dnote, array $intervals = array(2, 4))
 	{
 		// For ease of use, dnote may or may not have an sf indicator...
 		if (is_int($dnote) || is_array($dnote))
@@ -58,7 +58,7 @@ class Chord
 	 *
 	 * @return array()
 	 */
-	public function getDNote()
+	public function getDNote(): array
 	{
 		return $this->dnote;
 	}
@@ -68,7 +68,7 @@ class Chord
 	 *
 	 * @return int[]
 	 */
-	public function getIntervals()
+	public function getIntervals(): array
 	{
 		return $this->intervals;
 	}
@@ -80,7 +80,7 @@ class Chord
 	 * @param int $inversion - 0 for none, 1 for 1st inversion, 2 for 2nd inversion
 	 * @return void
 	 */
-	public function inversion($inversion)
+	public function inversion(int $inversion): void
 	{
 		// Sanity check...
 		if (($inversion != 1) && ($inversion != 2))
