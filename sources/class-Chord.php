@@ -102,7 +102,6 @@ class Chord
 		// Get rid of any dupes or 0s...
 		$this->intervals = array_filter($this->intervals, function($a) {return $a != 0;});
 		$this->intervals = array_unique($this->intervals);
-		
 	}
 }
 ?>

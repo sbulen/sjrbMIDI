@@ -31,11 +31,11 @@ class Note
 	/*
 	 * Properties
 	 */
-	protected $chan;
-	protected $abs_time;
-	protected $dNote;
-	protected $vel;
-	protected $dur;
+	protected int $chan;
+	protected int $abs_time;
+	protected array $dNote;
+	protected int $vel;
+	protected int $dur;
 
 	/**
 	 * Constructor
@@ -48,7 +48,7 @@ class Note
 	 * @param int $dur - note duration in ticks
 	 * @return void
 	 */
-	function __construct($chan, $abs_time, $dNote, $vel, $dur)
+	function __construct(int $chan, int $abs_time, array $dNote, int $vel, int $dur)
 	{
 		$this->chan = MIDIEvent::rangeCheck($chan, 0x0, 0xF);
 		$this->abs_time = MIDIEvent::rangeCheck($abs_time, 0, 0xFFFFFFF);
@@ -63,10 +63,9 @@ class Note
 	 * @param int $chan - MIDI channel
 	 * @return void
 	 */
-	public function setChan($chan = 0)
+	public function setChan(int $chan = 0): void
 	{
 		$this->chan = MIDIEvent::rangeCheck($chan, 0x0, 0xF);
-		return;
 	}
 
 	/**
@@ -74,7 +73,7 @@ class Note
 	 *
 	 * @return int
 	 */
-	public function getChan()
+	public function getChan(): int
 	{
 		return $this->chan;
 	}
@@ -85,10 +84,9 @@ class Note
 	 * @param int $abs_time - absolute time of note
 	 * @return void
 	 */
-	public function setAt($abs_time)
+	public function setAt(int $abs_time): void
 	{
 		$this->abs_time = MIDIEvent::rangeCheck($abs_time, 0, 0xFFFFFFF);
-		return;
 	}
 
 	/**
@@ -96,7 +94,7 @@ class Note
 	 *
 	 * @return int
 	 */
-	public function getAt()
+	public function getAt(): int
 	{
 		return $this->abs_time;
 	}
@@ -107,10 +105,9 @@ class Note
 	 * @param mixed $dNote - dNote
 	 * @return void
 	 */
-	public function setDNote($dNote)
+	public function setDNote(array $dNote): void
 	{
 		$this->dNote = Key::cleanseDNote($dNote);
-		return;
 	}
 
 	/**
@@ -118,7 +115,7 @@ class Note
 	 *
 	 * @return array
 	 */
-	public function getDNote()
+	public function getDNote(): array
 	{
 		return $this->dNote;
 	}
@@ -129,10 +126,9 @@ class Note
 	 * @param int $vel - MIDI velocity
 	 * @return void
 	 */
-	public function setVel($vel = 100)
+	public function setVel(int $vel = 100): void
 	{
 		$this->vel = MIDIEvent::rangeCheck($vel);
-		return;
 	}
 
 	/**
@@ -140,7 +136,7 @@ class Note
 	 *
 	 * @return int
 	 */
-	public function getVel()
+	public function getVel(): int
 	{
 		return $this->vel;
 	}
@@ -151,10 +147,9 @@ class Note
 	 * @param int $dur - duration in ticks
 	 * @return void
 	 */
-	public function setDur($dur = 960)
+	public function setDur($dur = 960): void
 	{
 		$this->dur = MIDIEvent::rangeCheck($dur, 0, 0xFFFFFFF);
-		return;
 	}
 
 	/**
@@ -162,7 +157,7 @@ class Note
 	 *
 	 * @return int
 	 */
-	public function getDur()
+	public function getDur(): int
 	{
 		return $this->dur;
 	}

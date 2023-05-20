@@ -188,7 +188,7 @@ abstract class AbstractGenerator
 				{
 					$note = clone $note;
 					$note->setAt($start + ($i * $new_dur));
-					$note->setVel($this->dynamics->getVel($note->getAt()) * $vel_factor);
+					$note->setVel(round($this->dynamics->getVel($note->getAt()) * $vel_factor));
 					$new_notes[$track_name][] = $note;
 				}
 			}
@@ -200,7 +200,7 @@ abstract class AbstractGenerator
 			return;
 
 		// Apply dynamics
-		$note->setVel($this->dynamics->getVel($note->getAt()) * $vel_factor);
+		$note->setVel(round($this->dynamics->getVel($note->getAt()) * $vel_factor));
 
 		$new_notes[$track_name][] = $note;
 	}

@@ -108,20 +108,21 @@ abstract class MIDIEvent
 	 * All events are read from disk/written to disk with their delta_time, per spec (ticks since last event).
 	 * All events in memory are in absolute times for ease of manipulation (ticks from start of track).
 	 */
-	protected $delta_time = 0;
-	protected $abs_time = 0;
-	protected $type = NULL;
+	protected int $delta_time = 0;
+	protected int $abs_time = 0;
+	protected int $type = 0;
 
 	/**
 	 * Simple range check; default to note/velocity value range
 	 * Very simple - if it's outside the range, trim the value to be within the range
 	 *
-	 * @param int $value
+	 * @param int|float $value
 	 * @param int $min
 	 * @param int $max
-	 * @return int
+	 * @return int|float
 	 */
-	public static function rangeCheck($value, $min = 0, $max = 127) {
+	public static function rangeCheck(int|float $value, int $min = 0, int $max = 127): int|float
+	{
 		if ($value < $min)
 		{
 			$value = $min;
@@ -141,7 +142,7 @@ abstract class MIDIEvent
 	 *
 	 * @return int
 	 */
-	public function getAt()
+	public function getAt(): int
 	{
 		return $this->abs_time;
 	}
@@ -152,7 +153,7 @@ abstract class MIDIEvent
 	 * @param int $dt
 	 * @return void
 	 */
-	public function setDt($dt = 0)
+	public function setDt(int $dt = 0): void
 	{
 		$dt = $this->rangeCheck($dt, 0, 0xFFFFFFF);
 		$this->delta_time = $dt;
@@ -164,7 +165,7 @@ abstract class MIDIEvent
 	 *
 	 * @return int
 	 */
-	public function getType()
+	public function getType(): int
 	{
 		return $this->type;
 	}
@@ -184,14 +185,14 @@ abstract class MIDIChannelEvent extends MIDIEvent
 	/**
 	 * properties unique to this layer
 	 */
-	protected $channel = 0;
+	protected int $channel = 0;
 
 	/**
 	 * Return the event channel
 	 *
 	 * @return int
 	 */
-	public function getChan()
+	public function getChan(): int
 	{
 		return $this->channel;
 	}
@@ -202,7 +203,7 @@ abstract class MIDISysexEvent extends MIDIEvent
 	/**
 	 * properties unique to this layer
 	 */
-	protected $length = 0;
+	protected int $length = 0;
 }
 
 abstract class MIDIMetaEvent extends MIDIEvent
@@ -210,15 +211,15 @@ abstract class MIDIMetaEvent extends MIDIEvent
 	/**
 	 * properties unique to this layer
 	 */
-	protected $subtype = 0;
-	protected $length = 0;
+	protected int $subtype = 0;
+	protected int $length = 0;
 
 	/**
 	 * Return the meta event subtype
 	 *
 	 * @return int
 	 */
-	public function getSubType()
+	public function getSubType(): int
 	{
 		return $this->subtype;
 	}
@@ -233,9 +234,9 @@ class NoteOff extends MIDIChannelEvent
 	/**
 	 * Properties unique to this event
 	 */
-	protected $type = MIDIEvent::NOTE_OFF;
-	protected $note = 0;
-	protected $velocity = 0;
+	protected int $type = MIDIEvent::NOTE_OFF;
+	protected int $note = 0;
+	protected int $velocity = 0;
 
 	/**
 	 * Constructor
@@ -260,7 +261,7 @@ class NoteOff extends MIDIChannelEvent
 	 *
 	 * @return int
 	 */
-	public function getNote()
+	public function getNote(): int
 	{
 		return $this->note;
 	}
@@ -270,7 +271,7 @@ class NoteOff extends MIDIChannelEvent
 	 *
 	 * @return int
 	 */
-	public function getVel()
+	public function getVel(): int
 	{
 		return $this->velocity;
 	}
@@ -280,7 +281,7 @@ class NoteOff extends MIDIChannelEvent
 	 *
 	 * @return string
 	 */
-	public function pack()
+	public function pack(): string
 	{
 		$dt = new VLQ();
 		return $dt->setValue($this->delta_time) . chr(($this->type << 4) | $this->channel) . chr($this->note) . chr($this->velocity);
@@ -292,9 +293,9 @@ class NoteOn extends MIDIChannelEvent
 	/**
 	 * Properties unique to this event
 	 */
-	protected $type = MIDIEvent::NOTE_ON;
-	protected $note = 0;
-	protected $velocity = 0;
+	protected int $type = MIDIEvent::NOTE_ON;
+	protected int $note = 0;
+	protected int $velocity = 0;
 
 	/**
 	 * Constructor
@@ -319,7 +320,7 @@ class NoteOn extends MIDIChannelEvent
 	 *
 	 * @return int
 	 */
-	public function getNote()
+	public function getNote(): int
 	{
 		return $this->note;
 	}
@@ -329,7 +330,7 @@ class NoteOn extends MIDIChannelEvent
 	 *
 	 * @return int
 	 */
-	public function getVel()
+	public function getVel(): int
 	{
 		return $this->velocity;
 	}
@@ -339,7 +340,7 @@ class NoteOn extends MIDIChannelEvent
 	 *
 	 * @return string
 	 */
-	public function pack()
+	public function pack(): string
 	{
 		$dt = new VLQ();
 		return $dt->setValue($this->delta_time) . chr(($this->type << 4) | $this->channel) . chr($this->note) . chr($this->velocity);
@@ -351,9 +352,9 @@ class PolyAfterTouch extends MIDIChannelEvent
 	/**
 	 * Properties unique to this event
 	 */
-	protected $type = MIDIEvent::POLY_AFTER_TOUCH;
-	protected $note = 0;
-	protected $value = 0;
+	protected int $type = MIDIEvent::POLY_AFTER_TOUCH;
+	protected int $note = 0;
+	protected int $value = 0;
 
 	/**
 	 * Constructor
@@ -378,7 +379,7 @@ class PolyAfterTouch extends MIDIChannelEvent
 	 *
 	 * @return string
 	 */
-	public function pack()
+	public function pack(): string
 	{
 		$dt = new VLQ();
 		return $dt->setValue($this->delta_time) . chr(($this->type << 4) | $this->channel) . chr($this->note) . chr($this->value);
@@ -390,9 +391,9 @@ class ControlChange extends MIDIChannelEvent
 	/**
 	 * Properties unique to this event
 	 */
-	protected $type = MIDIEvent::CONTROL_CHANGE;
-	protected $controller = 0;
-	protected $value = 0;
+	protected int $type = MIDIEvent::CONTROL_CHANGE;
+	protected int $controller = 0;
+	protected int $value = 0;
 
 	/**
 	 * Constructor
@@ -417,7 +418,7 @@ class ControlChange extends MIDIChannelEvent
 	 *
 	 * @return int
 	 */
-	public function getValue()
+	public function getValue(): int
 	{
 		return $this->value;
 	}
@@ -427,7 +428,7 @@ class ControlChange extends MIDIChannelEvent
 	 *
 	 * @return string
 	 */
-	public function pack()
+	public function pack(): string
 	{
 		$dt = new VLQ();
 		return $dt->setValue($this->delta_time) . chr(($this->type << 4) | $this->channel) . chr($this->controller) . chr($this->value);
@@ -439,8 +440,8 @@ class ProgramChange extends MIDIChannelEvent
 	/**
 	 * Properties unique to this event
 	 */
-	protected $type = MIDIEvent::PROGRAM_CHANGE;
-	protected $program = 0;
+	protected int $type = MIDIEvent::PROGRAM_CHANGE;
+	protected int $program = 0;
 
 	/**
 	 * Constructor
@@ -463,7 +464,7 @@ class ProgramChange extends MIDIChannelEvent
 	 *
 	 * @return string
 	 */
-	public function pack()
+	public function pack(): string
 	{
 		$dt = new VLQ();
 		return $dt->setValue($this->delta_time) . chr(($this->type << 4) | $this->channel) . chr($this->program);
@@ -475,8 +476,8 @@ class AfterTouch extends MIDIChannelEvent
 	/**
 	 * Properties unique to this event
 	 */
-	protected $type = MIDIEvent::AFTER_TOUCH;
-	protected $value = 0;
+	protected int $type = MIDIEvent::AFTER_TOUCH;
+	protected int $value = 0;
 
 	/**
 	 * Constructor
@@ -499,7 +500,7 @@ class AfterTouch extends MIDIChannelEvent
 	 *
 	 * @return string
 	 */
-	public function pack()
+	public function pack(): string
 	{
 		$dt = new VLQ();
 		return $dt->setValue($this->delta_time) . chr(($this->type << 4) | $this->channel) . chr($this->value);
@@ -511,8 +512,8 @@ class PitchWheel extends MIDIChannelEvent
 	/**
 	 * Properties unique to this event
 	 */
-	protected $type = MIDIEvent::PITCH_WHEEL;
-	protected $value = 0;
+	protected int $type = MIDIEvent::PITCH_WHEEL;
+	protected int $value = 0;
 
 	/**
 	 * Constructor
@@ -535,7 +536,7 @@ class PitchWheel extends MIDIChannelEvent
 	 *
 	 * @return int
 	 */
-	public function getValue()
+	public function getValue(): int
 	{
 		return $this->value;
 	}
@@ -545,7 +546,7 @@ class PitchWheel extends MIDIChannelEvent
 	 *
 	 * @return string
 	 */
-	public function pack()
+	public function pack(): string
 	{
 		$dt = new VLQ();
 		// Big-endian, & offset by 8192... 
@@ -559,8 +560,8 @@ class Sysex extends MIDISysexEvent
 	/**
 	 * Properties unique to this event
 	 */
-	protected $type = MIDIEvent::SYSEX;
-	protected $data = '';
+	protected int $type = MIDIEvent::SYSEX;
+	protected string $data = '';
 
 	/**
 	 * Constructor
@@ -582,7 +583,7 @@ class Sysex extends MIDISysexEvent
 	 *
 	 * @return string
 	 */
-	public function pack()
+	public function pack(): string
 	{
 		$dt = new VLQ();
 		return $dt->setValue($this->delta_time) . chr($this->type) . $dt->setValue($this->length) . $this->data;
@@ -594,8 +595,8 @@ class SysexEscape extends MIDISysexEvent
 	/**
 	 * Properties unique to this event
 	 */
-	protected $type = MIDIEvent::SYSEX_ESCAPE;
-	protected $data = '';
+	protected int $type = MIDIEvent::SYSEX_ESCAPE;
+	protected string $data = '';
 
 	/**
 	 * Constructor
@@ -617,7 +618,7 @@ class SysexEscape extends MIDISysexEvent
 	 *
 	 * @return string
 	 */
-	public function pack()
+	public function pack(): string
 	{
 		$dt = new VLQ();
 		return $dt->setValue($this->delta_time) . chr($this->type) . $dt->setValue($this->length) . $this->data;
@@ -629,10 +630,10 @@ class SequenceNo extends MIDIMetaEvent
 	/**
 	 * Properties unique to this event
 	 */
-	protected $type = MIDIEvent::META_EVENT;
-	protected $subtype = MIDIEvent::META_SEQ_NO;
-	protected $length = 2;	// fixed at 2
-	protected $seq_no = 0;
+	protected int $type = MIDIEvent::META_EVENT;
+	protected int $subtype = MIDIEvent::META_SEQ_NO;
+	protected int $length = 2;	// fixed at 2
+	protected int $seq_no = 0;
 
 	/**
 	 * Constructor
@@ -653,7 +654,7 @@ class SequenceNo extends MIDIMetaEvent
 	 *
 	 * @return string
 	 */
-	public function pack()
+	public function pack(): string
 	{
 		$dt = new VLQ();
 		return $dt->setValue($this->delta_time) . chr($this->type) . chr($this->subtype) . $dt->setValue($this->length) . pack('n', $this->seq_no);
@@ -665,10 +666,10 @@ class Text extends MIDIMetaEvent
 	/**
 	 * Properties unique to this event
 	 */
-	protected $type = MIDIEvent::META_EVENT;
-	protected $subtype = MIDIEvent::META_TEXT;
-	protected $length = 0;
-	protected $text = '';
+	protected int $type = MIDIEvent::META_EVENT;
+	protected int $subtype = MIDIEvent::META_TEXT;
+	protected int $length = 0;
+	protected string $text = '';
 
 	/**
 	 * Constructor
@@ -690,7 +691,7 @@ class Text extends MIDIMetaEvent
 	 *
 	 * @return string
 	 */
-	public function pack()
+	public function pack(): string
 	{
 		$dt = new VLQ();
 		return $dt->setValue($this->delta_time) . chr($this->type) . chr($this->subtype) . $dt->setValue($this->length) . $this->text;
@@ -702,10 +703,10 @@ class Copyright extends MIDIMetaEvent
 	/**
 	 * Properties unique to this event
 	 */
-	protected $type = MIDIEvent::META_EVENT;
-	protected $subtype = MIDIEvent::META_COPYRIGHT;
-	protected $length = 0;
-	protected $copyright = '';
+	protected int $type = MIDIEvent::META_EVENT;
+	protected int $subtype = MIDIEvent::META_COPYRIGHT;
+	protected int $length = 0;
+	protected string $copyright = '';
 
 	/**
 	 * Constructor
@@ -727,7 +728,7 @@ class Copyright extends MIDIMetaEvent
 	 *
 	 * @return string
 	 */
-	public function pack()
+	public function pack(): string
 	{
 		$dt = new VLQ();
 		return $dt->setValue($this->delta_time) . chr($this->type) . chr($this->subtype) . $dt->setValue($this->length) . $this->copyright;
@@ -739,10 +740,10 @@ class TrackName extends MIDIMetaEvent
 	/**
 	 * Properties unique to this event
 	 */
-	protected $type = MIDIEvent::META_EVENT;
-	protected $subtype = MIDIEvent::META_TRACK_NAME;
-	protected $length = 0;
-	protected $track_name = '';
+	protected int $type = MIDIEvent::META_EVENT;
+	protected int $subtype = MIDIEvent::META_TRACK_NAME;
+	protected int $length = 0;
+	protected string $track_name = '';
 
 	/**
 	 * Constructor
@@ -764,7 +765,7 @@ class TrackName extends MIDIMetaEvent
 	 *
 	 * @return string
 	 */
-	public function pack()
+	public function pack(): string
 	{
 		$dt = new VLQ();
 		return $dt->setValue($this->delta_time) . chr($this->type) . chr($this->subtype) . $dt->setValue($this->length) . $this->track_name;
@@ -775,7 +776,7 @@ class TrackName extends MIDIMetaEvent
 	 *
 	 * @return string
 	 */
-	public function getName()
+	public function getName(): string
 	{
 		return $this->track_name;
 	}
@@ -786,10 +787,10 @@ class InstName extends MIDIMetaEvent
 	/**
 	 * Properties unique to this event
 	 */
-	protected $type = MIDIEvent::META_EVENT;
-	protected $subtype = MIDIEvent::META_INST_NAME;
-	protected $length = 0;
-	protected $inst_name = '';
+	protected int $type = MIDIEvent::META_EVENT;
+	protected int $subtype = MIDIEvent::META_INST_NAME;
+	protected int $length = 0;
+	protected string $inst_name = '';
 
 	/**
 	 * Constructor
@@ -811,7 +812,7 @@ class InstName extends MIDIMetaEvent
 	 *
 	 * @return string
 	 */
-	public function pack()
+	public function pack(): string
 	{
 		$dt = new VLQ();
 		return $dt->setValue($this->delta_time) . chr($this->type) . chr($this->subtype) . $dt->setValue($this->length) . $this->inst_name;
@@ -823,10 +824,10 @@ class Lyric extends MIDIMetaEvent
 	/**
 	 * Properties unique to this event
 	 */
-	protected $type = MIDIEvent::META_EVENT;
-	protected $subtype = MIDIEvent::META_LYRIC;
-	protected $length = 0;
-	protected $lyric = '';
+	protected int $type = MIDIEvent::META_EVENT;
+	protected int $subtype = MIDIEvent::META_LYRIC;
+	protected int $length = 0;
+	protected string $lyric = '';
 
 	/**
 	 * Constructor
@@ -848,7 +849,7 @@ class Lyric extends MIDIMetaEvent
 	 *
 	 * @return string
 	 */
-	public function pack()
+	public function pack(): string
 	{
 		$dt = new VLQ();
 		return $dt->setValue($this->delta_time) . chr($this->type) . chr($this->subtype) . $dt->setValue($this->length) . $this->lyric;
@@ -860,10 +861,10 @@ class Marker extends MIDIMetaEvent
 	/**
 	 * Properties unique to this event
 	 */
-	protected $type = MIDIEvent::META_EVENT;
-	protected $subtype = MIDIEvent::META_MARKER;
-	protected $length = 0;
-	protected $marker = '';
+	protected int $type = MIDIEvent::META_EVENT;
+	protected int $subtype = MIDIEvent::META_MARKER;
+	protected int $length = 0;
+	protected string $marker = '';
 
 	/**
 	 * Constructor
@@ -885,7 +886,7 @@ class Marker extends MIDIMetaEvent
 	 *
 	 * @return string
 	 */
-	public function pack()
+	public function pack(): string
 	{
 		$dt = new VLQ();
 		return $dt->setValue($this->delta_time) . chr($this->type) . chr($this->subtype) . $dt->setValue($this->length) . $this->marker;
@@ -897,10 +898,10 @@ class Cue extends MIDIMetaEvent
 	/**
 	 * Properties unique to this event
 	 */
-	protected $type = MIDIEvent::META_EVENT;
-	protected $subtype = MIDIEvent::META_CUE;
-	protected $length = 0;
-	protected $cue = '';
+	protected int $type = MIDIEvent::META_EVENT;
+	protected int $subtype = MIDIEvent::META_CUE;
+	protected int $length = 0;
+	protected string $cue = '';
 
 	/**
 	 * Constructor
@@ -922,7 +923,7 @@ class Cue extends MIDIMetaEvent
 	 *
 	 * @return string
 	 */
-	public function pack()
+	public function pack(): string
 	{
 		$dt = new VLQ();
 		return $dt->setValue($this->delta_time) . chr($this->type) . chr($this->subtype) . $dt->setValue($this->length) . $this->cue;
@@ -934,10 +935,10 @@ class ChannelPrefix extends MIDIMetaEvent
 	/**
 	 * Properties unique to this event
 	 */
-	protected $type = MIDIEvent::META_EVENT;
-	protected $subtype = MIDIEvent::META_CHAN_PFX;
-	protected $length = 1;	//Fixed at 1
-	protected $channel = 0;
+	protected int $type = MIDIEvent::META_EVENT;
+	protected int $subtype = MIDIEvent::META_CHAN_PFX;
+	protected int $length = 1;	//Fixed at 1
+	protected int $channel = 0;
 
 	/**
 	 * Constructor
@@ -958,7 +959,7 @@ class ChannelPrefix extends MIDIMetaEvent
 	 *
 	 * @return string
 	 */
-	public function pack()
+	public function pack(): string
 	{
 		$dt = new VLQ();
 		return $dt->setValue($this->delta_time) . chr($this->type) . chr($this->subtype) . $dt->setValue($this->length) . chr($this->channel);
@@ -970,9 +971,9 @@ class TrackEnd extends MIDIMetaEvent
 	/**
 	 * Properties unique to this event
 	 */
-	protected $type = MIDIEvent::META_EVENT;
-	protected $subtype = MIDIEvent::META_TRACK_END;
-	protected $length = 0;	//Fixed at 0
+	protected int $type = MIDIEvent::META_EVENT;
+	protected int $subtype = MIDIEvent::META_TRACK_END;
+	protected int $length = 0;	//Fixed at 0
 
 	/**
 	 * Constructor
@@ -991,7 +992,7 @@ class TrackEnd extends MIDIMetaEvent
 	 *
 	 * @return string
 	 */
-	public function pack()
+	public function pack():string
 	{
 		$dt = new VLQ();
 		return $dt->setValue($this->delta_time) . chr($this->type) . chr($this->subtype) . $dt->setValue($this->length);
@@ -1003,10 +1004,10 @@ class Tempo extends MIDIMetaEvent
 	/**
 	 * Properties unique to this event
 	 */
-	protected $type = MIDIEvent::META_EVENT;
-	protected $subtype = MIDIEvent::META_TEMPO;
-	protected $length = 3;	//Fixed at 3
-	protected $tempo = 500000;	//Default to 120 bpm
+	protected int $type = MIDIEvent::META_EVENT;
+	protected int $subtype = MIDIEvent::META_TEMPO;
+	protected int $length = 3;	//Fixed at 3
+	protected int $tempo = 500000;	//Default to 120 bpm
 
 	/**
 	 * Constructor
@@ -1028,7 +1029,7 @@ class Tempo extends MIDIMetaEvent
 	 * @param int $tempo defaults to 120 bpm
 	 * @return void
 	 */
-	public function setTempo($tempo = 500000)
+	public function setTempo($tempo = 500000): void
 	{
 		$this->tempo = $this->rangeCheck($tempo, 0, 0xFFFFFF);
 	}
@@ -1038,7 +1039,7 @@ class Tempo extends MIDIMetaEvent
 	 *
 	 * @return int
 	 */
-	public function getTempo()
+	public function getTempo(): int
 	{
 		return $this->tempo;
 	}
@@ -1048,7 +1049,7 @@ class Tempo extends MIDIMetaEvent
 	 *
 	 * @return string
 	 */
-	public function pack()
+	public function pack(): string
 	{
 		$dt = new VLQ();
 		return $dt->setValue($this->delta_time) . chr($this->type) . chr($this->subtype) . $dt->setValue($this->length) . chr(($this->tempo >> 16) & 0xFF) . chr(($this->tempo >> 8) & 0xFF) . chr($this->tempo & 0xFF);
@@ -1060,14 +1061,14 @@ class SmpteOffset extends MIDIMetaEvent
 	/**
 	 * Properties unique to this event
 	 */
-	protected $type = MIDIEvent::META_EVENT;
-	protected $subtype = MIDIEvent::META_SMPTE;
-	protected $length = 5;	//Fixed at 5
-	protected $hh = 0;
-	protected $mm = 0;
-	protected $se = 0;
-	protected $fr = 0;
-	protected $ff = 0;
+	protected int $type = MIDIEvent::META_EVENT;
+	protected int $subtype = MIDIEvent::META_SMPTE;
+	protected int $length = 5;	//Fixed at 5
+	protected int $hh = 0;
+	protected int $mm = 0;
+	protected int $se = 0;
+	protected int $fr = 0;
+	protected int $ff = 0;
 
 	/**
 	 * Constructor
@@ -1098,7 +1099,7 @@ class SmpteOffset extends MIDIMetaEvent
 	 *
 	 * @return string
 	 */
-	public function pack()
+	public function pack(): string
 	{
 		$dt = new VLQ();
 		return $dt->setValue($this->delta_time) . chr($this->type) . chr($this->subtype) . $dt->setValue($this->length) . chr($this->hh) . chr($this->mm) . chr($this->se) . chr($this->fr) . chr($this->ff);
@@ -1110,13 +1111,13 @@ class TimeSignature extends MIDIMetaEvent
 	/**
 	 * Properties unique to this event
 	 */
-	protected $type = MIDIEvent::META_EVENT;
-	protected $subtype = MIDIEvent::META_TIME_SIG;
-	protected $length = 4;	//Fixed at 4
-	protected $top = 4;
-	protected $bottom = 2;	// Careful, powers of 2, 2=4
-	protected $cc = 24;		// Standard 24 clocks per beat
-	protected $bb = 8;		// Standard 8 1/32 notes per 24 clocks
+	protected int $type = MIDIEvent::META_EVENT;
+	protected int $subtype = MIDIEvent::META_TIME_SIG;
+	protected int $length = 4;	//Fixed at 4
+	protected int $top = 4;
+	protected int $bottom = 2;	// Careful, powers of 2, 2=4
+	protected int $cc = 24;		// Standard 24 clocks per beat
+	protected int $bb = 8;		// Standard 8 1/32 notes per 24 clocks
 
 	/**
 	 * Constructor
@@ -1147,7 +1148,7 @@ class TimeSignature extends MIDIMetaEvent
 	 * @param int $bb Number of 1/32 notes per 24 MICI clock ticks (8 standard)
 	 * @return void
 	 */
-	public function setTimeSignature($top = 4, $bottom = 2, $cc = 24, $bb = 8)
+	public function setTimeSignature($top = 4, $bottom = 2, $cc = 24, $bb = 8): void
 	{
 		$this->top = $this->rangeCheck($top);
 		$this->bottom = $this->rangeCheck($bottom);
@@ -1160,7 +1161,7 @@ class TimeSignature extends MIDIMetaEvent
 	 *
 	 * @return int[]
 	 */
-	public function getTimeSignature()
+	public function getTimeSignature(): array
 	{
 		return array('top' => $this->top, 'bottom' => $this->bottom);
 	}
@@ -1170,7 +1171,7 @@ class TimeSignature extends MIDIMetaEvent
 	 *
 	 * @return string
 	 */
-	public function pack()
+	public function pack(): string
 	{
 		$dt = new VLQ();
 		return $dt->setValue($this->delta_time) . chr($this->type) . chr($this->subtype) . $dt->setValue($this->length) . chr($this->top) . chr($this->bottom) . chr($this->cc) . chr($this->bb);
@@ -1182,11 +1183,11 @@ class KeySignature extends MIDIMetaEvent
 	/**
 	 * Properties unique to this event
 	 */
-	protected $type = MIDIEvent::META_EVENT;
-	protected $subtype = MIDIEvent::META_KEY_SIG;
-	protected $length = 2;	//Fixed at 2
-	protected $sharps = 0;
-	protected $minor = 0;
+	protected int $type = MIDIEvent::META_EVENT;
+	protected int $subtype = MIDIEvent::META_KEY_SIG;
+	protected int $length = 2;	//Fixed at 2
+	protected int $sharps = 0;
+	protected int $minor = 0;
 
 	/**
 	 * Constructor
@@ -1211,7 +1212,7 @@ class KeySignature extends MIDIMetaEvent
 	 * @param int $minor
 	 * @return void
 	 */
-	public function setKeySignature($sharps = 0, $minor = 0)
+	public function setKeySignature($sharps = 0, $minor = 0): void
 	{
 		$this->sharps = $this->rangeCheck($sharps, -7, 7);
 		$this->minor = $this->rangeCheck($minor, 0, 1);
@@ -1222,7 +1223,7 @@ class KeySignature extends MIDIMetaEvent
 	 *
 	 * @return int[]
 	 */
-	public function getKeySignature()
+	public function getKeySignature(): array
 	{
 		return array('sharps' => $this->sharps, 'minor' => $this->minor);
 	}
@@ -1232,7 +1233,7 @@ class KeySignature extends MIDIMetaEvent
 	 *
 	 * @return string
 	 */
-	public function pack()
+	public function pack(): string
 	{
 		$dt = new VLQ();
 		return $dt->setValue($this->delta_time) . chr($this->type) . chr($this->subtype) . $dt->setValue($this->length) . pack('c', $this->sharps) . chr($this->minor);
@@ -1244,10 +1245,10 @@ class SequencerSpecific extends MIDIMetaEvent
 	/**
 	 * Properties unique to this event
 	 */
-	protected $type = MIDIEvent::META_EVENT;
-	protected $subtype = MIDIEvent::META_SEQ_SPEC;
-	protected $length = 0;
-	protected $bytes = '';
+	protected int $type = MIDIEvent::META_EVENT;
+	protected int $subtype = MIDIEvent::META_SEQ_SPEC;
+	protected int $length = 0;
+	protected string $bytes = '';
 
 	/**
 	 * Constructor
@@ -1269,7 +1270,7 @@ class SequencerSpecific extends MIDIMetaEvent
 	 *
 	 * @return string
 	 */
-	public function pack()
+	public function pack():string
 	{
 		$dt = new VLQ();
 		return $dt->setValue($this->delta_time) . chr($this->type) . chr($this->subtype) . $dt->setValue($this->length) . $this->bytes;

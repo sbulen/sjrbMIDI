@@ -26,9 +26,9 @@ class VLQ
 	/**
 	 * The actual value here
 	 */
-	protected $value;
-	protected $len;
-	protected $str;
+	protected int $value;
+	protected int $len;
+	protected string $str;
 	
 	/**
 	 * Constructor
@@ -38,7 +38,7 @@ class VLQ
 	 * @param string $string - raw binary data to parse
 	 * @return int
 	 */
-	function __construct($string = null)
+	function __construct(string $string = null)
 	{
 		if ($string !== null)
 			$this->readVLQ($string);
@@ -57,7 +57,7 @@ class VLQ
 	 * @param string $string - raw binary data to parse
 	 * @return int
 	 */
-	public function readVLQ($string = '')
+	public function readVLQ(string $string = ''): int
 	{
 		$this->value = 0;
 		$this->len = 0;
@@ -80,7 +80,7 @@ class VLQ
 	 *
 	 * @return int
 	 */
-	public function getValue()
+	public function getValue(): int
 	{
 		return $this->value;
 	}
@@ -90,7 +90,7 @@ class VLQ
 	 *
 	 * @return int
 	 */
-	public function getLen()
+	public function getLen(): int
 	{
 		return $this->len;
 	}
@@ -100,7 +100,7 @@ class VLQ
 	 *
 	 * @return string
 	 */
-	public function getStr()
+	public function getStr(): string
 	{
 		return $this->str;
 	}
@@ -112,7 +112,7 @@ class VLQ
 	 * @param int $value
 	 * @return string
 	 */
-	public function setValue($int = 0)
+	public function setValue(int $int = 0): string
 	{
 		$this->value = $int;
 		$this->len = 0;
