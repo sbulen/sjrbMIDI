@@ -23,7 +23,7 @@
 
 class Euclid extends Rhythm
 {
-	protected $pattern = '';
+	protected string $pattern = '';
 
 	/**
 	 * Builds a Euclid object
@@ -32,7 +32,7 @@ class Euclid extends Rhythm
 	 * @param int $rests
 	 * @return void
 	 */
-	function __construct($beats = 0, $rests = 0)
+	function __construct(int $beats = 0, int $rests = 0)
 	{
 		$this->beats = $beats;
 		$this->rests = $rests;
@@ -69,7 +69,7 @@ class Euclid extends Rhythm
 	 * @param int $rem
 	 * @return int[]
 	 */
-	private function fold($arr, $rem)
+	private function fold(array $arr, int $rem): array
 	{
 		if($rem > 1)
 		{
@@ -94,7 +94,7 @@ class Euclid extends Rhythm
 	 *
 	 * @return string
 	 */
-	public function getPattern()
+	public function getPattern(): string
 	{
 		return $this->pattern;
 	}
@@ -103,9 +103,9 @@ class Euclid extends Rhythm
 	 * Randomize current object...
 	 *
 	 * @param int $pulses
-	 * @return Euclid
+	 * @return void
 	 */
-	public function randomize($pulses)
+	public function randomize(int $pulses): void
 	{
 		$beats = rand(1, $pulses);
 		$rests = $pulses - $beats;

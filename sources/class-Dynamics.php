@@ -28,14 +28,14 @@ class Dynamics
 	/*
 	 * Properties
 	 */
-	protected $rhythm;
-	protected $downbeat;
-	protected $dur;
-	protected $maxvel;
-	protected $minvel;
-	protected $spread;
-	protected $timesigtop;
-	protected $timesigbot;
+	protected Rhythm $rhythm;
+	protected int $downbeat;
+	protected int $dur;
+	protected int $maxvel;
+	protected int $minvel;
+	protected int $spread;
+	protected int $timesigtop;
+	protected int $timesigbot;
 
 	// Used internally for quick vel lookups for this obj
 	private $buckets;
@@ -45,7 +45,7 @@ class Dynamics
 	 *
 	 * Builds a Dynamics object
 	 *
-	 * @param int $rhythm - Rhythm object
+	 * @param Rhythm $rhythm - Rhythm object
 	 * @param int $dur - Measure duration in ticks
 	 * @param int $downbeat - E.g., 1 for rock (1,3), 2 for jazz (2,4)... Beat where rhythm pattern starts...
 	 * @param int $maxvel - Max velocity to be returned
@@ -55,7 +55,7 @@ class Dynamics
 	 * @param int $timesigbot - Bottom of time signature
 	 * @return void
 	 */
-	function __construct($rhythm, $dur = 3840, $downbeat = 1, $maxvel = 120, $minvel = 60, $spread = 20, $timesigtop = 4, $timesigbot = 4)
+	function __construct(Rhythm $rhythm, int $dur = 3840, int $downbeat = 1, int $maxvel = 120, int $minvel = 60, int $spread = 20, int $timesigtop = 4, int $timesigbot = 4)
 	{
 		if (is_a($rhythm, 'Rhythm'))
 			$this->rhythm = $rhythm;
@@ -81,7 +81,7 @@ class Dynamics
 	 * @param int $at - time to be calc'd for
 	 * @return int
 	 */
-	public function getVel($at)
+	public function getVel(int $at): int
 	{
 		static $exp = 6;			// 1/(2^6) = 1/64
 		static $bpb = 16;			// buckets per beat
@@ -169,9 +169,9 @@ class Dynamics
 	 * Is 4/4 - determine if the rhythm provided is aligned with a 4/4 signature.
 	 * Simple check: Need 4 groups, with equal pulses each.
 	 *
-	 * @return void
+	 * @return bool
 	 */
-	private function is4_4()
+	private function is4_4(): bool
 	{
 		if ((count($this->rhythm->getRhythm()) != 4) || ($this->timesigtop != 4) || ($this->timesigbot !=4))
 			return false;
@@ -189,7 +189,7 @@ class Dynamics
 	 * @param Rhythm $rhythm
 	 * @return void
 	 */
-	public function setRhythm($rhythm = null)
+	public function setRhythm(Rhythm $rhythm = null): void
 	{
 		if (is_a($rhythm, 'Rhythm'))
 			$this->rhythm = $rhythm;
@@ -198,8 +198,6 @@ class Dynamics
 
 		// If these had been built, they need to be redone...
 		$this->buckets = array();
-
-		return;
 	}
 
 	/**
@@ -208,10 +206,9 @@ class Dynamics
 	 * @param int $downbeat
 	 * @return void
 	 */
-	public function setDownbeat($downbeat = 1)
+	public function setDownbeat(int $downbeat = 1): void
 	{
 		$this->downbeat = MIDIEvent::rangeCheck($downbeat, 1, 0xF);
-		return;
 	}
 
 	/**
@@ -220,14 +217,12 @@ class Dynamics
 	 * @param int $dur - duration in ticks
 	 * @return void
 	 */
-	public function setDur($dur = 960)
+	public function setDur(int $dur = 960): void
 	{
 		$this->dur = MIDIEvent::rangeCheck($dur, 1, 0xFFFFFFF);
 
 		// If these had been built, they need to be redone...
 		$this->buckets = array();
-
-		return;
 	}
 
 	/**
@@ -237,15 +232,13 @@ class Dynamics
 	 * @param int $maxvel - max velocity
 	 * @return void
 	 */
-	public function setMaxvel($maxvel = 0x7F)
+	public function setMaxvel(int $maxvel = 0x7F): void
 	{
 		$this->maxvel = MIDIEvent::rangeCheck($maxvel, 0, 0x7F);
 		$this->minvel = MIDIEvent::rangeCheck($this->minvel, 0, $this->maxvel);
 
 		// If these had been built, they need to be redone...
 		$this->buckets = array();
-
-		return;
 	}
 
 	/**
@@ -255,15 +248,13 @@ class Dynamics
 	 * @param int $minvel - min velocity
 	 * @return void
 	 */
-	public function setMinvel($minvel = 0)
+	public function setMinvel(int $minvel = 0): void
 	{
 		$this->minvel = MIDIEvent::rangeCheck($minvel, 0, 0x7F);
 		$this->maxvel = MIDIEvent::rangeCheck($this->maxvel, $this->minvel, 0x7F);
 
 		// If these had been built, they need to be redone...
 		$this->buckets = array();
-
-		return;
 	}
 
 	/**
@@ -272,14 +263,12 @@ class Dynamics
 	 * @param int $spread - variance between note divisions
 	 * @return void
 	 */
-	public function setSpread($spread = 10)
+	public function setSpread(int $spread = 10): void
 	{
 		$this->spread = MIDIEvent::rangeCheck($spread, 0, 0x7F);
 
 		// If these had been built, they need to be redone...
 		$this->buckets = array();
-
-		return;
 	}
 
 	/**
@@ -288,14 +277,12 @@ class Dynamics
 	 * @param int $timesigtop - top of time signature
 	 * @return void
 	 */
-	public function setTimeSigTop($timesigtop = 4)
+	public function setTimeSigTop(int $timesigtop = 4): void
 	{
 		$this->timesigtop = MIDIEvent::rangeCheck($timesigtop, 1, 0x7F);
 
 		// If these had been built, they need to be redone...
 		$this->buckets = array();
-
-		return;
 	}
 
 	/**
@@ -304,15 +291,13 @@ class Dynamics
 	 * @param int $timesigbot - bottom of time signature
 	 * @return void
 	 */
-	public function setTimeSigBot($timesigbot = 4)
+	public function setTimeSigBot(int $timesigbot = 4): void
 	{
 		if (MathFuncs::isPow2($timesigbot))
 			$this->timesigbot = MIDIEvent::rangeCheck($timesigbot, 1, 0x7F);
 
 		// If these had been built, they need to be redone...
 		$this->buckets = array();
-
-		return;
 	}
 
 }

@@ -23,7 +23,9 @@
  */
 
 // This protects you in case they get loaded out of sequence...
-spl_autoload_register(function ($class_name) {
+spl_autoload_register(function ($class_name)
+	{
+		echo 'Auto including: ..\sources\class-' . $class_name . '.php' . PHP_EOL;
 		include_once '..\sources\class-' . $class_name . '.php';
 	}
 );

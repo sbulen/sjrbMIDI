@@ -27,19 +27,19 @@ class ChordSequence extends AbstractSequence
 	/**
 	 * Properties
 	 */
-	protected $key;
-	protected $chords;				// Chord sequence passed as a simple array; if passed, used, if not passed, random chords are generated
-	protected $root_seq;			// Array of roots of chords/phrases
-	protected $root_oct;			// Where to start...  Used when generating chords/phrases
-	protected $max_notes_per_chord;	// How big are the chords, when auto-generated
-	protected $max_inc_dec;			// Max amount to inc or dec when building chord sequences
-	protected $min_dnote;			// Min dnote when building chord sequences
-	protected $max_dnote;			// Max dnote when building chord sequences
-	protected $inversion_pct;		// What percentage of chords are inverted, when auto-generated
-	protected $chord_note_pct;		// What percentage of chords are kept, when auto-generated
-	protected $chord_trip_pct;		// What percentage of chords are triplets, when auto-generated
+	protected Key $key;					// Key of sequence
+	protected array $chords;			// Chord sequence passed as a simple array; if passed, used, if not passed, random chords are generated
+	protected array $root_seq;			// Array of roots of chords/phrases
+	protected int $root_oct;			// Where to start...  Used when generating chords/phrases
+	protected int $max_notes_per_chord;	// How big are the chords, when auto-generated
+	protected int $max_inc_dec;			// Max amount to inc or dec when building chord sequences
+	protected int $min_dnote;			// Min dnote when building chord sequences
+	protected int $max_dnote;			// Max dnote when building chord sequences
+	protected float $inversion_pct;		// What percentage of chords are inverted, when auto-generated
+	protected float $chord_note_pct;	// What percentage of chords are kept, when auto-generated
+	protected float $chord_trip_pct;	// What percentage of chords are triplets, when auto-generated
 
-	protected $intervals;			// Derived from root_seq
+	protected array $intervals;			// Derived from root_seq
 
 	/**
 	 * Constructor
@@ -65,7 +65,7 @@ class ChordSequence extends AbstractSequence
 	 * @param float $chord_trip_pct
 	 * @return void
 	 */
-	function __construct($key, $rhythm, $downbeat = 1, $duration = 1, $dests = array(1), $note_pct = 1, $trip_pct = 0, $chords = array(), $root_seq = null, $root_oct = 5, $max_notes_per_chord = 4, $max_inc_dec = 4, $min_dnote = 30, $max_dnote = 70, $inversion_pct = 0, $chord_note_pct = .8, $chord_trip_pct = .1)
+	function __construct(Key $key, Rhythm $rhythm, int $downbeat = 1, int $duration = 1, array $dests = array(1), float $note_pct = 1, float $trip_pct = 0, array $chords = null, array $root_seq = null, int $root_oct = 5, int $max_notes_per_chord = 4, int $max_inc_dec = 4, int $min_dnote = 30, int $max_dnote = 70, float $inversion_pct = 0, float $chord_note_pct = .8, float $chord_trip_pct = .1)
 	{
 		// Load all the basics first...
 		parent::__construct($rhythm, $downbeat, $duration, $dests, $note_pct, $trip_pct);
@@ -91,7 +91,6 @@ class ChordSequence extends AbstractSequence
 		// Two layers of randomness here; if no root_seq provided, create one.
 		// Then generate random chords.
 		// Only validate chord parameters if we need to generate them...
-		if ($this->chords === null)
 		{
 			// root_oct
 			if (is_int($root_oct) && ($root_oct >= 0) && ($root_oct <= 11))
@@ -174,7 +173,7 @@ class ChordSequence extends AbstractSequence
 	// Build some random chord ***phrasings*** from scratch...
 	// Transposition happens later, in generation.
 	// What varies among the phrasings are: number of notes in chord, inversions, note percents/gaps...
-	private function genChords()
+	private function genChords(): array
 	{
 		$chords = array();
 
@@ -211,7 +210,7 @@ class ChordSequence extends AbstractSequence
 	 * @return int
 	 */
 
-	public function randIncDec($curr_dnote)
+	public function randIncDec(array $curr_dnote): int
 	{
 		$val = base_convert($curr_dnote['dn'], 7, 10);
 		$min = base_convert($this->min_dnote, 7, 10);
@@ -234,7 +233,7 @@ class ChordSequence extends AbstractSequence
 	 * @return Chord[]
 	 */
 
-	public function getChords()
+	public function getChords(): array
 	{
 		return $this->chords;
 	}
@@ -245,7 +244,7 @@ class ChordSequence extends AbstractSequence
 	 * @return DNote[]
 	 */
 
-	public function getRootSeq()
+	public function getRootSeq(): array
 	{
 		return $this->root_seq;
 	}
@@ -256,7 +255,7 @@ class ChordSequence extends AbstractSequence
 	 * @return int
 	 */
 
-	public function getRootOct()
+	public function getRootOct(): int
 	{
 		return $this->root_oct;
 	}
@@ -267,7 +266,7 @@ class ChordSequence extends AbstractSequence
 	 * @return int
 	 */
 
-	public function getMaxNotesPerChord()
+	public function getMaxNotesPerChord(): int
 	{
 		return $this->max_notes_per_chord;
 	}
@@ -278,7 +277,7 @@ class ChordSequence extends AbstractSequence
 	 * @return float
 	 */
 
-	public function getInversionPct()
+	public function getInversionPct(): float
 	{
 		return $this->inversion_pct;
 	}
@@ -289,7 +288,7 @@ class ChordSequence extends AbstractSequence
 	 * @return float
 	 */
 
-	public function getChordNotePct()
+	public function getChordNotePct(): float
 	{
 		return $this->chord_note_pct;
 	}
@@ -300,7 +299,7 @@ class ChordSequence extends AbstractSequence
 	 * @return float
 	 */
 
-	public function getChordTripPct()
+	public function getChordTripPct(): float
 	{
 		return $this->chord_trip_pct;
 	}
@@ -311,7 +310,7 @@ class ChordSequence extends AbstractSequence
 	 * @return int[]
 	 */
 
-	public function getIntervals()
+	public function getIntervals(): array
 	{
 		return $this->intervals;
 	}
@@ -322,7 +321,7 @@ class ChordSequence extends AbstractSequence
 	 * @return Key
 	 */
 
-	public function getKey()
+	public function getKey(): Key
 	{
 		return $this->key;
 	}

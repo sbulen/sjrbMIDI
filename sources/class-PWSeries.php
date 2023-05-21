@@ -23,7 +23,7 @@
 
 class PWSeries extends EventSeries
 {
-	protected $channel;
+	protected int $channel;
 
 	/**
 	 * Constructor
@@ -32,14 +32,14 @@ class PWSeries extends EventSeries
 	 *
 	 * @param int $chan - The MIDI channel
 	 * @param int $shape - The shape of the curve
-	 * @param int $freq - The frequency, # of cycles per duration
+	 * @param float $freq - The frequency, # of cycles per duration
 	 * @param int $offset - The angle of offset, passed in degrees
 	 * @param int $min_pct - Minimum value used in scaling, in percent
 	 * @param int $max_pct - Maximum value used in scaling, in percent
 	 * @param int $tick_inc - How far apart in ticks to spread the events
 	 * @return void
 	 */
-	function __construct($chan = 0, $shape = EVENTSeries::SINE, $freq = 1, $offset = 0, $min_pct = 0, $max_pct = 100, $tick_inc = 48)
+	function __construct(int $chan = 0, int $shape = EVENTSeries::SINE, float $freq = 1, int $offset = 0, int $min_pct = 0, int $max_pct = 100, int $tick_inc = 48)
 	{
 		$this->channel = MIDIEvent::rangeCheck($chan, 0, 0xF);
 		$this->type_min = EventSeries::PW_MIN;
@@ -54,7 +54,7 @@ class PWSeries extends EventSeries
 	 * @param int $dur - The duration of the series
 	 * @return MIDIEvent::PitchWheel[]
 	 */
-	public function genEvents($start, $dur)
+	public function genEvents(int $start, int $dur): array
 	{
 		$values = $this->genValues($start, $dur);
 		$events = array();

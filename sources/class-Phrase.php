@@ -38,16 +38,16 @@ class Phrase implements IteratorAggregate
 	/*
 	 * Properties
 	 */
-	protected $note_arr;
-	protected $key;
-	protected $start;
-	protected $dur;
+	protected array $note_arr;
+	protected ?Key $key;
+	protected int $start;
+	protected int $dur;
 
 	/*
 	 * Iterators
 	 */
-	public $walkSD;
-	public $walkAll;
+	public Iterator $walkSD;
+	public Iterator $walkAll;
 
 	/**
 	 * Constructor
@@ -58,7 +58,7 @@ class Phrase implements IteratorAggregate
 	 * @param Key $key - Key object
 	 * @return void
 	 */
-	function __construct($note_arr = array(), $key = null)
+	function __construct(array $note_arr = array(), Key $key = null)
 	{
 		$min_time = null;
 		$max_time = null;
@@ -110,7 +110,7 @@ class Phrase implements IteratorAggregate
 	 *
 	 * @return void
 	 */
-	function __clone()
+	function __clone(): void
 	{
 		foreach($this->note_arr AS $ix => $note)
 			$this->note_arr[$ix] = clone $this->note_arr[$ix];
@@ -121,7 +121,8 @@ class Phrase implements IteratorAggregate
 	 *
 	 * @return MIDIEvent[]
 	 */
-    public function getIterator() : Traversable {
+    public function getIterator() : Traversable
+	{
         return new ArrayIterator($this->note_arr);
     }
 
@@ -130,7 +131,7 @@ class Phrase implements IteratorAggregate
 	 *
 	 * @return MIDIEvent[]
 	 */
-	public function getNotes()
+	public function getNotes(): array
 	{
 		$events = array();
 		foreach ($this->note_arr AS $note)
@@ -147,7 +148,7 @@ class Phrase implements IteratorAggregate
 	 *
 	 * @return int
 	 */
-	public function getStart()
+	public function getStart(): int
 	{
 		return $this->start;
 	}
@@ -157,7 +158,7 @@ class Phrase implements IteratorAggregate
 	 *
 	 * @return int
 	 */
-	public function getDur()
+	public function getDur(): int
 	{
 		return $this->Dur;
 	}
@@ -168,7 +169,7 @@ class Phrase implements IteratorAggregate
 	 * @param int $notenum
 	 * @return Note
 	 */
-	public function getNoteObj($notenum)
+	public function getNoteObj(int $notenum): Note
 	{
 		return $this->note_arr[$notenum];
 	}
@@ -180,7 +181,7 @@ class Phrase implements IteratorAggregate
 	 * @param int $dur - new duration
 	 * @return void
 	 */
-	public function setStartDur($start, $dur)
+	public function setStartDur(int $start, int $dur): void
 	{
 		$prior_start = $this->start;
 		$prior_dur = $this->dur;
@@ -195,8 +196,6 @@ class Phrase implements IteratorAggregate
 
 		$this->walkSD = new PhraseWalkSD($this->note_arr, $this->start, $this->dur);
 		$this->walkAll = new PhraseWalkAll($this->note_arr, $this->start, $this->dur);
-
-		return;
 	}
 
 	/**
@@ -205,13 +204,11 @@ class Phrase implements IteratorAggregate
 	 * @param int $interval - interval
 	 * @return void
 	 */
-	public function transpose($interval)
+	public function transpose(int $interval): void
 	{
 		$interval = (int) round($interval);
 		foreach ($this->note_arr AS $note)
 			$note->setDNote($this->key->dAdd($note->getDNote(), $interval));
-
-		return;
 	}
 
 	/**
@@ -220,7 +217,7 @@ class Phrase implements IteratorAggregate
 	 * @param int $notes - number of notes to rotate by; negative rotates left, positive rotates right
 	 * @return void
 	 */
-	public function rotate($notes)
+	public function rotate(int $notes): void
 	{
 		$notes = (int) round($notes);
 
@@ -252,8 +249,6 @@ class Phrase implements IteratorAggregate
 					$note->setAt($note->getAt() + $diff - $this->dur);
 			}
 		}
-
-		return;
 	}
 
 	/**
@@ -262,12 +257,10 @@ class Phrase implements IteratorAggregate
 	 *
 	 * @return void
 	 */
-	public function retrograde()
+	public function retrograde(): void
 	{
 		foreach ($this->note_arr AS $note)
 			$note->setAt(($this->start * 2) + $this->dur - $note->getAt() - $note->getDur());
-
-		return;
 	}
 
 	/**
@@ -277,7 +270,7 @@ class Phrase implements IteratorAggregate
 	 *
 	 * @return void
 	 */
-	public function invert()
+	public function invert(): void
 	{
 		// First, save off working copy of all the dnotes...
 		$notes = array();
@@ -315,8 +308,6 @@ class Phrase implements IteratorAggregate
 			// Update note...
 			$note->setDNote($new_note);
 		}
-
-		return;
 	}
 
 	/**
@@ -326,7 +317,7 @@ class Phrase implements IteratorAggregate
 	 *
 	 * @return void
 	 */
-	public function invert_set()
+	public function invert_set(): void
 	{
 		// First, save off working copy of all the dnotes...
 		$notes = array();
@@ -366,8 +357,6 @@ class Phrase implements IteratorAggregate
 			$new_note = $notes[$maxix - $key];
 			$note->setDNote($new_note);
 		}
-
-		return;
 	}
 }
 ?>

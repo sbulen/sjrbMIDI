@@ -176,7 +176,7 @@ abstract class MIDIEvent
 	 *
 	 * @return string
 	 */
-	abstract function pack();
+	abstract function pack(): string;
 
 }
 
@@ -981,7 +981,7 @@ class TrackEnd extends MIDIMetaEvent
 	 * @param int $at - absolute time
 	 * @return void
 	 */
-	function __construct($at = 0)
+	function __construct(int $at = 0)
 	{
 		$this->abs_time = $this->rangeCheck($at, 0, 0xFFFFFFF);
 		$this->delta_time = 0;	//Needs to be set later...
@@ -1257,7 +1257,7 @@ class SequencerSpecific extends MIDIMetaEvent
 	 * @param string $bytes - sequencer specific raw binary data
 	 * @return void
 	 */
-	function __construct($at = 0, $bytes = '')
+	function __construct(int $at = 0, string $bytes = '')
 	{
 		$this->abs_time = $this->rangeCheck($at, 0, 0xFFFFFFF);
 		$this->delta_time = 0;	//Needs to be set later...

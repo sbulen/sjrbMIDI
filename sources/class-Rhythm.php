@@ -24,18 +24,18 @@
 class Rhythm
 {
 	// Minimal information about a rhythm - bests, rests, & an array of relative lengths
-	protected $beats = 4;
-	protected $rests = 0;
-	protected $pulses = 4;
-	protected $rhythm = array();
+	protected int $beats = 4;
+	protected int $rests = 0;
+	protected int $pulses = 4;
+	protected array $rhythm = array();
 
 	// Once start & dur have been provided for the rhythm, we can use iterators to obtain starts & durs of each beat
-	protected $start = 0;
-	protected $dur = 0;
+	protected int $start = 0;
+	protected int $dur = 0;
 
 	// The iterators.  The simple one just returns $start => $durs.  The other returns more info.
-	public $walkSD = null;
-	public $walkAll = null;
+	public ?Iterator $walkSD = null;
+	public ?Iterator $walkAll = null;
 
 	/**
 	 * Constructor
@@ -48,7 +48,7 @@ class Rhythm
 	 * @param int $lengths - A variable number of lengths
 	 * @return void
 	 */
-	function __construct(...$lengths)
+	function __construct(int ...$lengths)
 	{
 		// Make sure destinations are all ints
 		if (!is_array($lengths) || ($lengths != array_filter($lengths, function($a) {return is_int($a);})))
@@ -72,7 +72,6 @@ class Rhythm
 		$this->dur = 0;
 		$this->walkSD = new RhythmWalkSD($this->rhythm, $this->start, $this->dur);
 		$this->walkAll = new RhythmWalkAll($this->rhythm, $this->start, $this->dur);
-
 	}
 
 	/**
@@ -80,7 +79,7 @@ class Rhythm
 	 *
 	 * @return int
 	 */
-	public function getBeats()
+	public function getBeats(): int
 	{
 		return $this->beats;
 	}
@@ -90,7 +89,7 @@ class Rhythm
 	 *
 	 * @return int
 	 */
-	public function getRests()
+	public function getRests(): int
 	{
 		return $this->rests;
 	}
@@ -100,7 +99,7 @@ class Rhythm
 	 *
 	 * @return int[]
 	 */
-	public function getRhythm()
+	public function getRhythm(): array
 	{
 		return $this->rhythm;
 	}
@@ -110,7 +109,7 @@ class Rhythm
 	 *
 	 * @return int
 	 */
-	public function getPulses()
+	public function getPulses(): int
 	{
 		return $this->pulses;
 	}
@@ -123,7 +122,7 @@ class Rhythm
 	 * @param int $dur
 	 * @return void
 	 */
-	public function setStartDur($start, $dur)
+	public function setStartDur(int $start, int $dur): void
 	{
 		$this->start = $start;
 		$this->dur = $dur;
@@ -140,9 +139,9 @@ class Rhythm
 	 * Then invoke the constructor to rebuild the object.
 	 *
 	 * @param int $pulses
-	 * @return Rhythm
+	 * @return void
 	 */
-	public function randomize($pulses)
+	public function randomize(int $pulses): void
 	{
 		if (!is_int($pulses) || ($pulses < 1))
 			Errors::fatal('inv_pulses');

@@ -41,7 +41,7 @@ class MathFuncs
 	 * @param float | int
 	 * @return bool
 	 */
-	static function isPow2(float|int $value): Bool
+	static function isPow2(float|int $value): bool
 	{
 		return fmod(log($value, 2), 1) === 0;
 	}
@@ -52,7 +52,7 @@ class MathFuncs
 	 * @param float | int
 	 * @return bool
 	 */
-	static function isEven(float|int $value): Bool
+	static function isEven(float|int $value): bool
 	{
 		return $value % 2 === 0;
 	}

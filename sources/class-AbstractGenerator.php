@@ -29,7 +29,7 @@ abstract class AbstractGenerator
 	protected array $instruments = array();
 
 	protected ?Dynamics $dynamics = null;
-	protected ?int $key = null;
+	protected ?Key $key = null;
 
 	// To be passed when Dynamics obj built
 	protected int $maxvel = 120;
@@ -99,9 +99,9 @@ abstract class AbstractGenerator
 	/**
 	 * Execute the algorithm & generate the notes
 	 *
-	 * @return array
+	 * @return void
 	 */
-	private function doSequence(AbstractSequence $seq): array
+	private function doSequence(AbstractSequence $seq): void
 	{
 		$notes = array();
 
@@ -226,7 +226,7 @@ abstract class AbstractGenerator
 	 * @param Note[]
 	 * @return void
 	 */
-	abstract function doInstrument(int $start, array $subinfo, Instrument $inst, int $tone, array $sub_inst_vars, array $rhythm_vars, AbstractSequence $seq, array &$new_notes);
+	abstract function doInstrument(int $start, array $subinfo, Instrument $inst, int $tone, array $sub_inst_vars, array $rhythm_vars, AbstractSequence $seq, array &$new_notes): void;
 
 	/**
 	 * Set the sequences
@@ -270,9 +270,9 @@ abstract class AbstractGenerator
 	 * Notes had been constructed in a simple fashion, with one array entry per note.
 	 * These must be split out into MIDI events to be added to the drum track here.
 	 *
-	 * @return MIDIEvents[]
+	 * @return void
 	 */
-	public function generate(): array
+	public function generate(): void
 	{
 		Errors::info('started');
 

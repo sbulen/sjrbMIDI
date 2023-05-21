@@ -44,14 +44,14 @@ abstract class EventSeries
 	/**
 	 * Properties
 	 */
-	protected $type_min;	// CC & PW have different min/max
-	protected $type_max;	// CC & PW have different min/max
-	protected $shape;		// Shape, e.g., SINE
-	protected $freq;		// Frequency - # of cycles per $dur
-	protected $offset;	// Offset - angle of offset; applies to all types; passed in degrees
-	protected $min_pct;	// User may not want entire range...  Percent for min value
-	protected $max_pct;	// User may not want entire range...  Percent for max value
-	protected $tick_inc;	// # of ticks between each event in series
+	protected int $type_min;	// CC & PW have different min/max
+	protected int $type_max;	// CC & PW have different min/max
+	protected int $shape;		// Shape, e.g., SINE
+	protected float $freq;		// Frequency - # of cycles per $dur
+	protected int $offset;		// Offset - angle of offset; applies to all types; passed in degrees
+	protected int $min_pct;		// User may not want entire range...  Percent for min value
+	protected int $max_pct;		// User may not want entire range...  Percent for max value
+	protected int $tick_inc;	// # of ticks between each event in series
 
 	/**
 	 * Constructor
@@ -59,14 +59,14 @@ abstract class EventSeries
 	 * Builds object to establish a series of MIDI events.
 	 *
 	 * @param int $shape - The shape of the curve
-	 * @param int $freq - The frequency, # of cycles per duration
+	 * @param float $freq - The frequency, # of cycles per duration
 	 * @param int $offset - The angle of offset, passed in degrees
 	 * @param int $min_pct - Minimum value used in scaling, in percent
 	 * @param int $max_pct - Maximum value used in scaling, in percent
 	 * @param int $tick_inc - How far apart in ticks to spread the events
 	 * @return void
 	 */
-	protected function __construct($shape = EVENTSeries::SINE, $freq = 1, $offset = 0, $min_pct = 0, $max_pct = 100, $tick_inc = 48)
+	protected function __construct(int $shape = EVENTSeries::SINE, float $freq = 1, int $offset = 0, int $min_pct = 0, int $max_pct = 100, int $tick_inc = 48)
 	{
 		$this->shape = MIDIEvent::rangeCheck($shape, EventSeries::SINE, EventSeries::RANDOM_STEPS);
 		$this->freq = MIDIEvent::rangeCheck($freq, 0, 256);
@@ -83,7 +83,7 @@ abstract class EventSeries
 	 * @param int $dur - The duration of the series
 	 * @return (MIDIEvent::ControlChange[]|MIDIEvent::PitchWheel[])
 	 */
-	abstract function genEvents($start, $dur);
+	abstract function genEvents(int $start, int $dur): array;
 
 	/**
 	 * Scale to requested min/max pct.
@@ -92,7 +92,7 @@ abstract class EventSeries
 	 * @param float $value - The value to be scaled
 	 * @return int
 	 */
-	private function scale($value)
+	private function scale(float $value): int
 	{
 		// Remember that PW has a negative min value...
 		$type_range = $this->type_max - $this->type_min;
@@ -112,7 +112,7 @@ abstract class EventSeries
 	 * @param float $angle
 	 * @return float
 	 */
-	private function sine($angle)
+	private function sine(float $angle): float
 	{
 		$result = sin($angle);
 
@@ -130,7 +130,7 @@ abstract class EventSeries
 	 * @param float $angle
 	 * @return float
 	 */
-	private function saw($angle)
+	private function saw(float $angle): float
 	{
 		$result = $angle / 2 / pi();
 		$result = fmod($result, 1.0);
@@ -148,7 +148,7 @@ abstract class EventSeries
 	 * @param float $angle
 	 * @return float
 	 */
-	private function square($angle)
+	private function square(float $angle): float
 	{
 		$result = $angle / 2 / pi();
 		$result = 1 - fmod($result, 1.0);
@@ -172,7 +172,7 @@ abstract class EventSeries
 	 * @param float $angle
 	 * @return float
 	 */
-	private function expo($angle)
+	private function expo(float $angle): float
 	{
 		$result = $angle / 2 / pi();
 		$result = fmod($result, 1.0);
@@ -196,7 +196,7 @@ abstract class EventSeries
 	 * @param float $angle
 	 * @return float
 	 */
-	private function random_steps($angle)
+	private function random_steps(float $angle): float
 	{
 		$result = rand($this->type_min, $this->type_max);
 		return $result;
@@ -209,7 +209,7 @@ abstract class EventSeries
 	 * @param int $dur - The duration of the series
 	 * @return int[]
 	 */
-	protected function genValues($start, $dur)
+	protected function genValues(int $start, int $dur): array
 	{
 		$values = array();
 		$saved = null;
@@ -262,7 +262,7 @@ abstract class EventSeries
 	 * @param float $angle
 	 * @return void
 	 */
-	public function setOffset($angle)
+	public function setOffset(float $angle): void
 	{
 		$this->offset = $angle;
 	}

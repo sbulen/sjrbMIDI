@@ -30,15 +30,15 @@ abstract class MIDIChunk
 	const CHUNK_TRK = 'MTrk';
 
 	// Type & length are common to all chunks
-	protected $type = '';
-	protected $length = 0;
+	protected string $type = '';
+	protected int $length = 0;
 
 	/**
 	 * Pack = to convert to MIDI binary format for writing to disk
 	 *
 	 * @return string
 	 */
-	abstract function pack();
+	abstract function pack(): string;
 }
 
 class MIDIHdr extends MIDIChunk
@@ -47,13 +47,13 @@ class MIDIHdr extends MIDIChunk
 	 * MIDI header
 	 */
 	// Type & length are common to all chunks
-	protected $type = MIDIChunk::CHUNK_HDR;
-	protected $length = 6;
-	protected $format = 1;
-	protected $ntrks = 1;
-	protected $ticks = 960;
-	protected $smpte_format = null;
-	protected $ticks_per_frame = null;
+	protected string $type = MIDIChunk::CHUNK_HDR;
+	protected int $length = 6;
+	protected int $format = 1;
+	protected int $ntrks = 1;
+	protected int $ticks = 960;
+	protected ?int $smpte_format = null;
+	protected ?int $ticks_per_frame = null;
 
 	/**
 	 * Constructor
@@ -68,7 +68,7 @@ class MIDIHdr extends MIDIChunk
 	 * @param int $ticks_per_frame - The smpte ticks/frame, if smpte-based
 	 * @return void
 	 */
-	function __construct($format = 1, $ntrks = 1, $ticks = 960, $smpte_format = null, $ticks_per_frame = null)
+	function __construct(int $format = 1, int $ntrks = 1, int $ticks = 960, ?int $smpte_format = null, ?int $ticks_per_frame = null)
 	{
 		$this->format = MIDIEvent::rangeCheck($format, 0, 2);
 		$this->ntrks = MIDIEvent::rangeCheck($ntrks, 0, 0xFFFF);
@@ -85,10 +85,9 @@ class MIDIHdr extends MIDIChunk
 	 *
 	 * @return void
 	 */
-	public function incNtrks()
+	public function incNtrks(): void
 	{
 		$this->ntrks++;
-		return;
 	}
 
 	/**
@@ -96,10 +95,9 @@ class MIDIHdr extends MIDIChunk
 	 *
 	 * @return void
 	 */
-	public function decNtrks()
+	public function decNtrks(): void
 	{
 		$this->ntrks--;
-		return;
 	}
 
 	/**
@@ -107,7 +105,7 @@ class MIDIHdr extends MIDIChunk
 	 *
 	 * @return int
 	 */
-	public function getNtrks()
+	public function getNtrks(): int
 	{
 		return $this->ntrks;
 	}
@@ -117,7 +115,7 @@ class MIDIHdr extends MIDIChunk
 	 *
 	 * @return int
 	 */
-	public function getTicks()
+	public function getTicks(): int
 	{
 		return $this->ticks;
 	}
@@ -127,7 +125,7 @@ class MIDIHdr extends MIDIChunk
 	 *
 	 * @return string
 	 */
-	public function pack()
+	public function pack(): string
 	{
 		if (!empty($this->ticks))
 			return $this->type . pack('Nnnn', $this->length, $this->format, $this->ntrks, $this->ticks);
@@ -142,9 +140,9 @@ class MIDItrk extends MIDIChunk
 	 * MIDI Track info
 	 */
 	// Type & length are common to all chunks
-	protected $type = MIDIChunk::CHUNK_TRK;
-	protected $length = 0;
-	protected $events = array();
+	protected string $type = MIDIChunk::CHUNK_TRK;
+	protected int $length = 0;
+	protected array $events = array();
 
 	/**
 	 * Adds an event to the track
@@ -152,10 +150,9 @@ class MIDItrk extends MIDIChunk
 	 * @param MIDIEvent $event
 	 * @return void
 	 */
-	public function addEvent($event)
+	public function addEvent(MIDIEvent $event): void
 	{
 		$this->events[] = $event;
-		return;
 	}
 
 	/**
@@ -164,12 +161,10 @@ class MIDItrk extends MIDIChunk
 	 * @param MIDIEvent[] $events
 	 * @return void
 	 */
-	public function addEvents($events)
+	public function addEvents(array $events): void
 	{
 		foreach($events AS $event)
 			$this->addEvent($event);
-
-		return;
 	}
 
 	/**
@@ -182,12 +177,11 @@ class MIDItrk extends MIDIChunk
 	 * @param int $dur note duration in ticks
 	 * @return void
 	 */
-	public function addNote($at, $chan, $note, $vel, $dur)
+	public function addNote(int $at, int $chan, int $note, int $vel, int $dur): void
 	{
 		// 40 is 'neutral' velocity on a note off...
 		$this->events[] = new NoteOn($at, $chan, $note, $vel);
 		$this->events[] = new NoteOff($at + $dur, $chan, $note, 0x40);
-		return;
 	}
 
 	/**
@@ -200,7 +194,7 @@ class MIDItrk extends MIDIChunk
 	 * @param int $dur note duration in ticks
 	 * @return void
 	 */
-	public function addChord($at, $chan, $notearr, $vel, $dur)
+	public function addChord(int $at, int $chan, array $notearr, int $vel, int $dur): void
 	{
 		foreach ($notearr AS $note)
 		{
@@ -208,7 +202,6 @@ class MIDItrk extends MIDIChunk
 			$this->events[] = new NoteOn($at, $chan, $note, $vel);
 			$this->events[] = new NoteOff($at + $dur, $chan, $note, 0x40);
 		}
-		return;
 	}
 
 	/**
@@ -220,10 +213,9 @@ class MIDItrk extends MIDIChunk
 	 * @param int $val controller value
 	 * @return void
 	 */
-	public function addCC($at, $chan, $cc, $val)
+	public function addCC(int $at, int $chan, int $cc, int $val): void
 	{
 		$this->events[] = new ControlChange($at, $chan, $cc, $val);
-		return;
 	}
 
 	/**
@@ -234,10 +226,9 @@ class MIDItrk extends MIDIChunk
 	 * @param int $val pitch wheel value
 	 * @return void
 	 */
-	public function addWheel($at, $chan, $val)
+	public function addWheel(int $at, int $chan, int $val): void
 	{
 		$this->events[] = new PitchWheel($at, $chan, $val);
-		return;
 	}
 
 	/**
@@ -247,7 +238,7 @@ class MIDItrk extends MIDIChunk
 	 * @param int $type MIDI event type
 	 * @return (false|MIDIEvent)
 	 */
-	public function getEvent($type)
+	public function getEvent(int $type): bool|MIDIEvent
 	{
 		// Check both the type & subtype, if available
 		foreach ($this->events AS $event)
@@ -265,7 +256,7 @@ class MIDItrk extends MIDIChunk
 	 *
 	 * @return MIDIEvent[]
 	 */
-	public function getEvents()
+	public function getEvents(): array
 	{
 		return $this->events;
 	}
@@ -281,7 +272,7 @@ class MIDItrk extends MIDIChunk
 	 * @param int $abs_time absolute time
 	 * @return void
 	 */
-	public function addTrackEnd($abs_time = 0)
+	public function addTrackEnd(int $abs_time = 0): void
 	{
 		// Sanity check...
 		if (is_numeric($abs_time))
@@ -299,8 +290,6 @@ class MIDItrk extends MIDIChunk
 				unset($this->events[$ix]);
 		}
 		$this->events[] = new TrackEnd(max($max_at, $abs_time));
-
-		return;
 	}
 
 	/**
@@ -308,7 +297,7 @@ class MIDItrk extends MIDIChunk
 	 *
 	 * @return string
 	 */
-	public function pack()
+	public function pack(): string
 	{
 		// First, sort event objects by abs_time
 		usort($this->events,
@@ -349,10 +338,10 @@ class MIDIFile
 	 * Content is, basically, a header + 1 or more tracks.
 	 * 
 	 */
-	protected $file_name = '';
-	protected $header = null;
-	protected $tracks = array();
-	protected $file_raw_contents = '';
+	protected string $file_name = '';
+	protected ?MIDIHdr $header = null;
+	protected array $tracks = array();
+	protected ?string $file_raw_contents = '';
 
 	/**
 	 * Constructor
@@ -364,7 +353,7 @@ class MIDIFile
 	 * @param string $file - MIDI file name
 	 * @return void
 	 */
-	public function __construct($file = null)
+	public function __construct(?string $file = null)
 	{
 		if ($file !== null)
 			$this->readMIDIFile($file);
@@ -393,14 +382,13 @@ class MIDIFile
 	 * Pack = to convert file to binary for writing to disk
 	 * Places the contents into file_raw_contents
 	 *
-	 * @return string
+	 * @return void
 	 */
-	protected function pack()
+	protected function pack(): void
 	{
 		$this->file_raw_contents = $this->header->pack();
 		foreach ($this->tracks AS $track)
 			$this->file_raw_contents .= $track->pack();
-		return;
 	}
 
 	/**
@@ -412,7 +400,7 @@ class MIDIFile
 	 * @param string $file - MIDI file name
 	 * @return void
 	 */
-	protected function readMIDIFile($file = null)
+	protected function readMIDIFile(?string $file = null): void
 	{
 		if ($file === null)
 			$file = $this->file_name;
@@ -442,8 +430,6 @@ class MIDIFile
 			}
 			$offset += 8 + $chunklen;
 		}
-
-		return;
 	}
 
 	/**
@@ -453,7 +439,7 @@ class MIDIFile
 	 * @param string $data - MIDI file contents to parse
 	 * @return MIDIHdr
 	 */
-	protected function parseHeader($data)
+	protected function parseHeader(string $data): MIDIHdr
 	{
 		$format = unpack('nformat', substr($data, 8, 2))['format'];
 		$ntrks = unpack('nntrks', substr($data, 10, 2))['ntrks'];
@@ -482,7 +468,7 @@ class MIDIFile
 	 * @param string $data - MIDI file contents to parse
 	 * @return MIDITrk
 	 */
-	protected function parseTrack($data = '')
+	protected function parseTrack(string $data = ''): MIDITrk
 	{
 		$trackobj = new MIDITrk();
 
@@ -584,7 +570,7 @@ class MIDIFile
 	 * @param int $abstime - Start time of the current set of data
 	 * @return int
 	 */
-	protected function parseMetaSysex($data, &$trackobj, &$abstime)
+	protected function parseMetaSysex(string $data, MIDITrk &$trackobj, int &$abstime): int
 	{
 		if (empty($data))
 			$data = '';
@@ -634,7 +620,7 @@ class MIDIFile
 	 * @param int $abstime - Start time of the current set of data
 	 * @return int
 	 */
-	protected function parseMetaEvent($data, &$trackobj, &$abstime)
+	protected function parseMetaEvent(string $data, MIDITrk &$trackobj, int &$abstime): int
 	{
 		if (empty($data))
 			$data = '';
@@ -768,7 +754,7 @@ class MIDIFile
 	 *
 	 * @return void
 	 */
-	public function displayMIDIFile()
+	public function displayMIDIFile(): void
 	{
 		// Without this header, flushes don't work...
 		header( 'Content-type: text/html; charset=utf-8' );
@@ -797,8 +783,6 @@ class MIDIFile
 
 		@ob_flush();
 		@flush();
-
-		return;
 	}
 
 	/**
@@ -807,7 +791,7 @@ class MIDIFile
 	 * @param $file string
 	 * @return void
 	 */
-	public function writeMIDIFile($file)
+	public function writeMIDIFile(string $file): void
 	{
 		Errors::info('write_file', $file);
 
@@ -828,7 +812,7 @@ class MIDIFile
 	 *
 	 * @return int
 	 */
-	public function getNtrks()
+	public function getNtrks(): int
 	{
 		return $this->header->getNtrks();
 	}
@@ -838,7 +822,7 @@ class MIDIFile
 	 *
 	 * @return MIDITrk[]
 	 */
-	public function getTracks()
+	public function getTracks(): array
 	{
 		return $this->tracks;
 	}
@@ -853,9 +837,9 @@ class MIDIFile
 	 * The track name is used as the key for this purpose, so ensure the track name is unique.
 	 *
 	 * @param string $name
-	 * @return int
+	 * @return MIDItrk
 	 */
-	public function addTrack($name = '')
+	public function addTrack(string $name = ''): MIDItrk
 	{
 		// Generate a name if not provided...
 		if (empty($name))
@@ -884,7 +868,7 @@ class MIDIFile
 	 * @param int $track_num
 	 * @return void
 	 */
-	public function deleteTrack($track_num)
+	public function deleteTrack(int $track_num): void
 	{
 		if (empty($track_num))
 			return;
@@ -900,8 +884,6 @@ class MIDIFile
 
 		// Renumber tracks
 		$this->tracks = array_merge($this->tracks);
-
-		return;
 	}
 
 	/**
@@ -912,7 +894,7 @@ class MIDIFile
 	 * @param float $bpm
 	 * @return void
 	 */
-	public function setBPM($bpm = 120)
+	public function setBPM(float $bpm = 120): void
 	{
 		// Sanity check...
 		if (($bpm < 1) || ($bpm > 3000))
@@ -923,8 +905,6 @@ class MIDIFile
 
 		$event = $this->tracks[0]->getEvent(MIDIEvent::META_TEMPO);
 		$event->setTempo($tempo);
-
-		return;
 	}
 
 	/**
@@ -933,7 +913,7 @@ class MIDIFile
 	 *
 	 * @return float
 	 */
-	public function getBPM()
+	public function getBPM(): float
 	{
 		// Default to 120 bpm in case nothing is found...
 		$tempo = 500000;
@@ -955,7 +935,7 @@ class MIDIFile
 	 * @param int $bottom
 	 * @return void
 	 */
-	public function setTimeSignature($top = 4, $bottom = 4)
+	public function setTimeSignature(int $top = 4, int $bottom = 4): void
 	{
 		// Sanity checks...
 		if (($top < 1) || ($top > 32))
@@ -967,8 +947,6 @@ class MIDIFile
 
 		$event = $this->tracks[0]->getEvent(MIDIEvent::META_TIME_SIG);
 		$event->setTimeSignature($top, $bottom, 24, $bb);
-
-		return;
 	}
 
 	/**
@@ -977,7 +955,7 @@ class MIDIFile
 	 *
 	 * @return int[]
 	 */
-	public function getTimeSignature()
+	public function getTimeSignature(): array
 	{
 		$top = 4;
 		$bottom = 4;
@@ -1002,7 +980,7 @@ class MIDIFile
 	 * @param int $minor
 	 * @return void
 	 */
-	public function setKeySignature($sharps = 0, $minor = 0)
+	public function setKeySignature(int $sharps = 0, int $minor = 0): void
 	{
 		// Sanity checks...
 		if (($sharps < -7) || ($sharps > 7))
@@ -1012,8 +990,6 @@ class MIDIFile
 
 		$event = $this->tracks[0]->getEvent(MIDIEvent::META_KEY_SIG);
 		$event->setKeySignature($sharps, $minor);
-
-		return;
 	}
 
 	/**
@@ -1022,7 +998,7 @@ class MIDIFile
 	 *
 	 * @return int[]
 	 */
-	public function getKeySignature()
+	public function getKeySignature(): array
 	{
 		$sharps = 0;
 		$minor = 0;
@@ -1047,7 +1023,7 @@ class MIDIFile
 	 * @param int $t
 	 * @return int
 	 */
-	public function mbt2at($m = 1, $b = 1, $t = 0)
+	public function mbt2at(int $m = 1, int $b = 1, int $t = 0): int
 	{
 		static $top = null;
 		static $bottom = null;
@@ -1080,7 +1056,7 @@ class MIDIFile
 	 * @param float $b
 	 * @return int
 	 */
-	public function b2dur($b = 1)
+	public function b2dur(float $b = 1): int
 	{
 		static $top = null;
 		static $bottom = null;
@@ -1116,7 +1092,7 @@ class MIDIFile
 	 * @param MIDItrk $track - track #
 	 * @return Note[]
 	 */
-	public function getNotesFromTrack($track = 1)
+	public function getNotesFromTrack(int $track = 1): array
 	{
 		// Key needed for d2m conversions - Get the MIDI file key signature
 		$key_sig = $this->getKeySignature();

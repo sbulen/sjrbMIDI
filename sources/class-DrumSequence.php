@@ -37,7 +37,7 @@ class DrumSequence extends AbstractSequence
 	 * @param float $trip_pct
 	 * @return void
 	 */
-	function __construct($rhythm, $downbeat = 1, $dur = 1, $dests = array(1), $note_pct = 1, $trip_pct = 0)
+	function __construct(Rhythm $rhythm, int $downbeat = 1, int $dur = 1, array $dests = array(1), float $note_pct = 1, float $trip_pct = 0)
 	{
 		parent::__construct($rhythm, $downbeat, $dur, $dests, $note_pct, $trip_pct);
 	}

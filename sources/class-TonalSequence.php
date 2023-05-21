@@ -27,19 +27,19 @@ class TonalSequence extends AbstractSequence
 	/**
 	 * Properties
 	 */
-	protected $key;
-	protected $phrases;					// Phrases passed as a simple array; if passed, used, if not passed, random phrases are generated
-	protected $root_seq;				// Array of roots of chords/phrases, if null, auto-generated
-	protected $root_oct;				// Where to start...  Used when generating chords/phrases
-	protected $num_phrases;				// Number of phrases to auto-generate
-	protected $max_notes_per_phrase;	// How big are the phrases, when auto-generated
-	protected $max_inc_dec;				// Max amount to inc or dec when building phrases
-	protected $min_dnote;				// Min dnote when building phrases
-	protected $max_dnote;				// Max dnote when building phrases
-	protected $phrase_note_pct;			// What percentage of notes are kept, when phrases are auto-generated
-	protected $phrase_trip_pct;			// What percentage of notes are triplets, when phrases are auto-generated
+	protected Key $key;						// Key of sequence
+	protected array $phrases;				// Phrases passed as a simple array; if passed, used, if not passed, random phrases are generated
+	protected array $root_seq;				// Array of roots of chords/phrases, if null, auto-generated
+	protected int $root_oct;				// Where to start...  Used when generating chords/phrases
+	protected int $num_phrases;				// Number of phrases to auto-generate
+	protected int $max_notes_per_phrase;	// How big are the phrases, when auto-generated
+	protected int $max_inc_dec;				// Max amount to inc or dec when building phrases
+	protected int $min_dnote;				// Min dnote when building phrases
+	protected int $max_dnote;				// Max dnote when building phrases
+	protected float $phrase_note_pct;		// What percentage of notes are kept, when phrases are auto-generated
+	protected float $phrase_trip_pct;		// What percentage of notes are triplets, when phrases are auto-generated
 
-	protected $intervals;				// Derived from root_seq
+	protected array $intervals;				// Derived from root_seq
 
 	/**
 	 * Constructor
@@ -65,7 +65,7 @@ class TonalSequence extends AbstractSequence
 	 * @param float $phrase_trip_pct
 	 * @return void
 	 */
-	function __construct($key, $rhythm, $downbeat = 1, $duration = 1, $dests = array(1), $note_pct = 1, $trip_pct = 0, $phrases = array(), $root_seq = null, $root_oct = 5, $num_phrases = 4, $max_notes_per_phrase = 5, $max_inc_dec = 4, $min_dnote = 30, $max_dnote = 70, $phrase_note_pct = .8, $phrase_trip_pct = .1)
+	function __construct(Key $key, Rhythm $rhythm, int $downbeat = 1, int $duration = 1, array $dests = array(1), float $note_pct = 1, float $trip_pct = 0, array $phrases = null, array $root_seq = null, int $root_oct = 5, int $num_phrases = 4, int $max_notes_per_phrase = 5, int $max_inc_dec = 4, int $min_dnote = 30, int $max_dnote = 70, float $phrase_note_pct = .8, float $phrase_trip_pct = .1)
 	{
 		// Load all the basics first...
 		parent::__construct($rhythm, $downbeat, $duration, $dests, $note_pct, $trip_pct);
@@ -174,7 +174,7 @@ class TonalSequence extends AbstractSequence
 	// Gen Phrases
 	// Build phrases from scratch...
 	// Transpositions, etc., happen later, in generation
-	private function genPhrases()
+	private function genPhrases(): array
 	{
 		// Dummy vars, placeholders...  Will be overridden later...
 		static $chan = 0;
@@ -242,7 +242,7 @@ class TonalSequence extends AbstractSequence
 	 * @return int
 	 */
 
-	public function randIncDec($curr_dnote, $phrase_gen = false)
+	public function randIncDec(array $curr_dnote, bool $phrase_gen = false): int
 	{
 		// Adjust min/max based on (dnote - root_oct) during phrase generation.
 		// Otherwise phrases can get squished, e.g., when passed a root_seq.
@@ -282,7 +282,7 @@ class TonalSequence extends AbstractSequence
 	 * @return Phrase[]
 	 */
 
-	public function getPhrases()
+	public function getPhrases(): array
 	{
 		return $this->phrases;
 	}
@@ -293,7 +293,7 @@ class TonalSequence extends AbstractSequence
 	 * @return DNote[]
 	 */
 
-	public function getRootSeq()
+	public function getRootSeq(): array
 	{
 		return $this->root_seq;
 	}
@@ -304,7 +304,7 @@ class TonalSequence extends AbstractSequence
 	 * @return int
 	 */
 
-	public function getRootOct()
+	public function getRootOct(): int
 	{
 		return $this->root_oct;
 	}
@@ -315,7 +315,7 @@ class TonalSequence extends AbstractSequence
 	 * @return int
 	 */
 
-	public function getNumPhrases()
+	public function getNumPhrases(): int
 	{
 		return $this->num_phrases;
 	}
@@ -326,7 +326,7 @@ class TonalSequence extends AbstractSequence
 	 * @return float
 	 */
 
-	public function getPhraseNotePct()
+	public function getPhraseNotePct(): float
 	{
 		return $this->phrase_note_pct;
 	}
@@ -337,7 +337,7 @@ class TonalSequence extends AbstractSequence
 	 * @return float
 	 */
 
-	public function getPhraseTripPct()
+	public function getPhraseTripPct(): float
 	{
 		return $this->phrase_trip_pct;
 	}
@@ -348,7 +348,7 @@ class TonalSequence extends AbstractSequence
 	 * @return int[]
 	 */
 
-	public function getIntervals()
+	public function getIntervals(): array
 	{
 		return $this->intervals;
 	}
@@ -359,7 +359,7 @@ class TonalSequence extends AbstractSequence
 	 * @return Key
 	 */
 
-	public function getKey()
+	public function getKey(): Key
 	{
 		return $this->key;
 	}

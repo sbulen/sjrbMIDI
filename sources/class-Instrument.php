@@ -32,11 +32,12 @@ class Instrument
 	/**
 	 * Properties
 	 */
-	protected $channel;			// MIDI Channel
-	protected $track_name;		// Name for the track
-	protected $sub_insts;		// Sub-insts = an array that allows for things like drums; melodic insts only have 1
-								// Sub-insts have at least 4 parameters each: a tone, min hits per rhythmic beat, max hits per rhythmic beat, and a velocity factor for mixing
-	protected $track;			// MIDI Track object
+	protected int $channel;			// MIDI Channel
+	protected string $track_name;	// Name for the track
+	protected array $sub_insts;		// Sub-insts = an array that allows for things like drums; melodic insts only have 1
+									// Sub-insts have at least 4 parameters each: a tone, min hits per rhythmic beat, 
+									//	  max hits per rhythmic beat, and a velocity factor for mixing
+	protected MIDItrk $track;		// MIDI Track object
 
 	/**
 	 * Constructor
@@ -48,7 +49,7 @@ class Instrument
 	 * @param array() $sub_insts
 	 * @return void
 	 */
-	function __construct($channel, $track_name = 'Track', $sub_insts = array(-1 => array(1, 1, 1)))
+	function __construct(int $channel, string $track_name = 'Track', array $sub_insts = array(-1 => array(1, 1, 1)))
 	{
 		Errors::info('load_insts');
 
@@ -87,9 +88,10 @@ class Instrument
 	 * Add Midi Track...
 	 * Can only be done after the instrument has been associated with a MIDI file.
 	 *
+	 * @param MIDItrk $track
 	 * @return void
 	 */
-	public function setTrack($track)
+	public function setTrack(MIDItrk $track): void
 	{
 		if (is_a($track, 'MIDITrk'))
 		    $this->track = $track;
@@ -102,7 +104,7 @@ class Instrument
 	 *
 	 * @return int
 	 */
-	public function getChan()
+	public function getChan(): int
 	{
 		return $this->channel;
 	}
@@ -112,7 +114,7 @@ class Instrument
 	 *
 	 * @return string
 	 */
-	public function getTrackName()
+	public function getTrackName(): string
 	{
 		return $this->track_name;
 	}
@@ -122,7 +124,7 @@ class Instrument
 	 *
 	 * @return array()
 	 */
-	public function getSubInsts()
+	public function getSubInsts(): array
 	{
 		return $this->sub_insts;
 	}
@@ -132,7 +134,7 @@ class Instrument
 	 *
 	 * @return MIDITrk
 	 */
-	public function getTrack()
+	public function getTrack(): MIDItrk
 	{
 	    return $this->track;
 	}

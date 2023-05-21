@@ -24,16 +24,16 @@
 class Errors
 {
 	// Just the one at the moment!
-	static $language = 'en_US';
-	static $txt = null;
-	static $verbose = false;
+	static string $language = 'en_US';
+	static ?array $txt = null;
+	static bool $verbose = false;
 
 	/**
 	 * Info - just print what's passed
 	 *
 	 * @void
 	 */
-	public static function info($key, $more = '')
+	public static function info(string $key, string $more = ''): void
 	{
 		// Confirm it's loaded...
 		self::loadLanguage();
@@ -48,7 +48,7 @@ class Errors
 	 *
 	 * @void
 	 */
-	public static function warning($key, $more = '')
+	public static function warning(string $key, string $more = ''): void
 	{
 		// Confirm it's loaded...
 		self::loadLanguage();
@@ -86,7 +86,7 @@ class Errors
 	 *
 	 * @void
 	 */
-	public static function fatal($key, $more = '')
+	public static function fatal(string $key, string $more = ''): void
 	{
 		// Confirm it's loaded...
 		self::loadLanguage();
@@ -103,7 +103,7 @@ class Errors
 	 *
 	 * @void
 	 */
-	public static function setVerbosity($on)
+	public static function setVerbosity(bool $on): void
 	{
 		// Confirm it's loaded...
 		self::loadLanguage();
@@ -121,7 +121,7 @@ class Errors
 	 *
 	 * @void
 	 */
-	public static function loadLanguage()
+	public static function loadLanguage(): void
 	{
 		if (empty(self::$txt))
 		{

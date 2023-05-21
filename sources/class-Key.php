@@ -77,12 +77,12 @@ class Key
 	/*
 	 * Properties
 	 */
-	protected $root;
-	protected $modal;
-	protected $scale;
+	protected int $root;
+	protected int $modal;
+	protected array $scale;
 
-	protected $midi_sf;		//sharps-flats value used by MIDI
-	protected $midi_mm;		//major-minor value used by MIDI
+	protected int $midi_sf;		//sharps-flats value used by MIDI
+	protected int $midi_mm;		//major-minor value used by MIDI
 
 	/**
 	 * Constructor
@@ -93,7 +93,7 @@ class Key
 	 * @param int $modal - Modal, e.g., whether major or minor
 	 * @return void
 	 */
-	function __construct($root = Key::C_NOTE, $modal = Key::MAJOR_SCALE)
+	function __construct(int $root = Key::C_NOTE, int $modal = Key::MAJOR_SCALE)
 	{
 		$this->root = $root;
 		$this->modal = $modal;
@@ -110,7 +110,7 @@ class Key
 	 * @param int $modal - Modal, e.g., whether major or minor
 	 * @return int[]
 	 */
-	private function setScale($modal = null)
+	private function setScale(?int $modal = null): array
 	{
 		// Steps that make up a major scale
 		$major = array(2, 2, 1, 2, 2, 2, 1);
@@ -144,7 +144,7 @@ class Key
 	 * @param mixed dnote
 	 * @return array dnote
 	 */
-	static function cleanseDNote($passed)
+	static function cleanseDNote(int|array $passed): array
 	{
 		$dnote = array('dn' => 0, 'sf' => 0);
 
@@ -173,7 +173,7 @@ class Key
 	 *
 	 * @return void
 	 */
-	private function setMIDI()
+	private function setMIDI(): void
 	{
 		// Just set minor if MINOR_SCALE or AEOLIAN_MODAL (which are the same).
 		// For major scale or all other modals, leave at 0.
@@ -243,7 +243,7 @@ class Key
 	 * @param int $minor
 	 * @return void
 	 */
-	public function setKeyFromMIDI($sharps = 0, $minor = 0)
+	public function setKeyFromMIDI(int $sharps = 0, int $minor = 0): void
 	{
 		$sharps = MIDIEvent::rangeCheck($sharps, -7, 7);
 		$minor = MIDIEvent::rangeCheck($minor, 0, 1);
@@ -282,7 +282,7 @@ class Key
 	 *
 	 * @return int[]
 	 */
-	public function getScale()
+	public function getScale(): array
 	{
 		return $this->scale;
 	}
@@ -292,7 +292,7 @@ class Key
 	 *
 	 * @return int
 	 */
-	public function getRoot()
+	public function getRoot(): int
 	{
 		return $this->root;
 	}
@@ -302,7 +302,7 @@ class Key
 	 *
 	 * @return int
 	 */
-	public function getMIDIsf()
+	public function getMIDIsf(): int
 	{
 		return $this->midi_sf;
 	}
@@ -312,7 +312,7 @@ class Key
 	 *
 	 * @return int
 	 */
-	public function getMIDImm()
+	public function getMIDImm(): int
 	{
 		return $this->midi_mm;
 	}
@@ -327,7 +327,7 @@ class Key
 	 * @param int $interval (base 10)
 	 * @return array $dnote
 	 */
-	public function dAdd($dnote, $interval)
+	public function dAdd(int|array $dnote, int $interval): array
 	{
 		$dnote = $this->cleanseDNote($dnote);
 
@@ -352,7 +352,7 @@ class Key
 	 * @param mixed $dnote
 	 * @return int $interval (base 10)
 	 */
-	public function dSub($dnote, $dnote2)
+	public function dSub(int|array $dnote, int|array $dnote2): int
 	{
 		$dnote = $this->cleanseDNote($dnote);
 		$dnote2 = $this->cleanseDNote($dnote2);
@@ -370,7 +370,7 @@ class Key
 	 * @param int $mnote
 	 * @return array $dnote
 	 */
-	public function m2d($mnote)
+	public function m2d(int $mnote): array
 	{
 		//sanity check...
 		$mnote = MIDIEvent::rangeCheck($mnote);
@@ -436,7 +436,7 @@ class Key
 	 * @param int $interval
 	 * @return array $dnote
 	 */
-	public function getD($oct, $interval)
+	public function getD(int $oct, int $interval): array
 	{
 		$octb7 = base_convert($oct, 10, 7);
 		$dnote = $this->dAdd($octb7 * 10, $interval);
@@ -454,7 +454,7 @@ class Key
 	 * @param mixed $dnote
 	 * @return int
 	 */
-	public function d2m($dnote)
+	public function d2m(int|array $dnote): int
 	{
 		$dnote = $this->cleanseDNote($dnote);
 
@@ -482,7 +482,7 @@ class Key
 	 * @param int $intervals - variable #
 	 * @return int[]
 	 */
-	public function buildChord($dnote, ...$intervals)
+	public function buildChord(int|array $dnote, int ...$intervals): array
 	{
 		$dnote = $this->cleanseDNote($dnote);
 
@@ -493,7 +493,6 @@ class Key
 
 		return $chord;
 	}
-
 }
 
 ?>

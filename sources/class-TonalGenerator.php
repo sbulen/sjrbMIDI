@@ -32,7 +32,7 @@ class TonalGenerator extends AbstractGenerator
 	 * @param array $root_seq - array that defines roots of chords/phrases to be generated
 	 * @return void
 	 */
-	function __construct($midi_file, $seqs = null, $instruments = null)
+	function __construct(MIDIFile $midi_file, array $seqs = null, array $instruments = null)
 	{
 		parent::__construct($midi_file, $seqs, $instruments);
 	}
@@ -50,7 +50,7 @@ class TonalGenerator extends AbstractGenerator
 	 * @param Note[]
 	 * @return void
 	 */
-	function doInstrument($start, $subinfo, $inst, $tone, $sub_inst_vars, $rhythm_vars, $seq, &$new_notes)
+	function doInstrument(int $start, array $subinfo, Instrument $inst, int $tone, array $sub_inst_vars, array $rhythm_vars, AbstractSequence $seq, array &$new_notes): void
 	{
 		// Chose one of the phrases & transform
 		// Transpose is based on beat of primary rhythm...

@@ -28,12 +28,12 @@ abstract class AbstractSequence
 	/**
 	 * Properties
 	 */
-	protected $rhythm;			// Rhythm
-	protected $downbeat;		// Rhythm generation: 1 for rock, 2 for jazz, r&b, etc...
-	protected $duration;		// Duration - number of measures for this chunk
-	protected $destinations;	// Destinations - where to place output
-	protected $note_pct;		// What percentage of notes are kept
-	protected $trip_pct;		// What percentage of notes are triplets
+	protected Rhythm $rhythm;		// Rhythm
+	protected int $downbeat;		// Rhythm generation: 1 for rock, 2 for jazz, r&b, etc...
+	protected int $duration;		// Duration - number of measures for this chunk
+	protected array $destinations;	// Destinations - where to place output
+	protected float $note_pct;		// What percentage of notes are kept
+	protected float $trip_pct;		// What percentage of notes are triplets
 
 	/**
 	 * Constructor
@@ -48,7 +48,7 @@ abstract class AbstractSequence
 	 * @param float $trip_pct
 	 * @return void
 	 */
-	protected function __construct($rhythm, $downbeat = 1, $duration = 1, $destinations = array(1), $note_pct = 1, $trip_pct = 0)
+	protected function __construct(Rhythm $rhythm, int $downbeat = 1, int $duration = 1, array $destinations = array(1), float $note_pct = 1, float $trip_pct = 0)
 	{
 		Errors::info('load_seqs');
 
@@ -89,7 +89,7 @@ abstract class AbstractSequence
 	 *
 	 * @return Rhythm
 	 */
-	public function getRhythm()
+	public function getRhythm(): Rhythm
 	{
 		return $this->rhythm;
 	}
@@ -99,7 +99,7 @@ abstract class AbstractSequence
 	 *
 	 * @return int
 	 */
-	public function getDownbeat()
+	public function getDownbeat(): int
 	{
 		return $this->downbeat;
 	}
@@ -109,7 +109,7 @@ abstract class AbstractSequence
 	 *
 	 * @return int
 	 */
-	public function getDuration()
+	public function getDuration(): int
 	{
 		return $this->duration;
 	}
@@ -119,7 +119,7 @@ abstract class AbstractSequence
 	 *
 	 * @return int[]
 	 */
-	public function getDestinations()
+	public function getDestinations(): array
 	{
 		return $this->destinations;
 	}
@@ -129,7 +129,7 @@ abstract class AbstractSequence
 	 *
 	 * @return float
 	 */
-	public function getNotePct()
+	public function getNotePct(): float
 	{
 		return $this->note_pct;
 	}
@@ -139,7 +139,7 @@ abstract class AbstractSequence
 	 *
 	 * @return float
 	 */
-	public function getTripPct()
+	public function getTripPct(): float
 	{
 		return $this->trip_pct;
 	}
