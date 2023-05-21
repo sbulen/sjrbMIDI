@@ -43,7 +43,8 @@ class MathFuncs
 	 */
 	static function isPow2(float|int $value): bool
 	{
-		return fmod(log($value, 2), 1) === 0;
+		$value = (float) $value;
+		return (fmod(log($value, 2), 1) === 0.0);
 	}
 
 	/**
@@ -54,7 +55,8 @@ class MathFuncs
 	 */
 	static function isEven(float|int $value): bool
 	{
-		return $value % 2 === 0;
+		$value = (float) $value;
+		return (fmod($value, 2) === 0.0);
 	}
 }
 ?>
