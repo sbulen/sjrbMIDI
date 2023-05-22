@@ -48,9 +48,9 @@ abstract class EventSeries
 	protected int $type_max;	// CC & PW have different min/max
 	protected int $shape;		// Shape, e.g., SINE
 	protected float $freq;		// Frequency - # of cycles per $dur
-	protected int $offset;		// Offset - angle of offset; applies to all types; passed in degrees
-	protected int $min_pct;		// User may not want entire range...  Percent for min value
-	protected int $max_pct;		// User may not want entire range...  Percent for max value
+	protected float $offset;		// Offset - angle of offset; applies to all types; passed in degrees
+	protected float $min_pct;		// User may not want entire range...  Percent for min value
+	protected float $max_pct;		// User may not want entire range...  Percent for max value
 	protected int $tick_inc;	// # of ticks between each event in series
 
 	/**
@@ -60,13 +60,13 @@ abstract class EventSeries
 	 *
 	 * @param int $shape - The shape of the curve
 	 * @param float $freq - The frequency, # of cycles per duration
-	 * @param int $offset - The angle of offset, passed in degrees
-	 * @param int $min_pct - Minimum value used in scaling, in percent
-	 * @param int $max_pct - Maximum value used in scaling, in percent
+	 * @param float $offset - The angle of offset, passed in degrees
+	 * @param float $min_pct - Minimum value used in scaling, in percent
+	 * @param float $max_pct - Maximum value used in scaling, in percent
 	 * @param int $tick_inc - How far apart in ticks to spread the events
 	 * @return void
 	 */
-	protected function __construct(int $shape = EVENTSeries::SINE, float $freq = 1, int $offset = 0, int $min_pct = 0, int $max_pct = 100, int $tick_inc = 48)
+	protected function __construct(int $shape = EVENTSeries::SINE, float $freq = 1, float $offset = 0, float $min_pct = 0, float $max_pct = 100, int $tick_inc = 48)
 	{
 		$this->shape = MIDIEvent::rangeCheck($shape, EventSeries::SINE, EventSeries::RANDOM_STEPS);
 		$this->freq = MIDIEvent::rangeCheck($freq, 0, 256);
