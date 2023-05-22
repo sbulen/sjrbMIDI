@@ -407,7 +407,7 @@ class MIDIFile
 		else
 			$this->file_name = $file;
 
-		Errors::info('write_file', $file);
+		Errors::info('read_file', $file);
 
 		$this->file_raw_contents = file_get_contents($this->file_name);
 
