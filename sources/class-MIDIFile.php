@@ -544,7 +544,7 @@ class MIDIFile
 					$trackobj->addEvent(new PitchWheel(
 						$abstime,
 						$status_byte & 0xF,
-						((ord(substr($data, $offset + $delta_time->getLen() + $status_len, 1)) & 0x7F) << 7) | ord(substr($data, $offset + $delta_time->getLen() + $status_len + 1, 1)) & 0x7F));
+						(((ord(substr($data, $offset + $delta_time->getLen() + $status_len, 1)) & 0x7F) << 7) | ord(substr($data, $offset + $delta_time->getLen() + $status_len + 1, 1)) & 0x7F) - 8192));
 					$offset += $delta_time->getLen() + $status_len + 2;
 					break;
 				case MIDIEvent::META_SYSEX:
