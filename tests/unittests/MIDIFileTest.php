@@ -4,11 +4,11 @@ use PHPUnit\Framework\TestCase;
 
 class MIDIFileTest extends TestCase {
 
-    /*
-     * Testing the MIDIFile functions
-     */
+	/*
+	 * Testing the MIDIFile functions
+	 */
 
-    public function testSetGetTempo(){
+	public function testSetGetTempo(){
 
 		$myFile = new MIDIFile();
 		for ($i = 1; $i <= 500; $i++)
@@ -22,7 +22,7 @@ class MIDIFileTest extends TestCase {
 		}
 	}
 
-    public function testSetGetTimeSignature(){
+	public function testSetGetTimeSignature(){
 		$data = array(
 			array('top' => 2, 'bottom' => 2),
 			array('top' => 3, 'bottom' => 4),
@@ -45,7 +45,7 @@ class MIDIFileTest extends TestCase {
 		}
 	}
 
-    public function testSetGetKeySignature(){
+	public function testSetGetKeySignature(){
 
 		$data = array(
 			// Cb treated as B - same tones
@@ -94,7 +94,7 @@ class MIDIFileTest extends TestCase {
 		}
 	}
 
-    public function testSetGetNotesFromTrack(){
+	public function testSetGetNotesFromTrack(){
 		// This really does a bunch of end to end testing across classes, including Key, Note, etc...
 		// Remember - MIDI key signature only reflects major/minor scales, so, this will only work for those,
 		// i.e., it won't work for all the other modals.  You lose the modal root xlating to/from MIDI key sigs.
@@ -144,7 +144,7 @@ class MIDIFileTest extends TestCase {
 		}
 	}
 
-    public function testFIFOQueueForSameNoteValues(){
+	public function testFIFOQueueForSameNoteValues(){
 		$myFile = new MIDIFile();
 		$note_arr = array();
 		$solo_track = $myFile->addTrack('Wild solo');

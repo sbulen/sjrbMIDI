@@ -4,11 +4,11 @@ use PHPUnit\Framework\TestCase;
 
 class RhythmTest extends TestCase {
 
-    /*
-     * Testing the Rhythm functions
-     */
+	/*
+	 * Testing the Rhythm functions
+	 */
 
-    public function testRhythm(){
+	public function testRhythm(){
 
 		for ($i = 1; $i <= 16; $i++)
 		{
@@ -20,7 +20,7 @@ class RhythmTest extends TestCase {
 		}
 	}
 
-    public function testWalkSDRhythm(){
+	public function testWalkSDRhythm(){
 
 		$myRhythm = new Rhythm(2, 2, 2, 2, 2, 2, 2, 2);
 		$myRhythm->setStartDur(1000, 8000);
@@ -33,7 +33,7 @@ class RhythmTest extends TestCase {
 		}
 	}
 
-    public function testWalkAllRhythm(){
+	public function testWalkAllRhythm(){
 
 		$myRhythm = new Rhythm(2, 2, 2, 2, 2, 2, 2, 2);
 		$myRhythm->setStartDur(1000, 8000);

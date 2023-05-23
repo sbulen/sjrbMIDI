@@ -4,11 +4,11 @@ use PHPUnit\Framework\TestCase;
 
 class PhraseTest extends TestCase {
 
-    /*
-     * Testing the Phrase functions
-     */
+	/*
+	 * Testing the Phrase functions
+	 */
 
-    public function testIsIterable(){
+	public function testIsIterable(){
 
 		$myKey = new Key(Key::C_NOTE, Key::MAJOR_SCALE);
 
@@ -29,7 +29,7 @@ class PhraseTest extends TestCase {
 		$this->assertIsIterable($myPhrase->walkAll, 'Phrase iterable test 1 failed');
 	}
 
-    public function testTransformationSetStartDur(){
+	public function testTransformationSetStartDur(){
 
 		$myKey = new Key(Key::C_NOTE, Key::MAJOR_SCALE);
 
@@ -93,7 +93,7 @@ class PhraseTest extends TestCase {
 		}
 	}
 
-    public function testTransformationRetrograde(){
+	public function testTransformationRetrograde(){
 
 		$myKey = new Key(Key::C_NOTE, Key::MAJOR_SCALE);
 
@@ -147,7 +147,7 @@ class PhraseTest extends TestCase {
 		}
 	}
 
-    public function testTransformationInversion(){
+	public function testTransformationInversion(){
 
 		$myKey = new Key(Key::C_NOTE, Key::MAJOR_SCALE);
 
@@ -201,7 +201,7 @@ class PhraseTest extends TestCase {
 		}
 	}
 
-    public function testTransformationRotation(){
+	public function testTransformationRotation(){
 
 		$myKey = new Key(Key::C_NOTE, Key::MAJOR_SCALE);
 
@@ -268,7 +268,7 @@ class PhraseTest extends TestCase {
 			$count++;
 		}
 	}
-    public function testTransformationTransposition(){
+	public function testTransformationTransposition(){
 		
 		$myKey = new Key(Key::C_NOTE, Key::MAJOR_SCALE);
 

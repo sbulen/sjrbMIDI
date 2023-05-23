@@ -4,11 +4,11 @@ use PHPUnit\Framework\TestCase;
 
 class MathFuncsTest extends TestCase {
 
-    /*
-     * Testing the math functions
-     */
+	/*
+	 * Testing the math functions
+	 */
 
-    public function testMathFuncs(){
+	public function testMathFuncs(){
 
 		// First, test random float...
 		// Just do a thousand random calls, make sure they're a float >= 0 and <= 1

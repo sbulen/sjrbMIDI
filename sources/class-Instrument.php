@@ -94,7 +94,7 @@ class Instrument
 	public function setTrack(MIDItrk $track): void
 	{
 		if (is_a($track, 'MIDITrk'))
-		    $this->track = $track;
+			$this->track = $track;
 		else
 			Errors::fatal('inv_assoc');
 	}
@@ -136,7 +136,7 @@ class Instrument
 	 */
 	public function getTrack(): MIDItrk
 	{
-	    return $this->track;
+		return $this->track;
 	}
 	
 }

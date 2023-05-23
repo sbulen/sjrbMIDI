@@ -2,7 +2,7 @@
 /**
  *	Math Functions
  *
- *  Some helpful math functions
+ *	Some helpful math functions
  *
  *	Copyright 2021-2023 Shawn Bulen
  *

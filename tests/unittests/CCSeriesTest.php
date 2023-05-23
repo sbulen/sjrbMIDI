@@ -4,11 +4,11 @@ use PHPUnit\Framework\TestCase;
 
 class CCSeriesTest extends TestCase {
 
-    /*
-     * Testing the CCSeries functions
-     */
+	/*
+	 * Testing the CCSeries functions
+	 */
 
-    public function testCCSeries(){
+	public function testCCSeries(){
 
 		$cc_data = array(
 			0=> array('sine' => 64, 'saw' => 0, 'square' => 127, 'expo' => 0),
@@ -68,7 +68,7 @@ class CCSeriesTest extends TestCase {
 		$this->assertTrue(($events[0]->getValue() >= 0x00) && ($events[0]->getValue() <= 0x7F), 'CCSeries random range test failed');
 	}
 
-    public function testCCSeriesRange(){
+	public function testCCSeriesRange(){
 
 		// Similar series tests, but with the range reversed...
 		$cc_data = array(
@@ -129,7 +129,7 @@ class CCSeriesTest extends TestCase {
 		$this->assertTrue(($events[0]->getValue() >= 19) && ($events[0]->getValue() <= 107), 'CCSeries random range test 2 failed');
 	}
 
-    public function testCCSeriesRangeOffset(){
+	public function testCCSeriesRangeOffset(){
 
 		// Similar series tests, but with a range & offset...
 		$cc_data = array(

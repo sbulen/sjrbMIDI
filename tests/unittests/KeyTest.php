@@ -4,11 +4,11 @@ use PHPUnit\Framework\TestCase;
 
 class KeyTest extends TestCase {
 
-    /*
-     * Testing the VLQ functions
-     */
+	/*
+	 * Testing the VLQ functions
+	 */
 
-    public function test_m2d_d2m(){
+	public function test_m2d_d2m(){
 
 		//Array of string, value, lengths for test data
 		// midi note, dnote octave, dnote interval, sharp/flat
@@ -313,7 +313,7 @@ class KeyTest extends TestCase {
 		}
 	}
 
-    public function test_cleanseDNote(){
+	public function test_cleanseDNote(){
 
 		$tests = array(
 			3,

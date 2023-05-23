@@ -4,11 +4,11 @@ use PHPUnit\Framework\TestCase;
 
 class EuclidTest extends TestCase {
 
-    /*
-     * Testing the Euclid functions
-     */
+	/*
+	 * Testing the Euclid functions
+	 */
 
-    public function testEuclid(){
+	public function testEuclid(){
 
 		//Array of patterns for test data
 		$data = array (
@@ -40,7 +40,7 @@ class EuclidTest extends TestCase {
 		}
 	}
 
-    public function testWalkSDEuclid(){
+	public function testWalkSDEuclid(){
 
 		$myEuclid = new Euclid(8, 8);
 		$myEuclid->setStartDur(1000, 8000);
@@ -53,7 +53,7 @@ class EuclidTest extends TestCase {
 		}
 	}
 
-    public function testWalkAllEuclid(){
+	public function testWalkAllEuclid(){
 
 		$myEuclid = new Euclid(8, 8);
 		$myEuclid->setStartDur(1000, 8000);

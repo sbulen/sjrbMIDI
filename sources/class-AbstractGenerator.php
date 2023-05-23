@@ -179,7 +179,7 @@ abstract class AbstractGenerator
 		// Apply a triplet?
 		if (MathFuncs::randomFloat() <= $tpct)
 		{
-		    $start = $note->getAt();
+			$start = $note->getAt();
 			$new_dur = (int) ($note->getDur() / 3);
 			$note->setDur($new_dur);
 			for ($i = 0; $i < 3; $i++)

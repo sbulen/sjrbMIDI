@@ -4,11 +4,11 @@ use PHPUnit\Framework\TestCase;
 
 class VLQTest extends TestCase {
 
-    /*
-     * Testing the VLQ functions
-     */
+	/*
+	 * Testing the VLQ functions
+	 */
 
-    public function testVLQ(){
+	public function testVLQ(){
 
 		//Array of string, value, lengths for test data
 		$data = array (

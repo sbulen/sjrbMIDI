@@ -2,13 +2,13 @@
 
 use PHPUnit\Framework\TestCase;
 
-class  DynamicsTest extends TestCase {
+class DynamicsTest extends TestCase {
 
-    /*
-     * Testing the Dynamics functions
-     */
+	/*
+	 * Testing the Dynamics functions
+	 */
 
-    public function test_4_4_Dynamics(){
+	public function test_4_4_Dynamics(){
 
 		$dyn_data = array(
 			0 => 120,
@@ -154,7 +154,7 @@ class  DynamicsTest extends TestCase {
 		}
 	}
 
-    public function test_7_8_Dynamics(){
+	public function test_7_8_Dynamics(){
 
 		$dyn_data = array(
 			0 => 100,

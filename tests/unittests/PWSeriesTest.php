@@ -4,11 +4,11 @@ use PHPUnit\Framework\TestCase;
 
 class PWSeriesTest extends TestCase {
 
-    /*
-     * Testing the PWSeries functions
-     */
+	/*
+	 * Testing the PWSeries functions
+	 */
 
-    public function testPWSeries(){
+	public function testPWSeries(){
 
 		$pw_data = array(
 			0 => array('sine' => 0, 'saw' => -8192, 'square' => 8191, 'expo' => -8191),
@@ -68,7 +68,7 @@ class PWSeriesTest extends TestCase {
 		$this->assertTrue(($events[0]->getValue() >= -0x2000) && ($events[0]->getValue() <= 0x1FFF), 'PWSeries random range test failed');
 	}
 
-    public function testPWSeriesRange(){
+	public function testPWSeriesRange(){
 
 		// Similar series tests, but with the range reversed...
 		$pw_data = array(
@@ -129,7 +129,7 @@ class PWSeriesTest extends TestCase {
 		$this->assertTrue(($events[0]->getValue() >= -5735) && ($events[0]->getValue() <= 5733), 'PWSeries random range test 2 failed');
 	}
 
-    public function testPWSeriesRangeOffset(){
+	public function testPWSeriesRangeOffset(){
 
 		// Similar series tests, but with a range & offset...
 		$pw_data = array(
