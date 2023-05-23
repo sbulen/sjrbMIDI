@@ -121,10 +121,10 @@ class Phrase implements IteratorAggregate
 	 *
 	 * @return MIDIEvent[]
 	 */
-    public function getIterator() : Traversable
+	public function getIterator() : Traversable
 	{
-        return new ArrayIterator($this->note_arr);
-    }
+		return new ArrayIterator($this->note_arr);
+	}
 
 	/**
 	 * Get note events...
