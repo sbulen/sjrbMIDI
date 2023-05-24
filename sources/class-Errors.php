@@ -29,12 +29,16 @@ class Errors
 	static bool $verbose = false;
 
 	/**
-	 * Info - just print what's passed
+	 * Info - just print what's passed.
+	 * Infos are only printed in verbose mode.
 	 *
 	 * @void
 	 */
 	public static function info(string $key, string $more = ''): void
 	{
+		if (!self::$verbose)
+			return;
+
 		// Confirm it's loaded...
 		self::loadLanguage();
 		if (!empty(self::$txt[$key]))
@@ -44,12 +48,16 @@ class Errors
 	}
 
 	/**
-	 * Warning - just print the error, class & func
+	 * Warning - just print the error, class & func.
+	 * Warnings are only printed in verbose mode.
 	 *
 	 * @void
 	 */
 	public static function warning(string $key, string $more = ''): void
 	{
+		if (!self::$verbose)
+			return;
+
 		// Confirm it's loaded...
 		self::loadLanguage();
 		if (!empty(self::$txt[$key]))
@@ -77,12 +85,12 @@ class Errors
 
 		echo self::$txt['warning'] . ': ' . $key . ' ' . $class . ' ' . $func . ' ' . $more . '<br>';
 
-		if (self::$verbose)
-			echo '<pre>' . print_r($trace, true) . '</pre><br>';
+		echo '<pre>' . print_r($trace, true) . '</pre><br>';
 	}
 
 	/**
-	 * Fatal - print the error & a trace & die
+	 * Fatal - print the error & a trace & die.
+	 * Fatal messages always printed.
 	 *
 	 * @void
 	 */

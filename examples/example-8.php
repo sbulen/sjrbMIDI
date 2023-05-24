@@ -15,7 +15,7 @@ $time_sig_bottom = 4;
 $bpm = 90;
 $out_name = 'example-8.mid';
 $chan = 9;
-Errors::setVerbosity(false);
+Errors::setVerbosity(true);
 
 // Now do it...
 $myFile = new MIDIFile();
