@@ -125,13 +125,13 @@ abstract class MIDIEvent
 	{
 		if ($value < $min)
 		{
-			$value = $min;
 			Errors::warning('out_of_range');
+			$value = $min;
 		}
 		elseif ($value > $max)
 		{
-			$value = $max;
 			Errors::warning('out_of_range');
+			$value = $max;
 		}
 
 		return $value;
