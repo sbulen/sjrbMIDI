@@ -76,22 +76,10 @@ class TonalSequence extends AbstractSequence
 		else
 			Errors::fatal('inv_key');
 		
-		// Passed something?
-		if (is_array($phrases) && count($phrases > 0))
+		// Passed $root_seq or generate?
+		if (empty($root_seq))
 		{
-			$this->phrases = array();
-			foreach ($phrases AS $phrase)
-				if (is_a($phrase, 'Phrase'))
-					$this->phrases[] = clone $phrase;
-				else
-					Errors::fatal('inv_phrase');
-		}
-		elseif (empty($phrases))
-		// OK, we need we need to generate them...
-		// Two layers of randomness here; if no root_seq provided, create one.
-		// Then generate random phrases.
-		// Only validate phrase parameters if we need to generate them...
-		{
+			// If generating, check appropriate parameters...
 			// root_oct
 			if (is_int($root_oct) && ($root_oct >= 0) && ($root_oct <= 11))
 				$this->root_oct = $root_oct;
@@ -116,30 +104,42 @@ class TonalSequence extends AbstractSequence
 			else
 				Errors::fatal('inv_maxnote');
 
-			// Load up array of roots...  Convert to DNotes...
-			if (empty($root_seq))
+			// Now we can generate...
+			$roots = $this->rhythm->getBeats();
+			$note = $this->key->getD($this->root_oct, 0);
+			$this->root_seq = array();
+			for ($i = 0; $i < $roots; $i++)
 			{
-				// start off...
-				$roots = $this->rhythm->getBeats();
-				$note = $this->key->getD($this->root_oct, 0);
-				$this->root_seq = array();
-				for ($i = 0; $i < $roots; $i++)
-				{
-					$this->root_seq[] = $note;
-					$note = $this->key->dAdd($note, $this->randIncDec($note, false));
-				}
+				$this->root_seq[] = $note;
+				$note = $this->key->dAdd($note, $this->randIncDec($note, false));
 			}
-			// Might be an array of ints or an array of dnotes
-			elseif (is_array($root_seq) && ($root_seq == array_filter($root_seq, function($a) {return (is_int($a) || (isset($a['dn']) && is_numeric($a['dn'])));})))
-				$this->root_seq = $root_seq;
-			else
-				Errors::fatal('inv_rootseq');
+		}
+		// If root_seq passed, might be an array of ints or an array of dnotes
+		elseif (is_array($root_seq) && ($root_seq == array_filter($root_seq, function($a) {return (is_int($a) || (isset($a['dn']) && is_numeric($a['dn'])));})))
+			$this->root_seq = $root_seq;
+		else
+			Errors::fatal('inv_rootseq');
 
-			// Derive your intervals from root_seq
-			$this->intervals = array(0);
-			for ($i = 1; $i < count($this->root_seq); $i++)
-				$this->intervals[] = $key->dSub($this->root_seq[$i], $this->root_seq[0]);
+		// Now you got it, you can derive your intervals from root_seq...
+		// This is derived in advance because they are used so often throughout...
+		$this->intervals = array(0);
+		for ($i = 1; $i < count($this->root_seq); $i++)
+			$this->intervals[] = $key->dSub($this->root_seq[$i], $this->root_seq[0]);
 
+		// Passed phrases or generate?
+		if (is_array($phrases) && (count($phrases) > 0))
+		{
+			$this->phrases = array();
+			foreach ($phrases AS $phrase)
+				if (is_a($phrase, 'Phrase'))
+					$this->phrases[] = clone $phrase;
+				else
+					Errors::fatal('inv_phrase');
+		}
+		elseif (empty($phrases))
+		// OK, we need we need to generate them...
+		// Only validate phrase parameters if we need to generate them...
+		{
 			// num_phrases
 			if (is_int($num_phrases) && ($num_phrases > 0))
 				$this->num_phrases = $num_phrases;
@@ -206,7 +206,7 @@ class TonalSequence extends AbstractSequence
 				{
 					$new_start = $start;
 					$new_dur = (int) ($dur / 3);
-					for ($i = 0; $i < 3; $i++)
+					for ($itrip = 0; $itrip < 3; $itrip++)
 					{
 						if (MathFuncs::randomFloat() <= $this->phrase_note_pct)
 							$note_arr[] = new Note($chan, $new_start, $dnote, $vel, $new_dur);
