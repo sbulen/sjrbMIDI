@@ -3,7 +3,7 @@
  *	Tonal sequence - a set of parameters for generating some music, oriented toward tonal instruments.
  *	In general, one channel, one instrument (e.g., piano), lots of parameters (chords, phrases)...
  *
- *	Copyright 2020-2023 Shawn Bulen
+ *	Copyright 2020-2024 Shawn Bulen
  *
  *	This file is part of the sjrbMIDI library.
  *
@@ -75,22 +75,16 @@ class TonalSequence extends AbstractSequence
 			$this->key = $key;
 		else
 			Errors::fatal('inv_key');
-		
-		// Passed $root_seq or generate?
-		if (empty($root_seq))
+
+		// If generating, check appropriate parameters...
+		// These params are used if generating root_seq, OR, generating phrases...
+		if (empty($root_seq) || empty($phrases))
 		{
-			// If generating, check appropriate parameters...
 			// root_oct
 			if (is_int($root_oct) && ($root_oct >= 0) && ($root_oct <= 11))
 				$this->root_oct = $root_oct;
 			else
 				Errors::fatal('inv_rootoct');
-
-			// max inc dec
-			if (is_int($max_inc_dec) && ($max_inc_dec > 0) && ($max_inc_dec < 127))
-				$this->max_inc_dec = $max_inc_dec;
-			else
-				Errors::fatal('inv_maxid');
 
 			// min dnote
 			if (is_int($min_dnote) && ($min_dnote >= 0) && ($min_dnote <= 144))
@@ -104,6 +98,16 @@ class TonalSequence extends AbstractSequence
 			else
 				Errors::fatal('inv_maxnote');
 
+			// max inc dec
+			if (is_int($max_inc_dec) && ($max_inc_dec > 0) && ($max_inc_dec < 127))
+				$this->max_inc_dec = $max_inc_dec;
+			else
+				Errors::fatal('inv_maxid');
+		}
+
+		// Passed $root_seq or generate?
+		if (empty($root_seq))
+		{
 			// Now we can generate...
 			$roots = $this->rhythm->getBeats();
 			$note = $this->key->getD($this->root_oct, 0);
