@@ -6,14 +6,21 @@
  * Simple ABCDx4 song structure.  Random rhythm.  Random-ish chords within key.
  */
 
-spl_autoload_register(function ($class_name) {
-		include '..\sources\class-' . $class_name . '.php';
+// First things first, these scripts need to know source & language folders.
+$sourcedir = 'd:\wamp64\www\sjrbMIDI\sources\\';
+$langdir = 'd:\wamp64\www\sjrbMIDI\languages\\';
+
+spl_autoload_register(function ($class_name) use ($sourcedir) {
+		include $sourcedir . '\class-' . $class_name . '.php';
 	}
 );
-
-$out_name = 'example-6.mid';
+Errors::setLanguageDir($langdir);
 Errors::setVerbosity(true);
 
+// Place output same place as this script...
+$out_name = __DIR__ . '\\example-6.mid';
+
+// Setup file & track...
 $myFile = new MIDIFile();
 $myFile->setBPM(97);
 $pad_track = $myFile->addTrack('Pad');

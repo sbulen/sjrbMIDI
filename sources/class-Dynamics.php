@@ -4,7 +4,7 @@
  *	velocities, emphasizing notes on time divisions.  1/2 notes get emphasized 
  *	heavily, 1/4 notes a little less so, 1/8 notes less so, etc.
  *
- *	Copyright 2020-2023 Shawn Bulen
+ *	Copyright 2020-2024 Shawn Bulen
  *
  *	This file is part of the sjrbMIDI library.
  *
@@ -55,7 +55,7 @@ class Dynamics
 	 * @param int $timesigbot - Bottom of time signature
 	 * @return void
 	 */
-	function __construct(Rhythm $rhythm, int $dur = 3840, int $downbeat = 1, int $maxvel = 120, int $minvel = 60, int $spread = 20, int $timesigtop = 4, int $timesigbot = 4)
+	function __construct(Rhythm $rhythm, int $dur = 3840, int $downbeat = 1, int $maxvel = 110, int $minvel = 50, int $spread = 11, int $timesigtop = 4, int $timesigbot = 4)
 	{
 		if (is_a($rhythm, 'Rhythm'))
 			$this->rhythm = $rhythm;

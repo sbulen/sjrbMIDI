@@ -4,14 +4,21 @@
  * Simple random sequence of notes, with pitch bend & expression controller.
  */
 
-spl_autoload_register(function ($class_name) {
-		include '..\sources\class-' . $class_name . '.php';
+// First things first, these scripts need to know source & language folders.
+$sourcedir = 'd:\wamp64\www\sjrbMIDI\sources\\';
+$langdir = 'd:\wamp64\www\sjrbMIDI\languages\\';
+
+spl_autoload_register(function ($class_name) use ($sourcedir) {
+		include $sourcedir . '\class-' . $class_name . '.php';
 	}
 );
-
-$out_name = 'example.mid';
+Errors::setLanguageDir($langdir);
 Errors::setVerbosity(true);
 
+// Place output same place as this script...
+$out_name = __DIR__ . '\\example.mid';
+
+// Setup file & track...
 $myFile = new MIDIFile();
 $myFile->setBPM(97);
 $new_track = $myFile->addTrack();

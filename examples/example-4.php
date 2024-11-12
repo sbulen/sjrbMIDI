@@ -4,10 +4,16 @@
  * Displays all variants of Euclidean rhythms for 16 & 32 & 64 pulses.
  */
 
-spl_autoload_register(function ($class_name) {
-		include '..\sources\class-' . $class_name . '.php';
+// First things first, these scripts need to know source & language folders.
+$sourcedir = 'd:\wamp64\www\sjrbMIDI\sources\\';
+$langdir = 'd:\wamp64\www\sjrbMIDI\languages\\';
+
+spl_autoload_register(function ($class_name) use ($sourcedir) {
+		include $sourcedir . '\class-' . $class_name . '.php';
 	}
 );
+Errors::setLanguageDir($langdir);
+Errors::setVerbosity(true);
 
 // Step thru them all...
 echo '<font size="3" face="Courier New">';

@@ -2,7 +2,7 @@
 /**
  *	Simple class for info & error reporting.
  *
- *	Copyright 2020-2023 Shawn Bulen
+ *	Copyright 2020-2024 Shawn Bulen
  *
  *	This file is part of the sjrbMIDI library.
  *
@@ -23,9 +23,11 @@
 
 class Errors
 {
-	// Just the one at the moment!
+	// Where to find language info
+	static string $language_dir = '';
 	static string $language = 'en_US';
 	static ?array $txt = null;
+
 	static bool $verbose = false;
 
 	/**
@@ -123,6 +125,16 @@ class Errors
 	}
 
 	/**
+	 * Set Language Directory - where to find language files
+	 *
+	 * @void
+	 */
+	public static function setLanguageDir(string $langdir): void
+	{
+		self::$language_dir = $langdir;
+	}
+
+	/**
 	 * Kinda sorta a constructor...  Makes sure language is loaded...
 	 * PHP doesn't allow static constructors.  Yet.
 	 * Should be first thing called by all of these funcs OR early in program.
@@ -133,7 +145,7 @@ class Errors
 	{
 		if (empty(self::$txt))
 		{
-			require('..\\languages\\' . self::$language . '\\errors.php');
+			require(self::$language_dir . self::$language . '\\errors.php');
 			self::$txt = $txt;
 		}
 	}

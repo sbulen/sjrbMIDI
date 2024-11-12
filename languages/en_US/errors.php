@@ -2,7 +2,7 @@
 /**
  *	English language strings
  *
- *	Copyright 2020-2023 Shawn Bulen
+ *	Copyright 2020-2024 Shawn Bulen
  *
  *	This file is part of the sjrbMIDI library.
  *
@@ -76,5 +76,8 @@ $txt['inv_maxid'] = 'Invalid max inc dec amount.';
 $txt['inv_minnote'] = 'Invalid value for min note.';
 $txt['inv_maxnote'] = 'Invalid value for max note.';
 $txt['unique_trknm'] = 'Track name must be unique!';
+
+// Surround adds...
+$txt['inv_surr_coords'] = 'Invalid surround coordinates.';
 
 ?>
