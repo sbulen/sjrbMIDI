@@ -93,7 +93,7 @@ class SurroundEnv
 	 * @param int $ms_cc - CC to pass the delay events in ms (93 = I've seen used on some chorus/delay vsts...)
 	 * @return void
 	 */
-	function __construct($cart_coords = array(0.0, 0.0), $vol_cc = 12, $ang_cc = 13, $x_cc = 14, $y_cc = 15,$foc_cc = 16, $rvb_cc = 91, $ms_cc = 93)
+	function __construct($cart_coords = array(0.0, 0.0), $vol_cc = 12, $ang_cc = 13, $x_cc = 14, $y_cc = 15, $foc_cc = 16, $rvb_cc = 91, $ms_cc = 93)
 	{
 		// Make sure coords are all pairs of ints or floats
 		if (!is_array($cart_coords) || (count($cart_coords) != 2) || ($cart_coords != array_filter($cart_coords, function($a) {return is_int($a) || is_float($a);})))
