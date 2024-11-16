@@ -2,12 +2,12 @@
 /**
  *	Surround Environment
  *
- *	Some helpful functions for leveraging the 5.1 surround panner
- *  within Cakewalk.
+ *	Some helpful functions for leveraging a 5.1 surround panner.
  *
  *  This library maps a sound location in cartesian coordinates
- *  relative to the listener to the polar(-ish) coordinates used
- *  within Cakewalk.  The output will be several MIDI CCs
+ *  relative to the listener to the polar(-ish) coordinates, e.g., used
+ *  within Cakewalk.  The X-Y coordinates used in Reaper are also 
+ *  provided.  The output will be several MIDI CCs
  *  (continuous controllers) to be used to control the placement
  *  of the sound.  Several functions for standard movements, e.g.,
  *  to move the sound to a location, or in a line, in a circle, or a spiral
@@ -54,6 +54,8 @@ class SurroundEnv
 
 	// $vol_127 is the distance converted to a volume CC values 0-127
 	// $ang_127 is the angle converted to Cakewalk surround panel angle in CC values 0-127
+	// $x_127 is the angle converted to Reaper surround panel x values in CC values 0-127
+	// $y_127 is the angle converted to Reaper surround panel y values in CC values 0-127
 	// $foc_127 is the distance converted to Cakewalk surround panel focus in CC values 0-127
 	// $rvb_127 is the distance converted to a reverb CC values 0-127
 	// $ms_127 is $ms converted to CC values 0-127
@@ -62,13 +64,17 @@ class SurroundEnv
 
 	protected int $vol_127 = 0;
 	protected int $ang_127 = 0;
+	protected int $x_127 = 0;
+	protected int $y_127 = 0;
 	protected int $foc_127 = 0;
 	protected int $rvb_127 = 0;
 	protected int $ms_127 = 0;
 
 	protected int $vol_cc = 12;
 	protected int $ang_cc = 13;
-	protected int $foc_cc = 14;
+	protected int $x_cc = 14;
+	protected int $y_cc = 15;
+	protected int $foc_cc = 16;
 	protected int $rvb_cc = 91;
 	protected int $ms_cc = 93;
 
@@ -77,15 +83,17 @@ class SurroundEnv
 	 *
 	 * Passed location coordinates.  Cartesian coordinates assumed in constructor.
 	 *
-	 * @param array $cart_coords - x, y coordinates in feet
+	 * @param array $cart_coords - x, y coordinates in feet of location of sound
 	 * @param int $vol_cc - CC to pass the surround volume events, based on distance
 	 * @param int $ang_cc - CC to pass the surround angle events
+	 * @param int $x_cc - CC to pass the surround x coordinate events
+	 * @param int $y_cc - CC to pass the surround y coordinate events
 	 * @param int $foc_cc - CC to pass the surround focus events
 	 * @param int $rvb_cc - CC to pass the reverb level events (91 =  standard-ish...)
 	 * @param int $ms_cc - CC to pass the delay events in ms (93 = I've seen used on some chorus/delay vsts...)
 	 * @return void
 	 */
-	function __construct($cart_coords = array(0.0, 0.0), $vol_cc = 12, $ang_cc = 13, $foc_cc = 14, $rvb_cc = 91, $ms_cc = 93)
+	function __construct($cart_coords = array(0.0, 0.0), $vol_cc = 12, $ang_cc = 13, $x_cc = 14, $y_cc = 15,$foc_cc = 16, $rvb_cc = 91, $ms_cc = 93)
 	{
 		// Make sure coords are all pairs of ints or floats
 		if (!is_array($cart_coords) || (count($cart_coords) != 2) || ($cart_coords != array_filter($cart_coords, function($a) {return is_int($a) || is_float($a);})))
@@ -115,6 +123,8 @@ class SurroundEnv
 		// Set which CCs to use
 		$this->vol_cc = (int) MIDIEvent::rangeCheck($vol_cc);
 		$this->ang_cc = (int) MIDIEvent::rangeCheck($ang_cc);
+		$this->x_cc = (int) MIDIEvent::rangeCheck($x_cc);
+		$this->y_cc = (int) MIDIEvent::rangeCheck($y_cc);
 		$this->foc_cc = (int) MIDIEvent::rangeCheck($foc_cc);
 		$this->rvb_cc = (int) MIDIEvent::rangeCheck($rvb_cc);
 		$this->ms_cc = (int) MIDIEvent::rangeCheck($ms_cc);
@@ -283,7 +293,20 @@ class SurroundEnv
 		$this->ang_127 = (int) round(fmod($this->polar_coords['ang']+(2.5*M_PI),2*M_PI)*127/2/M_PI);
 		$this->ang_127 = (int) MIDIEvent::rangeCheck($this->ang_127);
 
+		// In Reaper, use x & y, but need to scale it down to within a 10 ft radius to get the angle right...
+		$scaled_polar[0] = $this->polar_coords['ang'];
+		$scaled_polar[1] = $this->polar_coords['dist'] > 10 ? 10 : $this->polar_coords['dist'];
+		$scaled_cart = SurroundEnv::pol2cart($scaled_polar);
+
+		$this->x_127 = (int) round(($scaled_cart[0] + 10) / 20 * 127);
+		$this->y_127 = (int) round(($scaled_cart[1] + 10) / 20 * 127);
+
+		// Safety check...
+		$this->x_127 = (int) MIDIEvent::rangeCheck($this->x_127);
+		$this->y_127 = (int) MIDIEvent::rangeCheck($this->y_127);
+
 		// Focus is how much the sound "surrounds" you...  At distance, it's just a point on the horizon.
+		// Called "Diffusion" in the Reaper surround panner.
 		// Up close, say, within the confines of the speaker configuration, it should be coming out of most/all speakers.
 		// Low focus = 0 = all the speakers = very close; high focus = 127 = far away.
 		// Basically, the inverse of the vol, so flip it.  I.e., if vol = 127, it's very very close, so low focus.
@@ -332,6 +355,30 @@ class SurroundEnv
 	public function getAng127(): int
 	{
 		return $this->ang_127;
+	}
+
+	/**
+	 * getX127
+	 *
+	 * Get the x value in 0-127 format
+	 *
+	 * @return int
+	 */
+	public function getX127(): int
+	{
+		return $this->x_127;
+	}
+
+	/**
+	 * getY127
+	 *
+	 * Get the y value in 0-127 format
+	 *
+	 * @return int
+	 */
+	public function getY127(): int
+	{
+		return $this->y_127;
 	}
 
 	/**
@@ -392,6 +439,30 @@ class SurroundEnv
 	public function getAngCc(): int
 	{
 		return $this->ang_Cc;
+	}
+
+	/**
+	 * getXCc
+	 *
+	 * Get the CC # used for returning x
+	 *
+	 * @return int
+	 */
+	public function getXCc(): int
+	{
+		return $this->x_Cc;
+	}
+
+	/**
+	 * getYCc
+	 *
+	 * Get the CC # used for returning y
+	 *
+	 * @return int
+	 */
+	public function getYCc(): int
+	{
+		return $this->y_Cc;
 	}
 
 	/**
@@ -458,6 +529,8 @@ class SurroundEnv
 
 		$result[] = new ControlChange($start, $chan, $this->vol_cc, $this->vol_127);
 		$result[] = new ControlChange($start, $chan, $this->ang_cc, $this->ang_127);
+		$result[] = new ControlChange($start, $chan, $this->x_cc, $this->x_127);
+		$result[] = new ControlChange($start, $chan, $this->y_cc, $this->y_127);
 		$result[] = new ControlChange($start, $chan, $this->foc_cc, $this->foc_127);
 		$result[] = new ControlChange($start, $chan, $this->rvb_cc, $this->rvb_127);
 		$result[] = new ControlChange($start, $chan, $this->ms_cc, $this->ms_127);
@@ -521,6 +594,8 @@ class SurroundEnv
 
 			$result[] = new ControlChange($i, $chan, $this->vol_cc, $this->vol_127);
 			$result[] = new ControlChange($i, $chan, $this->ang_cc, $this->ang_127);
+			$result[] = new ControlChange($i, $chan, $this->x_cc, $this->x_127);
+			$result[] = new ControlChange($i, $chan, $this->y_cc, $this->y_127);
 			$result[] = new ControlChange($i, $chan, $this->foc_cc, $this->foc_127);
 			$result[] = new ControlChange($i, $chan, $this->rvb_cc, $this->rvb_127);
 			$result[] = new ControlChange($i, $chan, $this->ms_cc, $this->ms_127);
@@ -534,6 +609,8 @@ class SurroundEnv
 
 		$result[] = new ControlChange($end, $chan, $this->vol_cc, $this->vol_127);
 		$result[] = new ControlChange($end, $chan, $this->ang_cc, $this->ang_127);
+		$result[] = new ControlChange($end, $chan, $this->x_cc, $this->x_127);
+		$result[] = new ControlChange($end, $chan, $this->y_cc, $this->y_127);
 		$result[] = new ControlChange($end, $chan, $this->foc_cc, $this->foc_127);
 		$result[] = new ControlChange($end, $chan, $this->rvb_cc, $this->rvb_127);
 		$result[] = new ControlChange($end, $chan, $this->ms_cc, $this->ms_127);
@@ -587,6 +664,8 @@ class SurroundEnv
 
 			$result[] = new ControlChange($i, $chan, $this->vol_cc, $this->vol_127);
 			$result[] = new ControlChange($i, $chan, $this->ang_cc, $this->ang_127);
+			$result[] = new ControlChange($i, $chan, $this->x_cc, $this->x_127);
+			$result[] = new ControlChange($i, $chan, $this->y_cc, $this->y_127);
 			$result[] = new ControlChange($i, $chan, $this->foc_cc, $this->foc_127);
 			$result[] = new ControlChange($i, $chan, $this->rvb_cc, $this->rvb_127);
 			$result[] = new ControlChange($i, $chan, $this->ms_cc, $this->ms_127);
@@ -599,6 +678,8 @@ class SurroundEnv
 
 		$result[] = new ControlChange($end, $chan, $this->vol_cc, $this->vol_127);
 		$result[] = new ControlChange($end, $chan, $this->ang_cc, $this->ang_127);
+		$result[] = new ControlChange($end, $chan, $this->x_cc, $this->x_127);
+		$result[] = new ControlChange($end, $chan, $this->y_cc, $this->y_127);
 		$result[] = new ControlChange($end, $chan, $this->foc_cc, $this->foc_127);
 		$result[] = new ControlChange($end, $chan, $this->rvb_cc, $this->rvb_127);
 		$result[] = new ControlChange($end, $chan, $this->ms_cc, $this->ms_127);
@@ -659,6 +740,8 @@ class SurroundEnv
 
 			$result[] = new ControlChange($i, $chan, $this->vol_cc, $this->vol_127);
 			$result[] = new ControlChange($i, $chan, $this->ang_cc, $this->ang_127);
+			$result[] = new ControlChange($i, $chan, $this->x_cc, $this->x_127);
+			$result[] = new ControlChange($i, $chan, $this->y_cc, $this->y_127);
 			$result[] = new ControlChange($i, $chan, $this->foc_cc, $this->foc_127);
 			$result[] = new ControlChange($i, $chan, $this->rvb_cc, $this->rvb_127);
 			$result[] = new ControlChange($i, $chan, $this->ms_cc, $this->ms_127);
@@ -672,6 +755,8 @@ class SurroundEnv
 
 		$result[] = new ControlChange($end, $chan, $this->vol_cc, $this->vol_127);
 		$result[] = new ControlChange($end, $chan, $this->ang_cc, $this->ang_127);
+		$result[] = new ControlChange($end, $chan, $this->x_cc, $this->x_127);
+		$result[] = new ControlChange($end, $chan, $this->y_cc, $this->y_127);
 		$result[] = new ControlChange($end, $chan, $this->foc_cc, $this->foc_127);
 		$result[] = new ControlChange($end, $chan, $this->rvb_cc, $this->rvb_127);
 		$result[] = new ControlChange($end, $chan, $this->ms_cc, $this->ms_127);

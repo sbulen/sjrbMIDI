@@ -44,11 +44,11 @@ $vel = 120;
 $dur = $myFile->b2dur(4);
 $meas = 1;
 $cart_locs = array(
-		array(-10, 10), array(-25, 10), array(0, 10), array(25, 10), array(10, 10),
-		array(-10, 25), array(-25, 25), array(0, 25), array(25, 25), array(10, 25),
-		array(-10, 0), array(-25, 0), array(0, 0), array(25, 0), array(10, 0),
-		array(-10, -25), array(-25, -25), array(0, -25), array(25, -25), array(10, -25),
-		array(-10, -10), array(-25, -10), array(0, -10), array(25, -10), array(10, -10),
+		array(-10, 10), array(-5, 10), array(0, 10), array(5, 10), array(10, 10),
+		array(-10, 5), array(-5, 5), array(0, 5), array(5, 5), array(10, 5),
+		array(-10, 0), array(-5, 0), array(0, 0), array(5, 0), array(10, 0),
+		array(-10, -5), array(-5, -5), array(0, -5), array(5, -5), array(10, -5),
+		array(-10, -10), array(-5, -10), array(0, -10), array(5, -10), array(10, -10),
 	);
 
 foreach ($cart_locs AS $loc)
@@ -87,7 +87,7 @@ $meas = 61;
 $start_coords = array(-10, 10);
 $end_coords = array(10, -10);
 $start = $myFile->mbt2at($meas);
-$end = $myFile->mbt2at($meas+4);
+$end = $myFile->mbt2at($meas + 4);
 $stepdur = $myFile->b2dur(.25);
 
 // Set the location...
@@ -104,7 +104,7 @@ $meas = 67;
 $start_coords = array(-10, 10);
 $cycles = 20.0;
 $start = $myFile->mbt2at($meas);
-$end = $myFile->mbt2at($meas+10);
+$end = $myFile->mbt2at($meas + 10);
 $stepdur = $myFile->b2dur(.0625);
 
 // Set the location...
@@ -122,7 +122,7 @@ $start_coords = array(-10, 10);
 $cycles = -20.0;
 $end_radius = 2.0;
 $start = $myFile->mbt2at($meas);
-$end = $myFile->mbt2at($meas+10);
+$end = $myFile->mbt2at($meas + 10);
 $stepdur = $myFile->b2dur(.0625);
 
 // Set the location...
