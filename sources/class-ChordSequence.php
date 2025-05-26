@@ -3,7 +3,7 @@
  *	Chord sequence - a set of parameters for generating a chord sequence.
  *	In general, one channel, one instrument (e.g., piano), lots of parameters (chords, phrases)...
  *
- *	Copyright 2020-2023 Shawn Bulen
+ *	Copyright 2020-2025 Shawn Bulen
  *
  *	This file is part of the sjrbMIDI library.
  *
@@ -33,8 +33,8 @@ class ChordSequence extends AbstractSequence
 	protected int $root_oct;			// Where to start...  Used when generating chords/phrases
 	protected int $max_notes_per_chord;	// How big are the chords, when auto-generated
 	protected int $max_inc_dec;			// Max amount to inc or dec when building chord sequences
-	protected int $min_dnote;			// Min dnote when building chord sequences
-	protected int $max_dnote;			// Max dnote when building chord sequences
+	protected array $min_dnote;			// Min dnote when building chord sequences
+	protected array $max_dnote;			// Max dnote when building chord sequences
 	protected float $inversion_pct;		// What percentage of chords are inverted, when auto-generated
 	protected float $chord_note_pct;	// What percentage of chords are kept, when auto-generated
 	protected float $chord_trip_pct;	// What percentage of chords are triplets, when auto-generated
@@ -58,8 +58,8 @@ class ChordSequence extends AbstractSequence
 	 * @param int $root_oct
 	 * @param int $max_notes_per_chord
 	 * @param int $max_inc_dec
-	 * @param int $min_dnote
-	 * @param int $max_dnote
+	 * @param int[] $min_dnote
+	 * @param int[] $max_dnote
 	 * @param float $inversion_pct
 	 * @param float $chord_note_pct
 	 * @param float $chord_trip_pct
@@ -106,13 +106,13 @@ class ChordSequence extends AbstractSequence
 
 			// min dnote
 			if (is_int($min_dnote) && ($min_dnote >= 0) && ($min_dnote <= 144))
-				$this->min_dnote = $min_dnote;
+				$this->min_dnote = $this->key->cleanseDNote($min_dnote);
 			else
 				Errors::fatal('inv_minnote');
 
 			// max dnote
 			if (is_int($max_dnote) && ($max_dnote >= 0) && ($max_dnote <= 144) && ($max_dnote > $min_dnote))
-				$this->max_dnote = $max_dnote;
+				$this->max_dnote = $this->key->cleanseDNote($max_dnote);
 			else
 				Errors::fatal('inv_maxnote');
 
@@ -205,6 +205,7 @@ class ChordSequence extends AbstractSequence
 
 	/*
 	 * Return a safe, random, amount to inc or dec by, honoring $max_inc_dec, $min_dnote & $max_dnote
+	 * while staying in key.
 	 *
 	 * @param dnote
 	 * @return int
@@ -212,17 +213,18 @@ class ChordSequence extends AbstractSequence
 
 	public function randIncDec(array $curr_dnote): int
 	{
-		$val = base_convert($curr_dnote['dn'], 7, 10);
-		$min = base_convert($this->min_dnote, 7, 10);
-		$max = base_convert($this->max_dnote, 7, 10);
-
+		// Default range to increment by...
 		$min_inc = -$this->max_inc_dec;
 		$max_inc = $this->max_inc_dec;
 
-		if (($val + $this->max_inc_dec) > $max)
-			$max_inc = 0;
-		if (($val - $this->max_inc_dec) < $min)
-			$min_inc = 0;
+		// Safe range to increment by...
+		$min_headroom = $this->key->dSub($this->min_dnote, $curr_dnote);
+		$max_headroom = $this->key->dSub($this->max_dnote, $curr_dnote);
+
+		if ($min_inc < $min_headroom)
+			$min_inc = $min_headroom;
+		if ($max_inc > $max_headroom)
+			$max_inc = $max_headroom;
 
 		return rand($min_inc, $max_inc);
 	}

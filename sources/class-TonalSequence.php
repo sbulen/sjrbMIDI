@@ -3,7 +3,7 @@
  *	Tonal sequence - a set of parameters for generating some music, oriented toward tonal instruments.
  *	In general, one channel, one instrument (e.g., piano), lots of parameters (chords, phrases)...
  *
- *	Copyright 2020-2024 Shawn Bulen
+ *	Copyright 2020-2025 Shawn Bulen
  *
  *	This file is part of the sjrbMIDI library.
  *
@@ -34,8 +34,8 @@ class TonalSequence extends AbstractSequence
 	protected int $num_phrases;				// Number of phrases to auto-generate
 	protected int $max_notes_per_phrase;	// How big are the phrases, when auto-generated
 	protected int $max_inc_dec;				// Max amount to inc or dec when building phrases
-	protected int $min_dnote;				// Min dnote when building phrases
-	protected int $max_dnote;				// Max dnote when building phrases
+	protected array $min_dnote;				// Min dnote when building phrases
+	protected array $max_dnote;				// Max dnote when building phrases
 	protected float $phrase_note_pct;		// What percentage of notes are kept, when phrases are auto-generated
 	protected float $phrase_trip_pct;		// What percentage of notes are triplets, when phrases are auto-generated
 
@@ -59,8 +59,8 @@ class TonalSequence extends AbstractSequence
 	 * @param int $num_phrases
 	 * @param int $max_notes_per_phrase
 	 * @param int $max_inc_dec
-	 * @param int $min_dnote
-	 * @param int $max_dnote
+	 * @param int[] $min_dnote
+	 * @param int[] $max_dnote
 	 * @param float $phrase_note_pct
 	 * @param float $phrase_trip_pct
 	 * @return void
@@ -88,13 +88,13 @@ class TonalSequence extends AbstractSequence
 
 			// min dnote
 			if (is_int($min_dnote) && ($min_dnote >= 0) && ($min_dnote <= 144))
-				$this->min_dnote = $min_dnote;
+				$this->min_dnote = $this->key->cleanseDNote($min_dnote);
 			else
 				Errors::fatal('inv_minnote');
 
 			// max dnote
 			if (is_int($max_dnote) && ($max_dnote >= 0) && ($max_dnote <= 144) && ($max_dnote > $min_dnote))
-				$this->max_dnote = $max_dnote;
+				$this->max_dnote = $this->key->cleanseDNote($max_dnote);
 			else
 				Errors::fatal('inv_maxnote');
 
@@ -115,7 +115,7 @@ class TonalSequence extends AbstractSequence
 			for ($i = 0; $i < $roots; $i++)
 			{
 				$this->root_seq[] = $note;
-				$note = $this->key->dAdd($note, $this->randIncDec($note, false));
+				$note = $this->key->dAdd($note, $this->randIncDec($note));
 			}
 		}
 		// If root_seq passed, might be an array of ints or an array of dnotes
@@ -215,7 +215,7 @@ class TonalSequence extends AbstractSequence
 						if (MathFuncs::randomFloat() <= $this->phrase_note_pct)
 							$note_arr[] = new Note($chan, $new_start, $dnote, $vel, $new_dur);
 
-						$dnote = $this->key->dAdd($dnote, $this->randIncDec($dnote, true));
+						$dnote = $this->key->dAdd($dnote, $this->randIncDec($dnote));
 						$new_start = $new_start + $new_dur;
 					}
 					continue;
@@ -225,7 +225,7 @@ class TonalSequence extends AbstractSequence
 				if (MathFuncs::randomFloat() <= $this->phrase_note_pct)
 					$note_arr[] = new Note($chan, $start, $dnote, $vel, $dur);
 
-				$dnote = $this->key->dAdd($dnote, $this->randIncDec($dnote, true));
+				$dnote = $this->key->dAdd($dnote, $this->randIncDec($dnote));
 			}
 
 			// Start or end on the root, 50/50...
@@ -240,42 +240,26 @@ class TonalSequence extends AbstractSequence
 
 	/*
 	 * Return a safe, random, amount to inc or dec by, honoring $max_inc_dec, $min_dnote & $max_dnote
-	 * Phrases need their own version...
+	 * while staying in key.
 	 *
 	 * @param dnote
 	 * @return int
 	 */
 
-	public function randIncDec(array $curr_dnote, bool $phrase_gen = false): int
+	public function randIncDec(array $curr_dnote): int
 	{
-		// Adjust min/max based on (dnote - root_oct) during phrase generation.
-		// Otherwise phrases can get squished, e.g., when passed a root_seq.
-		// To fix, treat min/max as 'floating' during phrase generation.
-		// I.e., at this point, honor changes in root_seq, yet still keep narrow ranges if defined...
-		if ($phrase_gen)
-		{
-			$gen_root = $this->key->getD($this->root_oct, 0);
-			$diff = $this->key->dSub($curr_dnote, $gen_root);
-			$temp_min = $this->key->dAdd($this->min_dnote, $diff);
-			$temp_max = $this->key->dAdd($this->max_dnote, $diff);
-		}
-		else
-		{
-			$temp_min = Key::cleanseDNote($this->min_dnote);
-			$temp_max = Key::cleanseDNote($this->max_dnote);
-		}
-
-		$val = base_convert($curr_dnote['dn'], 7, 10);
-		$min = base_convert($temp_min['dn'], 7, 10);
-		$max = base_convert($temp_max['dn'], 7, 10);
-
+		// Default range to increment by...
 		$min_inc = -$this->max_inc_dec;
 		$max_inc = $this->max_inc_dec;
 
-		if (($val + $this->max_inc_dec) > $max)
-			$max_inc = 0;
-		if (($val - $this->max_inc_dec) < $min)
-			$min_inc = 0;
+		// Safe range to increment by...
+		$min_headroom = $this->key->dSub($this->min_dnote, $curr_dnote);
+		$max_headroom = $this->key->dSub($this->max_dnote, $curr_dnote);
+
+		if ($min_inc < $min_headroom)
+			$min_inc = $min_headroom;
+		if ($max_inc > $max_headroom)
+			$max_inc = $max_headroom;
 
 		return rand($min_inc, $max_inc);
 	}
