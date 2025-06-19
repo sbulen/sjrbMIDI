@@ -236,11 +236,12 @@ class Phrase implements IteratorAggregate
 		$notes = $notes % $count;
 		if ($notes < 0)
 			$notes = $notes + $count;
+		$notes = $count - $notes;
 
 		// Do the actual rotation...
 		if ($notes != 0)
 		{
-			$diff = $start_positions[$notes] - $this->start;
+		    $diff = $this->start + $this->dur - $start_positions[$notes];
 			foreach ($this->note_arr AS $note)
 			{
 				if (($note->getAt() + $diff) < ($this->start + $this->dur))
